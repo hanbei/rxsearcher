@@ -1,0 +1,204 @@
+{
+  "DefinitionSource" : "",
+  "Heading" : "Google",
+  "ImageWidth" : 0,
+  "RelatedTopics" : [
+    {
+      "Result" : "<a href=\"https://duckduckgo.com/Google\">Google</a> An American multinational technology company specializing in Internet-related services and...",
+      "Icon" : {
+        "URL" : "https://duckduckgo.com/i/8f85c93f.png",
+        "Height" : "",
+        "Width" : ""
+      },
+      "FirstURL" : "https://duckduckgo.com/Google",
+      "Text" : "Google An American multinational technology company specializing in Internet-related services and..."
+    },
+    {
+      "Result" : "<a href=\"https://duckduckgo.com/Google_Search\">Google Search</a>A web search engine owned by Google Inc. It is the most-used search engine on the World Wide Web...",
+      "Icon" : {
+        "URL" : "https://duckduckgo.com/i/8f85c93f.png",
+        "Height" : "",
+        "Width" : ""
+      },
+      "FirstURL" : "https://duckduckgo.com/Google_Search",
+      "Text" : "Google SearchA web search engine owned by Google Inc. It is the most-used search engine on the World Wide Web..."
+    },
+    {
+      "Topics" : [
+        {
+          "Result" : "<a href=\"https://duckduckgo.com/Google_(verb)\">Google (verb)</a>Using the Google search engine to obtain information on something or somebody on the World Wide Web.",
+          "Icon" : {
+            "URL" : "",
+            "Height" : "",
+            "Width" : ""
+          },
+          "FirstURL" : "https://duckduckgo.com/Google_(verb)",
+          "Text" : "Google (verb)Using the Google search engine to obtain information on something or somebody on the World Wide Web."
+        },
+        {
+          "Result" : "<a href=\"https://duckduckgo.com/Google.org\">Google.org</a>Google.org, founded in October 2005, is the charitable arm of Google, an Internet search engine...",
+          "Icon" : {
+            "URL" : "https://duckduckgo.com/i/a707b7ea.png",
+            "Height" : "",
+            "Width" : ""
+          },
+          "FirstURL" : "https://duckduckgo.com/Google.org",
+          "Text" : "Google.orgGoogle.org, founded in October 2005, is the charitable arm of Google, an Internet search engine..."
+        }
+      ],
+      "Name" : "Google Inc."
+    },
+    {
+      "Topics" : [
+        {
+          "Result" : "<a href=\"https://duckduckgo.com/Googal%2C_Devadurga\">Googal, Devadurga</a>A village in the Devadurga taluk of Raichur district in Karnataka state, India.",
+          "Icon" : {
+            "URL" : "",
+            "Height" : "",
+            "Width" : ""
+          },
+          "FirstURL" : "https://duckduckgo.com/Googal%2C_Devadurga",
+          "Text" : "Googal, DevadurgaA village in the Devadurga taluk of Raichur district in Karnataka state, India."
+        }
+      ],
+      "Name" : "Other uses"
+    },
+    {
+      "Topics" : [
+        {
+          "Result" : "<a href=\"https://duckduckgo.com/Goggles\">Goggles</a>Goggles or safety glasses are forms of protective eyewear that usually enclose or protect the...",
+          "Icon" : {
+            "URL" : "https://duckduckgo.com/i/82de7b2a.jpg",
+            "Height" : "",
+            "Width" : ""
+          },
+          "FirstURL" : "https://duckduckgo.com/Goggles",
+          "Text" : "GogglesGoggles or safety glasses are forms of protective eyewear that usually enclose or protect the..."
+        },
+        {
+          "Result" : "<a href=\"https://duckduckgo.com/Goggles!\">Goggles!</a> Goggles! is a 1969 children's picture book by American author and illustrator Ezra Jack Keats...",
+          "Icon" : {
+            "URL" : "https://duckduckgo.com/i/d291493f.jpeg",
+            "Height" : "",
+            "Width" : ""
+          },
+          "FirstURL" : "https://duckduckgo.com/Goggles!",
+          "Text" : "Goggles! Goggles! is a 1969 children's picture book by American author and illustrator Ezra Jack Keats..."
+        },
+        {
+          "Result" : "<a href=\"https://duckduckgo.com/Googly\">Googly</a>A type of delivery bowled by a right-arm leg spin bowler.",
+          "Icon" : {
+            "URL" : "",
+            "Height" : "",
+            "Width" : ""
+          },
+          "FirstURL" : "https://duckduckgo.com/Googly",
+          "Text" : "GooglyA type of delivery bowled by a right-arm leg spin bowler."
+        },
+        {
+          "Result" : "<a href=\"https://duckduckgo.com/Googly_eyes\">Googly eyes</a>Googly eyes, or jiggly eyes are small plastic craft supplies used to imitate eyeballs.",
+          "Icon" : {
+            "URL" : "https://duckduckgo.com/i/cf399a0e.jpg",
+            "Height" : "",
+            "Width" : ""
+          },
+          "FirstURL" : "https://duckduckgo.com/Googly_eyes",
+          "Text" : "Googly eyesGoogly eyes, or jiggly eyes are small plastic craft supplies used to imitate eyeballs."
+        },
+        {
+          "Result" : "<a href=\"https://duckduckgo.com/Googol\">Googol</a>The large number 10100.",
+          "Icon" : {
+            "URL" : "",
+            "Height" : "",
+            "Width" : ""
+          },
+          "FirstURL" : "https://duckduckgo.com/Googol",
+          "Text" : "GoogolThe large number 10100."
+        },
+        {
+          "Result" : "<a href=\"https://duckduckgo.com/d/Gogol\">Gogol Meanings</a>  See related meanings for the word 'Gogol'.",
+          "Icon" : {
+            "URL" : "",
+            "Height" : "",
+            "Width" : ""
+          },
+          "FirstURL" : "https://duckduckgo.com/d/Gogol",
+          "Text" : "Gogol Meanings  See related meanings for the word 'Gogol'."
+        }
+      ],
+      "Name" : "See also"
+    }
+  ],
+  "Entity" : "",
+  "meta" : {
+    "maintainer" : {
+      "github" : "duckduckgo"
+    },
+    "perl_module" : "DDG::Fathead::Wikipedia",
+    "status" : "live",
+    "production_state" : "offline",
+    "dev_date" : null,
+    "js_callback_name" : "wikipedia",
+    "signal_from" : "wikipedia_fathead",
+    "live_date" : null,
+    "src_id" : 1,
+    "src_options" : {
+      "skip_end" : "0",
+      "skip_abstract" : 0,
+      "skip_qr" : "",
+      "language" : "en",
+      "skip_icon" : 0,
+      "skip_image_name" : 0,
+      "directory" : "",
+      "min_abstract_length" : "20",
+      "skip_abstract_paren" : 0,
+      "is_wikipedia" : 1,
+      "source_skip" : "",
+      "is_fanon" : 0,
+      "is_mediawiki" : 1,
+      "src_info" : ""
+    },
+    "repo" : "fathead",
+    "developer" : [
+      {
+        "name" : "DDG Team",
+        "url" : "http://www.duckduckhack.com",
+        "type" : "ddg"
+      }
+    ],
+    "tab" : "About",
+    "producer" : null,
+    "unsafe" : 0,
+    "id" : "wikipedia_fathead",
+    "dev_milestone" : "live",
+    "topic" : [
+      "productivity"
+    ],
+    "name" : "Wikipedia",
+    "attribution" : null,
+    "created_date" : null,
+    "example_query" : "nikola tesla",
+    "description" : "Wikipedia",
+    "is_stackexchange" : null,
+    "designer" : null,
+    "src_domain" : "en.wikipedia.org",
+    "src_name" : "Wikipedia",
+    "blockgroup" : null,
+    "src_url" : null
+  },
+  "Type" : "D",
+  "Redirect" : "",
+  "DefinitionURL" : "",
+  "AbstractURL" : "https://en.wikipedia.org/wiki/Google_(disambiguation)",
+  "Definition" : "",
+  "AbstractSource" : "Wikipedia",
+  "Infobox" : "",
+  "Image" : "",
+  "ImageIsLogo" : 0,
+  "Abstract" : "",
+  "AbstractText" : "",
+  "AnswerType" : "",
+  "ImageHeight" : 0,
+  "Answer" : "",
+  "Results" : []
+}
