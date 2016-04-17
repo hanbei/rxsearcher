@@ -6,18 +6,20 @@ public class SearchResult {
     private String url;
     private String title;
     private String icon;
+    private String searchSource;
 
     protected SearchResult() {
         this(null, null, null);
     }
 
-    public SearchResult(String url, String title) {
-        this(url, title, "");
+    public SearchResult(String url, String title, String searchSource) {
+        this(url, title, searchSource, "");
     }
 
-    public SearchResult(String url, String title, String icon) {
+    public SearchResult(String url, String title, String searchSource, String icon) {
         this.url = url;
         this.title = title;
+        this.searchSource = searchSource;
         this.icon = icon;
     }
 
@@ -33,6 +35,10 @@ public class SearchResult {
         return icon;
     }
 
+    public String getSearchSource() {
+        return searchSource;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -40,17 +46,19 @@ public class SearchResult {
 
         SearchResult that = (SearchResult) o;
 
-        if (getUrl() != null ? !getUrl().equals(that.getUrl()) : that.getUrl() != null) return false;
-        if (getTitle() != null ? !getTitle().equals(that.getTitle()) : that.getTitle() != null) return false;
-        return getIcon() != null ? getIcon().equals(that.getIcon()) : that.getIcon() == null;
+        if (!getUrl().equals(that.getUrl())) return false;
+        if (!getTitle().equals(that.getTitle())) return false;
+        if (!getIcon().equals(that.getIcon())) return false;
+        return getSearchSource().equals(that.getSearchSource());
 
     }
 
     @Override
     public int hashCode() {
-        int result = getUrl() != null ? getUrl().hashCode() : 0;
-        result = 31 * result + (getTitle() != null ? getTitle().hashCode() : 0);
-        result = 31 * result + (getIcon() != null ? getIcon().hashCode() : 0);
+        int result = getUrl().hashCode();
+        result = 31 * result + getTitle().hashCode();
+        result = 31 * result + getIcon().hashCode();
+        result = 31 * result + getSearchSource().hashCode();
         return result;
     }
 
@@ -60,6 +68,7 @@ public class SearchResult {
                 "url='" + url + '\'' +
                 ", title='" + title + '\'' +
                 ", icon='" + icon + '\'' +
+                ", searchSource='" + searchSource + '\'' +
                 '}';
     }
 }

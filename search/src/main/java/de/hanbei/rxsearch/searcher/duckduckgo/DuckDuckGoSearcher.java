@@ -91,7 +91,7 @@ public class DuckDuckGoSearcher {
         String url = getFieldStringValue(relatedTopic, "FirstURL");
         String title = getFieldStringValue(relatedTopic, "Text");
         String icon = getIcon(relatedTopic);
-        return new SearchResult(url, title, icon);
+        return new SearchResult(url, title, getName(), icon);
     }
 
     private String getIcon(JsonNode relatedTopic) {

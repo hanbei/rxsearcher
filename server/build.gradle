@@ -1,6 +1,8 @@
 def vertx_version = "3.2.1"
 
 dependencies {
+    compile project(":search")
+
     compile "io.vertx:vertx-core:${vertx_version}"
     compile "io.vertx:vertx-web:${vertx_version}"
 }
