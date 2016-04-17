@@ -6,74 +6,38 @@ import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.SearchResult;
+import de.hanbei.rxsearch.searcher.AbstractSearcher;
+import de.hanbei.rxsearch.searcher.Searcher;
 import rx.Observable;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DuckDuckGoSearcher {
+public class DuckDuckGoSearcher extends AbstractSearcher {
 
     private static final ObjectMapper mapper = new ObjectMapper();
-    private final AsyncHttpClient asyncHttpClient;
-    private String name;
 
     public DuckDuckGoSearcher(String name, AsyncHttpClient asyncHttpClient) {
-        this.name = name;
-        this.asyncHttpClient = asyncHttpClient;
+        super(name, asyncHttpClient);
     }
 
-    public String getName() {
-        return name;
+    @Override
+    protected String createRequestUrl(String searchInput) {
+        return "http://api.duckduckgo.com/?format=json&t=hanbeirxsearch&q=" + searchInput;
     }
 
-    public Observable<SearchResult> search(String searchInput) {
-        return asyncGet(searchInput).map(this::responseToString).
-                flatMap(s -> Observable.from(toSearchResults(s)));
-    }
-
-    private Observable<Response> asyncGet(String searchInput) {
-        return Observable.create(subscriber -> {
-            asyncHttpClient.prepareGet(createRequestUrl(searchInput)).execute(new AsyncCompletionHandler<Response>() {
-                @Override
-                public Response onCompleted(Response response) throws Exception {
-                    subscriber.onNext(response);
-                    subscriber.onCompleted();
-                    return response;
-                }
-
-                @Override
-                public void onThrowable(Throwable t) {
-                    subscriber.onError(t);
-                }
-            });
-        });
-    }
-
-    private String createRequestUrl(String searchInput) {
-        return "http://api.duckduckgo.com/?q=" + searchInput + "&format=json&t=hanbeirxsearch";
-    }
-
-    private String responseToString(Response response) {
+    @Override
+    protected List<SearchResult> toSearchResults(String s) {
         try {
-            return response.getResponseBody();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private List<SearchResult> toSearchResults(String s) {
-        try {
-
             JsonNode jsonNode = mapper.readTree(s);
-
             JsonNode relatedTopics = jsonNode.findValue("RelatedTopics");
-            List<SearchResult> results = extractResultNodes(relatedTopics);
-            return results;
+            return extractResultNodes(relatedTopics);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
 
     private List<SearchResult> extractResultNodes(JsonNode jsonNode) {
         List<SearchResult> results = new ArrayList<>();

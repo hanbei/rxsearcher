@@ -4,7 +4,7 @@ package de.hanbei.rxsearch.server;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ning.http.client.AsyncHttpClient;
-import de.hanbei.rxsearch.model.SearchResult;
+import de.hanbei.rxsearch.searcher.Searcher;
 import de.hanbei.rxsearch.searcher.duckduckgo.DuckDuckGoSearcher;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
@@ -22,7 +22,7 @@ import java.util.Map;
  */
 public class VertxServer extends AbstractVerticle {
 
-    private DuckDuckGoSearcher searcher = new DuckDuckGoSearcher("ddgo", new AsyncHttpClient());
+    private Searcher searcher = new DuckDuckGoSearcher("ddgo", new AsyncHttpClient());
     private ObjectMapper objectMapper = new ObjectMapper();
 
     @Override
