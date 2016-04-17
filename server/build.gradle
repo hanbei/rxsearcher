@@ -5,4 +5,7 @@ dependencies {
 
     compile "io.vertx:vertx-core:${vertx_version}"
     compile "io.vertx:vertx-web:${vertx_version}"
+    compile 'io.dropwizard.metrics:metrics-core:3.1.2'
+
+    testCompile 'com.ning:async-http-client:1.9.36'
 }

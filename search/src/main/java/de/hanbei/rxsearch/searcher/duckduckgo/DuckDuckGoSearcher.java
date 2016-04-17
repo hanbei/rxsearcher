@@ -2,6 +2,7 @@ package de.hanbei.rxsearch.searcher.duckduckgo;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Strings;
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
@@ -12,6 +13,7 @@ import rx.Observable;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class DuckDuckGoSearcher extends AbstractSearcher {
@@ -29,6 +31,9 @@ public class DuckDuckGoSearcher extends AbstractSearcher {
 
     @Override
     protected List<SearchResult> toSearchResults(String s) {
+        if (Strings.isNullOrEmpty(s)) {
+            return Collections.emptyList();
+        }
         try {
             JsonNode jsonNode = mapper.readTree(s);
             JsonNode relatedTopics = jsonNode.findValue("RelatedTopics");

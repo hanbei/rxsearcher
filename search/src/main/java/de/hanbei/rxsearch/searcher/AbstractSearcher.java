@@ -26,7 +26,7 @@ public abstract class AbstractSearcher implements Searcher {
     }
 
     public Observable<SearchResult> search(String searchInput) {
-        return asyncGet(searchInput).map(this::responseToString).
+        return asyncGet(searchInput).onErrorResumeNext(t -> Observable.empty()).map(this::responseToString).
                 flatMap(s -> Observable.from(toSearchResults(s)));
     }
 
@@ -35,8 +35,12 @@ public abstract class AbstractSearcher implements Searcher {
             asyncHttpClient.prepareGet(createRequestUrl(searchInput)).execute(new AsyncCompletionHandler<Response>() {
                 @Override
                 public Response onCompleted(Response response) throws Exception {
-                    subscriber.onNext(response);
-                    subscriber.onCompleted();
+                    if (response.getStatusCode() < 300) {
+                        subscriber.onNext(response);
+                        subscriber.onCompleted();
+                    } else {
+                        subscriber.onError(new RuntimeException(getName() + ":" + response.getStatusCode() + " " + response.getStatusText()));
+                    }
                     return response;
                 }
 
@@ -50,8 +54,7 @@ public abstract class AbstractSearcher implements Searcher {
 
     private String responseToString(Response response) {
         try {
-            String responseBody = response.getResponseBody();
-            return responseBody;
+            return response.getResponseBody();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
