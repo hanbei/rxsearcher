@@ -18,15 +18,17 @@ import java.util.List;
 public class GithubSearcher extends AbstractSearcher {
 
     private static final ObjectMapper mapper = new ObjectMapper();
+    private final String repo;
 
 
-    public GithubSearcher(String name, AsyncHttpClient asyncHttpClient) {
+    public GithubSearcher(String name, String repo, AsyncHttpClient asyncHttpClient) {
         super(name, asyncHttpClient);
+        this.repo = repo;
     }
 
     @Override
     protected String createRequestUrl(String searchInput) {
-        return "https://api.github.com/search/code?q=" + searchInput;
+        return "https://api.github.com/search/code?q=" + searchInput + "+repo:" + repo;
     }
 
     @Override
@@ -36,8 +38,10 @@ public class GithubSearcher extends AbstractSearcher {
         try {
             JsonNode jsonNode = mapper.readTree(s);
             JsonNode items = jsonNode.findValue("items");
-            for (JsonNode item : items) {
-                results.add(toSearchResult(item));
+            if (items != null) {
+                for (JsonNode item : items) {
+                    results.add(toSearchResult(item));
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
