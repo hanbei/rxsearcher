@@ -43,7 +43,7 @@
             "Width" : ""
           },
           "FirstURL" : "https://duckduckgo.com/Google.org",
-          "Text" : "Google.orgGoogle.org, founded in October 2005, is the charitable arm of Google, an Internet search engine..."
+          "Text" : "Google.org, founded in October 2005, is the charitable arm of Google, an Internet search engine..."
         }
       ],
       "Name" : "Google Inc."
@@ -73,7 +73,7 @@
             "Width" : ""
           },
           "FirstURL" : "https://duckduckgo.com/Goggles",
-          "Text" : "GogglesGoggles or safety glasses are forms of protective eyewear that usually enclose or protect the..."
+          "Text" : "Goggles or safety glasses are forms of protective eyewear that usually enclose or protect the..."
         },
         {
           "Result" : "<a href=\"https://duckduckgo.com/Goggles!\">Goggles!</a> Goggles! is a 1969 children's picture book by American author and illustrator Ezra Jack Keats...",
@@ -86,16 +86,6 @@
           "Text" : "Goggles! Goggles! is a 1969 children's picture book by American author and illustrator Ezra Jack Keats..."
         },
         {
-          "Result" : "<a href=\"https://duckduckgo.com/Googly\">Googly</a>A type of delivery bowled by a right-arm leg spin bowler.",
-          "Icon" : {
-            "URL" : "",
-            "Height" : "",
-            "Width" : ""
-          },
-          "FirstURL" : "https://duckduckgo.com/Googly",
-          "Text" : "GooglyA type of delivery bowled by a right-arm leg spin bowler."
-        },
-        {
           "Result" : "<a href=\"https://duckduckgo.com/Googly_eyes\">Googly eyes</a>Googly eyes, or jiggly eyes are small plastic craft supplies used to imitate eyeballs.",
           "Icon" : {
             "URL" : "https://duckduckgo.com/i/cf399a0e.jpg",
@@ -104,26 +94,6 @@
           },
           "FirstURL" : "https://duckduckgo.com/Googly_eyes",
           "Text" : "Googly eyesGoogly eyes, or jiggly eyes are small plastic craft supplies used to imitate eyeballs."
-        },
-        {
-          "Result" : "<a href=\"https://duckduckgo.com/Googol\">Googol</a>The large number 10100.",
-          "Icon" : {
-            "URL" : "",
-            "Height" : "",
-            "Width" : ""
-          },
-          "FirstURL" : "https://duckduckgo.com/Googol",
-          "Text" : "GoogolThe large number 10100."
-        },
-        {
-          "Result" : "<a href=\"https://duckduckgo.com/d/Gogol\">Gogol Meanings</a>  See related meanings for the word 'Gogol'.",
-          "Icon" : {
-            "URL" : "",
-            "Height" : "",
-            "Width" : ""
-          },
-          "FirstURL" : "https://duckduckgo.com/d/Gogol",
-          "Text" : "Gogol Meanings  See related meanings for the word 'Gogol'."
         }
       ],
       "Name" : "See also"

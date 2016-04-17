@@ -4,7 +4,6 @@ package de.hanbei.rxsearch.model;
 public class SearchResult {
 
     private String url;
-    private String text;
     private String title;
     private String icon;
 
@@ -12,23 +11,18 @@ public class SearchResult {
         this(null, null, null);
     }
 
-    public SearchResult(String url, String text, String title) {
-        this(url, text, title, null);
+    public SearchResult(String url, String title) {
+        this(url, title, "");
     }
 
-    public SearchResult(String url, String text, String title, String icon) {
+    public SearchResult(String url, String title, String icon) {
         this.url = url;
-        this.text = text;
         this.title = title;
         this.icon = icon;
     }
 
     public String getUrl() {
         return url;
-    }
-
-    public String getText() {
-        return text;
     }
 
     public String getTitle() {
@@ -46,19 +40,26 @@ public class SearchResult {
 
         SearchResult that = (SearchResult) o;
 
-        if (!getUrl().equals(that.getUrl())) return false;
-        if (!getText().equals(that.getText())) return false;
-        if (!getTitle().equals(that.getTitle())) return false;
-        return getIcon().equals(that.getIcon());
+        if (getUrl() != null ? !getUrl().equals(that.getUrl()) : that.getUrl() != null) return false;
+        if (getTitle() != null ? !getTitle().equals(that.getTitle()) : that.getTitle() != null) return false;
+        return getIcon() != null ? getIcon().equals(that.getIcon()) : that.getIcon() == null;
 
     }
 
     @Override
     public int hashCode() {
-        int result = getUrl().hashCode();
-        result = 31 * result + getText().hashCode();
-        result = 31 * result + getTitle().hashCode();
-        result = 31 * result + getIcon().hashCode();
+        int result = getUrl() != null ? getUrl().hashCode() : 0;
+        result = 31 * result + (getTitle() != null ? getTitle().hashCode() : 0);
+        result = 31 * result + (getIcon() != null ? getIcon().hashCode() : 0);
         return result;
+    }
+
+    @Override
+    public String toString() {
+        return "SearchResult{" +
+                "url='" + url + '\'' +
+                ", title='" + title + '\'' +
+                ", icon='" + icon + '\'' +
+                '}';
     }
 }

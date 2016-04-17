@@ -28,8 +28,6 @@ public class DuckDuckGoSearcher {
     }
 
     public Observable<SearchResult> search(String searchInput) {
-        System.out.println(Thread.currentThread().getName());
-
         return asyncGet(searchInput).map(this::responseToString).
                 flatMap(s -> Observable.from(toSearchResults(s)));
     }
@@ -66,31 +64,40 @@ public class DuckDuckGoSearcher {
 
     private List<SearchResult> toSearchResults(String s) {
         try {
-            List<SearchResult> results = new ArrayList<>();
+
             JsonNode jsonNode = mapper.readTree(s);
 
-            List<JsonNode> relatedTopics = jsonNode.findValues("Result");
-            for (JsonNode relatedTopic : relatedTopics) {
-                results.add(toSearchResult(relatedTopic));
-            }
+            JsonNode relatedTopics = jsonNode.findValue("RelatedTopics");
+            List<SearchResult> results = extractResultNodes(relatedTopics);
             return results;
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
 
+    private List<SearchResult> extractResultNodes(JsonNode jsonNode) {
+        List<SearchResult> results = new ArrayList<>();
+        for (JsonNode relatedTopic : jsonNode) {
+            if (relatedTopic.has("Topics")) {
+                results.addAll(extractResultNodes(relatedTopic.get("Topics")));
+            } else {
+                results.add(toSearchResult(relatedTopic));
+            }
+        }
+        return results;
+    }
+
     private SearchResult toSearchResult(JsonNode relatedTopic) {
         String url = getFieldStringValue(relatedTopic, "FirstURL");
-        String text = getFieldStringValue(relatedTopic, "Text");
-        String title = getFieldStringValue(relatedTopic, "Result");
+        String title = getFieldStringValue(relatedTopic, "Text");
         String icon = getIcon(relatedTopic);
-        return new SearchResult(url, text, title, icon);
+        return new SearchResult(url, title, icon);
     }
 
     private String getIcon(JsonNode relatedTopic) {
         JsonNode icon = relatedTopic.findValue("Icon");
         if (icon != null) {
-            JsonNode url = icon.findValue("Url");
+            JsonNode url = icon.findValue("URL");
             if (url != null) {
                 return url.asText();
             }
