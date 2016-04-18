@@ -14,7 +14,9 @@ import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.handler.impl.ResponseTimeHandlerImpl;
+import io.vertx.ext.web.handler.ResponseTimeHandler;
+import io.vertx.ext.web.handler.LoggerHandler;
+import io.vertx.ext.web.handler.TimeoutHandler;
 import rx.Observable;
 
 import java.util.HashMap;
@@ -42,12 +44,13 @@ public class VertxServer extends AbstractVerticle {
         HttpServer httpServer = vertx.createHttpServer();
         Router router = Router.router(vertx);
 
-        router.route().handler(new ResponseTimeHandlerImpl());
+        router.route().handler(LoggerHandler.create());
+        router.route().handler(ResponseTimeHandler.create());
+        router.route().handler(TimeoutHandler.create(6000));
 
         router.route("/search/:keyword").handler(routingContext -> {
             String keyword = routingContext.request().getParam("keyword").toLowerCase();
             startSearch(routingContext, keyword);
-
         });
 
         httpServer.requestHandler(router::accept).listen(8080);

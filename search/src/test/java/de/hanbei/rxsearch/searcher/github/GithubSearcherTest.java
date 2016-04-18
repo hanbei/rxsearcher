@@ -6,7 +6,6 @@ import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.SearchResult;
-import de.hanbei.rxsearch.searcher.duckduckgo.DuckDuckGoSearcher;
 import org.junit.Before;
 import org.junit.Test;
 import rx.Observable;
@@ -15,7 +14,6 @@ import rx.observers.TestSubscriber;
 import java.io.IOException;
 
 import static com.google.common.io.Resources.getResource;
-import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
@@ -34,13 +32,12 @@ public class GithubSearcherTest {
         AsyncHttpClient httpClient = mock(AsyncHttpClient.class, RETURNS_DEEP_STUBS);
         httpClient = setupResponse(httpClient);
 
-        searcher = new GithubSearcher(GITHUB_SEARCHER, httpClient);
+        searcher = new GithubSearcher(GITHUB_SEARCHER, "jquery/jquery", httpClient);
     }
 
     private AsyncHttpClient setupResponse(AsyncHttpClient httpClient) throws IOException {
         Response response = mock(Response.class);
         when(response.getResponseBody()).thenReturn(Resources.toString(getResource("searcher/github/response_ok.json"), Charsets.UTF_8));
-
 
         when(httpClient.prepareGet(anyString()).execute(any(AsyncCompletionHandler.class)))
                 .thenAnswer(invocation -> {
