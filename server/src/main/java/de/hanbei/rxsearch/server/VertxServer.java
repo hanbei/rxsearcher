@@ -1,6 +1,5 @@
 package de.hanbei.rxsearch.server;
 
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
@@ -8,14 +7,15 @@ import com.ning.http.client.AsyncHttpClient;
 import de.hanbei.rxsearch.searcher.Searcher;
 import de.hanbei.rxsearch.searcher.duckduckgo.DuckDuckGoSearcher;
 import de.hanbei.rxsearch.searcher.github.GithubSearcher;
+import de.hanbei.rxsearch.searcher.webhose.WebhoseSearcher;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpServer;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
-import io.vertx.ext.web.handler.ResponseTimeHandler;
 import io.vertx.ext.web.handler.LoggerHandler;
+import io.vertx.ext.web.handler.ResponseTimeHandler;
 import io.vertx.ext.web.handler.TimeoutHandler;
 import rx.Observable;
 
@@ -36,7 +36,8 @@ public class VertxServer extends AbstractVerticle {
         searcher = Lists.newArrayList(
                 new DuckDuckGoSearcher("ddgo", asyncHttpClient),
                 new GithubSearcher("github", "jquery/jquery", asyncHttpClient),
-                new GithubSearcher("github2", "hanbei/mock-httpserver", asyncHttpClient));
+                new GithubSearcher("github2", "hanbei/mock-httpserver", asyncHttpClient),
+                new WebhoseSearcher("webhose", "5925ae9d-b5a2-48bf-a904-90b54604b9c2", asyncHttpClient));
     }
 
     @Override
@@ -46,7 +47,7 @@ public class VertxServer extends AbstractVerticle {
 
         router.route().handler(LoggerHandler.create());
         router.route().handler(ResponseTimeHandler.create());
-        router.route().handler(TimeoutHandler.create(6000));
+//        router.route().handler(TimeoutHandler.create(6000));
 
         router.route("/search/:keyword").handler(routingContext -> {
             String keyword = routingContext.request().getParam("keyword").toLowerCase();

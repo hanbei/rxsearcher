@@ -1,5 +1,6 @@
 package de.hanbei.rxsearch.searcher;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
@@ -13,6 +14,7 @@ import java.util.List;
  * Created by hanbei on 4/17/16.
  */
 public abstract class AbstractSearcher implements Searcher {
+    protected static final ObjectMapper mapper = new ObjectMapper();
     protected final AsyncHttpClient asyncHttpClient;
     protected String name;
 
