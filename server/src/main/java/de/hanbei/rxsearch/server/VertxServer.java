@@ -47,7 +47,7 @@ public class VertxServer extends AbstractVerticle {
 
         router.route().handler(LoggerHandler.create());
         router.route().handler(ResponseTimeHandler.create());
-//        router.route().handler(TimeoutHandler.create(6000));
+        router.route().handler(TimeoutHandler.create(6000));
 
         router.route("/search/:keyword").handler(routingContext -> {
             String keyword = routingContext.request().getParam("keyword").toLowerCase();

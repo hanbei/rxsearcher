@@ -9,6 +9,7 @@ import rx.Observable;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by hanbei on 4/17/16.
@@ -28,8 +29,10 @@ public abstract class AbstractSearcher implements Searcher {
     }
 
     public Observable<SearchResult> search(String searchInput) {
-        return asyncGet(searchInput).onErrorResumeNext(t -> Observable.empty()).map(this::responseToString).
-                flatMap(s -> Observable.from(toSearchResults(s)));
+        return asyncGet(searchInput).timeout(2, TimeUnit.SECONDS).onErrorResumeNext(t -> {
+            System.err.println(getName() + " experienced error: " + t.getMessage() + " - " + t);
+            return Observable.empty();
+        }).map(this::responseToString).flatMap(s -> Observable.from(toSearchResults(s)));
     }
 
     private Observable<Response> asyncGet(String searchInput) {

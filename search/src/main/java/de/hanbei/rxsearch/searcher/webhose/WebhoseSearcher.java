@@ -22,7 +22,7 @@ public class WebhoseSearcher extends AbstractSearcher {
 
     @Override
     protected String createRequestUrl(String searchInput) {
-        return "https://webhose.io/search?token=" + key + "&format=json&q=" + searchInput;
+        return "https://webhose.io/search?token=" + key + "&format=json&size=10&q=" + searchInput;
     }
 
     @Override
