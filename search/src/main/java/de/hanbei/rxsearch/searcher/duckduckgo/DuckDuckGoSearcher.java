@@ -1,15 +1,10 @@
 package de.hanbei.rxsearch.searcher.duckduckgo;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
-import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.SearchResult;
 import de.hanbei.rxsearch.searcher.AbstractSearcher;
-import de.hanbei.rxsearch.searcher.Searcher;
-import rx.Observable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,8 +12,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class DuckDuckGoSearcher extends AbstractSearcher {
-
-    private static final ObjectMapper mapper = new ObjectMapper();
 
     public DuckDuckGoSearcher(String name, AsyncHttpClient asyncHttpClient) {
         super(name, asyncHttpClient);
@@ -42,7 +35,6 @@ public class DuckDuckGoSearcher extends AbstractSearcher {
             throw new RuntimeException(e);
         }
     }
-
 
     private List<SearchResult> extractResultNodes(JsonNode jsonNode) {
         List<SearchResult> results = new ArrayList<>();

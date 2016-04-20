@@ -1,12 +1,9 @@
 package de.hanbei.rxsearch.searcher.github;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ning.http.client.AsyncHttpClient;
 import de.hanbei.rxsearch.model.SearchResult;
 import de.hanbei.rxsearch.searcher.AbstractSearcher;
-import de.hanbei.rxsearch.searcher.Searcher;
-import rx.Observable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -17,7 +14,6 @@ import java.util.List;
  */
 public class GithubSearcher extends AbstractSearcher {
 
-    private static final ObjectMapper mapper = new ObjectMapper();
     private final String repo;
 
 
