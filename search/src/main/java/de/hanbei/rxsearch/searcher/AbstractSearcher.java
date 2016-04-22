@@ -9,17 +9,16 @@ import rx.Observable;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
-/**
- * Created by hanbei on 4/17/16.
- */
 public abstract class AbstractSearcher implements Searcher {
 
-    private ResponseParser responseParser;
-    protected final AsyncHttpClient asyncHttpClient;
-    protected String name;
+    private final String name;
+    private final RequestUrlBuilder urlBuilder;
+    private final ResponseParser responseParser;
+    private final AsyncHttpClient asyncHttpClient;
 
-    public AbstractSearcher(String name, ResponseParser responseParser, AsyncHttpClient asyncHttpClient) {
+    public AbstractSearcher(String name, RequestUrlBuilder urlBuilder, ResponseParser responseParser, AsyncHttpClient asyncHttpClient) {
         this.name = name;
+        this.urlBuilder = urlBuilder;
         this.responseParser = responseParser;
         this.asyncHttpClient = asyncHttpClient;
     }
@@ -38,7 +37,7 @@ public abstract class AbstractSearcher implements Searcher {
 
     private Observable<Response> asyncGet(String searchInput) {
         return Observable.create(subscriber -> {
-            asyncHttpClient.prepareGet(createRequestUrl(searchInput)).execute(new AsyncCompletionHandler<Response>() {
+            asyncHttpClient.prepareGet(urlBuilder.createRequestUrl(searchInput)).execute(new AsyncCompletionHandler<Response>() {
                 @Override
                 public Response onCompleted(Response response) throws Exception {
                     if (response.getStatusCode() < 300) {
@@ -58,7 +57,6 @@ public abstract class AbstractSearcher implements Searcher {
         });
     }
 
-    protected abstract String createRequestUrl(String searchInput);
 
     private Observable<? extends Response> handleSearcherError(Throwable t) {
         System.err.println(getName() + " experienced error: " + t.getMessage() + " - " + t);
