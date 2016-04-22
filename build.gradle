@@ -5,6 +5,8 @@ allprojects {
         mavenCentral()
     }
 
+    sourceCompatibility = 1.8
+
     dependencies {
         compile "com.fasterxml.jackson.core:jackson-databind:2.7.3"
         compile "com.google.guava:guava:19.0"
