@@ -32,7 +32,8 @@ public abstract class AbstractSearcher implements Searcher {
                 .timeout(2, TimeUnit.SECONDS)
                 .onErrorResumeNext(this::handleSearcherError)
                 .map(this::responseToString)
-                .flatMap(responseParser::toSearchResults);
+                .flatMap(responseParser::toSearchResults)
+                .onErrorResumeNext(this::handleParserError);
     }
 
     private Observable<Response> asyncGet(String searchInput) {
@@ -62,6 +63,12 @@ public abstract class AbstractSearcher implements Searcher {
         System.err.println(getName() + " experienced error: " + t.getMessage() + " - " + t);
         return Observable.empty();
     }
+
+    private Observable<? extends SearchResult> handleParserError(Throwable t) {
+        System.err.println(getName() + " experienced parsing error: " + t.getMessage() + " - " + t);
+        return Observable.empty();
+    }
+
 
     private String responseToString(Response response) {
         try {
