@@ -1,6 +1,5 @@
 package de.hanbei.rxsearch.searcher;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
@@ -8,19 +7,20 @@ import de.hanbei.rxsearch.model.SearchResult;
 import rx.Observable;
 
 import java.io.IOException;
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
  * Created by hanbei on 4/17/16.
  */
 public abstract class AbstractSearcher implements Searcher {
-    protected static final ObjectMapper mapper = new ObjectMapper();
+
+    private ResponseParser responseParser;
     protected final AsyncHttpClient asyncHttpClient;
     protected String name;
 
-    public AbstractSearcher(String name, AsyncHttpClient asyncHttpClient) {
+    public AbstractSearcher(String name, ResponseParser responseParser, AsyncHttpClient asyncHttpClient) {
         this.name = name;
+        this.responseParser = responseParser;
         this.asyncHttpClient = asyncHttpClient;
     }
 
@@ -29,10 +29,11 @@ public abstract class AbstractSearcher implements Searcher {
     }
 
     public Observable<SearchResult> search(String searchInput) {
-        return asyncGet(searchInput).timeout(2, TimeUnit.SECONDS).onErrorResumeNext(t -> {
-            System.err.println(getName() + " experienced error: " + t.getMessage() + " - " + t);
-            return Observable.empty();
-        }).map(this::responseToString).flatMap(s -> Observable.from(toSearchResults(s)));
+        return asyncGet(searchInput)
+                .timeout(2, TimeUnit.SECONDS)
+                .onErrorResumeNext(this::handleSearcherError)
+                .map(this::responseToString)
+                .flatMap(responseParser::toSearchResults);
     }
 
     private Observable<Response> asyncGet(String searchInput) {
@@ -57,6 +58,13 @@ public abstract class AbstractSearcher implements Searcher {
         });
     }
 
+    protected abstract String createRequestUrl(String searchInput);
+
+    private Observable<? extends Response> handleSearcherError(Throwable t) {
+        System.err.println(getName() + " experienced error: " + t.getMessage() + " - " + t);
+        return Observable.empty();
+    }
+
     private String responseToString(Response response) {
         try {
             return response.getResponseBody();
@@ -65,7 +73,4 @@ public abstract class AbstractSearcher implements Searcher {
         }
     }
 
-    protected abstract String createRequestUrl(String searchInput);
-
-    protected abstract List<SearchResult> toSearchResults(String s);
 }
