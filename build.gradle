@@ -47,3 +47,5 @@ allprojects {
         }
     }
 }
+
+task stage(dependsOn: ['clean', ':server:installDist'])
