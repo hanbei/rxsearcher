@@ -1,8 +1,13 @@
+apply plugin: 'application'
+
+mainClassName = "de.hanbei.rxsearch.server.VertxServer"
+
 dependencies {
     compile project(":search")
 
     compile "io.vertx:vertx-core"
     compile "io.vertx:vertx-web"
 
+    testCompile 'io.dropwizard.metrics:metrics-core'
     testCompile 'com.ning:async-http-client'
 }
