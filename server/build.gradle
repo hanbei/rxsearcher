@@ -8,6 +8,8 @@ dependencies {
     compile "io.vertx:vertx-core"
     compile "io.vertx:vertx-web"
 
+    compile "ch.qos.logback:logback-classic:1.1.7"
+
     testCompile 'io.dropwizard.metrics:metrics-core'
     testCompile 'com.ning:async-http-client'
 }
