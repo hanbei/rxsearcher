@@ -1,11 +1,8 @@
-def vertx_version = "3.2.1"
-
 dependencies {
     compile project(":search")
 
-    compile "io.vertx:vertx-core:${vertx_version}"
-    compile "io.vertx:vertx-web:${vertx_version}"
-    compile 'io.dropwizard.metrics:metrics-core:3.1.2'
+    compile "io.vertx:vertx-core"
+    compile "io.vertx:vertx-web"
 
-    testCompile 'com.ning:async-http-client:1.9.36'
+    testCompile 'com.ning:async-http-client'
 }
