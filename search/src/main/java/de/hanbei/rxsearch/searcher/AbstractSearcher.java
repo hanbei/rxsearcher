@@ -4,6 +4,8 @@ import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.SearchResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rx.Observable;
 
 import java.io.IOException;
@@ -11,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractSearcher implements Searcher {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSearcher.class);
     private final String name;
     private final RequestUrlBuilder urlBuilder;
     private final ResponseParser responseParser;
@@ -60,12 +63,12 @@ public abstract class AbstractSearcher implements Searcher {
 
 
     private Observable<? extends Response> handleSearcherError(Throwable t) {
-        System.err.println(getName() + " experienced error: " + t.getMessage() + " - " + t);
+        LOGGER.error(getName() + " experienced error: " + t.getMessage() + " - " + t);
         return Observable.empty();
     }
 
     private Observable<? extends SearchResult> handleParserError(Throwable t) {
-        System.err.println(getName() + " experienced parsing error: " + t.getMessage() + " - " + t);
+        LOGGER.error(getName() + " experienced parsing error: " + t.getMessage() + " - " + t);
         return Observable.empty();
     }
 
