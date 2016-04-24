@@ -30,10 +30,10 @@ public class SearchRouter implements Handler<RoutingContext> {
     private void startSearch(RoutingContext routingContext, String keyword) {
         Observable.from(searcher)
                 .flatMap(searcher -> searcher.search(keyword)).toList().subscribe(
-                t -> {
+                results -> {
                     try {
                         Map<String, Object> wrapper = new HashMap<>();
-                        wrapper.put("results", t);
+                        wrapper.put("results", results);
                         String s = objectMapper.writeValueAsString(wrapper);
                         HttpServerResponse response = routingContext.response();
 
