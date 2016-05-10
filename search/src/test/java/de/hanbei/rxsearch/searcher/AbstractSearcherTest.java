@@ -14,7 +14,9 @@ import java.io.IOException;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AbstractSearcherTest {
 
@@ -34,7 +36,7 @@ public class AbstractSearcherTest {
         when(urlBuilder.createRequestUrl(anyString())).thenReturn("");
 
         responseParser = mock(ResponseParser.class);
-        when(responseParser.toSearchResults(anyString())).thenReturn(Observable.from(expectedSearchResults));
+        when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.from(expectedSearchResults));
 
         httpClient = mock(AsyncHttpClient.class, RETURNS_DEEP_STUBS);
 
@@ -108,7 +110,7 @@ public class AbstractSearcherTest {
     }
 
     private void givenResponseParserSendsErrorObservable() {
-        when(responseParser.toSearchResults(anyString())).thenReturn(Observable.error(new RuntimeException("response parser error")));
+        when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.error(new RuntimeException("response parser error")));
     }
 
 

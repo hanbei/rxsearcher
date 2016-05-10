@@ -2,7 +2,9 @@ package de.hanbei.rxsearch.searcher.duckduckgo;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
+import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.SearchResult;
 import de.hanbei.rxsearch.searcher.ResponseParser;
 import rx.Observable;
@@ -10,6 +12,8 @@ import rx.Observable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 public class DuckDuckGoResponseParser implements ResponseParser {
 
@@ -21,11 +25,15 @@ public class DuckDuckGoResponseParser implements ResponseParser {
     }
 
     @Override
-    public Observable<SearchResult> toSearchResults(String responseAsString) {
-        if (Strings.isNullOrEmpty(responseAsString)) {
-            return Observable.empty();
-        }
+    public Observable<SearchResult> toSearchResults(Response response) {
+        checkNotNull(response);
+
         try {
+            String responseAsString = response.getResponseBody(Charsets.UTF_8.name());
+            if (Strings.isNullOrEmpty(responseAsString)) {
+                return Observable.empty();
+            }
+
             JsonNode jsonNode = mapper.readTree(responseAsString);
             JsonNode relatedTopics = jsonNode.findValue("RelatedTopics");
             if (relatedTopics != null) {
@@ -33,6 +41,7 @@ public class DuckDuckGoResponseParser implements ResponseParser {
             } else {
                 return Observable.empty();
             }
+
         } catch (IOException e) {
             return Observable.error(e);
         }
