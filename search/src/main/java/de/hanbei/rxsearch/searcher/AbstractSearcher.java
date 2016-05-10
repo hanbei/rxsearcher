@@ -41,7 +41,7 @@ public abstract class AbstractSearcher implements Searcher {
 
     private Observable<Response> asyncGet(String searchInput) {
         return Observable.create(subscriber -> {
-            asyncHttpClient.prepareGet(urlBuilder.createRequestUrl(searchInput)).execute(new AsyncCompletionHandler<Response>() {
+            asyncHttpClient.executeRequest(urlBuilder.createRequestUrl(searchInput), new AsyncCompletionHandler<Response>() {
                 @Override
                 public Response onCompleted(Response response) throws Exception {
                     if (response.getStatusCode() < 300) {

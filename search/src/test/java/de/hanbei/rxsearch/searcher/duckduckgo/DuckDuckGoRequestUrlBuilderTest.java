@@ -1,5 +1,6 @@
 package de.hanbei.rxsearch.searcher.duckduckgo;
 
+import com.ning.http.client.Request;
 import de.hanbei.rxsearch.searcher.RequestUrlBuilderTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,8 +17,8 @@ public class DuckDuckGoRequestUrlBuilderTest extends RequestUrlBuilderTest {
 
     @Test
     public void correctRequestUrlIsBuilt() throws Exception {
-        String input = urlBuilder.createRequestUrl("input");
-        assertThat(input, is("http://api.duckduckgo.com/?format=json&t=hanbeirxsearch&q=input"));
+        Request input = urlBuilder.createRequestUrl("input");
+        assertThat(input.getUrl(), is("http://api.duckduckgo.com?format=json&t=hanbeirxsearch&q=input"));
     }
 
 

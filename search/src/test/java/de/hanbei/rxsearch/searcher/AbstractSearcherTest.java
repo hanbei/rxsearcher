@@ -2,6 +2,7 @@ package de.hanbei.rxsearch.searcher;
 
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
+import com.ning.http.client.Request;
 import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.SearchResult;
 import org.junit.Before;
@@ -14,7 +15,9 @@ import java.io.IOException;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class AbstractSearcherTest {
 
@@ -31,7 +34,7 @@ public class AbstractSearcherTest {
     @Before
     public void setUp() throws Exception {
         RequestUrlBuilder urlBuilder = mock(RequestUrlBuilder.class);
-        when(urlBuilder.createRequestUrl(anyString())).thenReturn("");
+        when(urlBuilder.createRequestUrl(anyString())).thenReturn(mock(Request.class));
 
         responseParser = mock(ResponseParser.class);
         when(responseParser.toSearchResults(anyString())).thenReturn(Observable.from(expectedSearchResults));
@@ -113,18 +116,18 @@ public class AbstractSearcherTest {
 
 
     private void givenHttpClientSendsResponse(Response response) throws IOException {
-        when(httpClient.prepareGet(anyString()).execute(any(AsyncCompletionHandler.class)))
+        when(httpClient.executeRequest(any(Request.class), any(AsyncCompletionHandler.class)))
                 .thenAnswer((Answer<Void>) invocation -> {
-                    ((AsyncCompletionHandler) invocation.getArguments()[0]).onCompleted(response);
+                    ((AsyncCompletionHandler) invocation.getArguments()[1]).onCompleted(response);
                     return null;
                 });
     }
 
 
     private void givenHttpClientThrows() throws IOException {
-        when(httpClient.prepareGet(anyString()).execute(any(AsyncCompletionHandler.class)))
+        when(httpClient.executeRequest(any(Request.class), any(AsyncCompletionHandler.class)))
                 .thenAnswer((Answer<Void>) invocation -> {
-                    ((AsyncCompletionHandler) invocation.getArguments()[0]).onThrowable(new RuntimeException("client error"));
+                    ((AsyncCompletionHandler) invocation.getArguments()[1]).onThrowable(new RuntimeException("client error"));
                     return null;
                 });
     }
