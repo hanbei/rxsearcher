@@ -3,13 +3,19 @@ package de.hanbei.rxsearch.searcher.github;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
+import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.SearchResult;
 import org.junit.Before;
 import org.junit.Test;
 import rx.Observable;
 import rx.observers.TestSubscriber;
 
+import java.io.IOException;
+
 import static com.google.common.io.Resources.getResource;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by fschulz on 22.04.2016.
@@ -18,17 +24,19 @@ public class GithubResponseParserTest {
     private static final String GITHUB_SEARCHER = "GithubSearcher";
 
     private GithubResponseParser responseParser;
-    private String s;
+    private Response response;
 
     @Before
     public void setUp() throws Exception {
-        s = Resources.toString(getResource("searcher/github/response_ok.json"), Charsets.UTF_8);
+        String stringResponse = Resources.toString(getResource("searcher/github/response_ok.json"), Charsets.UTF_8);
+        response = mock(Response.class);
+        when(response.getResponseBody(anyString())).thenReturn(stringResponse);
         responseParser = new GithubResponseParser(GITHUB_SEARCHER);
     }
 
     @Test
     public void toSearchResultReturnsAllItems() throws Exception {
-        Observable<SearchResult> observable = responseParser.toSearchResults(s);
+        Observable<SearchResult> observable = responseParser.toSearchResults(response);
         TestSubscriber<SearchResult> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
         subscriber.assertValueCount(4);
@@ -40,16 +48,22 @@ public class GithubResponseParserTest {
     }
 
     @Test
-    public void brokenJsonReturnsErrorObservable() {
-        Observable<SearchResult> observable = responseParser.toSearchResults("{");
+    public void brokenJsonReturnsErrorObservable() throws IOException {
+        when(response.getResponseBody(anyString())).thenReturn("{");
+
+        Observable<SearchResult> observable = responseParser.toSearchResults(response);
+
         TestSubscriber<SearchResult> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
         subscriber.assertError(JsonParseException.class);
     }
 
     @Test
-    public void correctButEmptyJsonReturnsEmptyObservable() {
-        Observable<SearchResult> observable = responseParser.toSearchResults("{}");
+    public void correctButEmptyJsonReturnsEmptyObservable() throws IOException {
+        when(response.getResponseBody(anyString())).thenReturn("{}");
+
+        Observable<SearchResult> observable = responseParser.toSearchResults(response);
+
         TestSubscriber<SearchResult> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
         subscriber.assertNoValues();

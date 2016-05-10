@@ -37,7 +37,7 @@ public class AbstractSearcherTest {
         when(urlBuilder.createRequestUrl(anyString())).thenReturn(mock(Request.class));
 
         responseParser = mock(ResponseParser.class);
-        when(responseParser.toSearchResults(anyString())).thenReturn(Observable.from(expectedSearchResults));
+        when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.from(expectedSearchResults));
 
         httpClient = mock(AsyncHttpClient.class, RETURNS_DEEP_STUBS);
 
@@ -111,7 +111,7 @@ public class AbstractSearcherTest {
     }
 
     private void givenResponseParserSendsErrorObservable() {
-        when(responseParser.toSearchResults(anyString())).thenReturn(Observable.error(new RuntimeException("response parser error")));
+        when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.error(new RuntimeException("response parser error")));
     }
 
 

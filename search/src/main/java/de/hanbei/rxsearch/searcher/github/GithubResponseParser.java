@@ -2,6 +2,8 @@ package de.hanbei.rxsearch.searcher.github;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Charsets;
+import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.SearchResult;
 import de.hanbei.rxsearch.searcher.ResponseParser;
 import rx.Observable;
@@ -9,6 +11,8 @@ import rx.Observable;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * Created by fschulz on 22.04.2016.
@@ -23,10 +27,14 @@ public class GithubResponseParser implements ResponseParser {
     }
 
     @Override
-    public Observable<SearchResult> toSearchResults(String responseAsString) {
+    public Observable<SearchResult> toSearchResults(Response response) {
+        checkNotNull(response);
+
         List<SearchResult> results = new ArrayList<>();
 
         try {
+            String responseAsString = response.getResponseBody(Charsets.UTF_8.name());
+
             JsonNode jsonNode = mapper.readTree(responseAsString);
             JsonNode items = jsonNode.findValue("items");
             if (items == null) {

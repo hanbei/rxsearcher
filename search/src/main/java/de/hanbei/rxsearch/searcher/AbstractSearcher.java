@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
 
-import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractSearcher implements Searcher {
@@ -34,7 +33,6 @@ public abstract class AbstractSearcher implements Searcher {
         return asyncGet(searchInput)
                 .timeout(2, TimeUnit.SECONDS)
                 .onErrorResumeNext(this::handleSearcherError)
-                .map(this::responseToString)
                 .flatMap(responseParser::toSearchResults)
                 .onErrorResumeNext(this::handleParserError);
     }
@@ -70,15 +68,6 @@ public abstract class AbstractSearcher implements Searcher {
     private Observable<? extends SearchResult> handleParserError(Throwable t) {
         LOGGER.error(getName() + " experienced parsing error: " + t.getMessage() + " - " + t);
         return Observable.empty();
-    }
-
-
-    private String responseToString(Response response) {
-        try {
-            return response.getResponseBody();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
     }
 
 }
