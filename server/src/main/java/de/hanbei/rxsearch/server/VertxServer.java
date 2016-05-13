@@ -39,6 +39,14 @@ public class VertxServer extends AbstractVerticle {
 
     }
 
+    public static void main(String[] args) throws IOException {
+        Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new DropwizardMetricsOptions().setEnabled(true).setJmxEnabled(true)));
+
+        vertx.deployVerticle(VertxServer.class.getName());
+
+        Runtime.getRuntime().addShutdownHook(new Thread(vertx::close));
+    }
+
     @Override
     public void start(Future<Void> fut) {
         httpServer = vertx.createHttpServer();
@@ -60,6 +68,7 @@ public class VertxServer extends AbstractVerticle {
         super.stop(stopFuture);
         LOGGER.info("Stopping server");
         httpServer.close();
+        asyncHttpClient.close();
         stopFuture.complete();
     }
 
@@ -70,20 +79,6 @@ public class VertxServer extends AbstractVerticle {
             port = Integer.parseInt(portAsString);
         }
         return port;
-    }
-
-    public static void main(String[] args) throws IOException {
-        Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new DropwizardMetricsOptions().setEnabled(true).setJmxEnabled(true)));
-
-        vertx.deployVerticle(VertxServer.class.getName());
-
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            vertx.close();
-        }
-        ));
-
-        System.in.read();
-        System.exit(0);
     }
 
 }
