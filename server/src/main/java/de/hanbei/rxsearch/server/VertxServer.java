@@ -19,13 +19,15 @@ import io.vertx.ext.web.handler.TimeoutHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+
 public class VertxServer extends AbstractVerticle {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxServer.class);
 
     private final AsyncHttpClient asyncHttpClient;
     private final SearchRouter searchRouter;
-
+    private HttpServer httpServer;
 
     public VertxServer() {
         asyncHttpClient = new AsyncHttpClient();
@@ -37,15 +39,9 @@ public class VertxServer extends AbstractVerticle {
 
     }
 
-    public static void main(String[] args) {
-        Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(
-                new DropwizardMetricsOptions().setEnabled(true).setJmxEnabled(true)));
-        vertx.deployVerticle(VertxServer.class.getName());
-    }
-
     @Override
     public void start(Future<Void> fut) {
-        HttpServer httpServer = vertx.createHttpServer();
+        httpServer = vertx.createHttpServer();
         Router router = Router.router(vertx);
 
         router.route().handler(LoggerHandler.create());
@@ -59,6 +55,14 @@ public class VertxServer extends AbstractVerticle {
         httpServer.requestHandler(router::accept).listen(port);
     }
 
+    @Override
+    public void stop(Future<Void> stopFuture) throws Exception {
+        super.stop(stopFuture);
+        LOGGER.info("Stopping server");
+        httpServer.close();
+        stopFuture.complete();
+    }
+
     private Integer port() {
         String portAsString = System.getenv("PORT");
         Integer port = 8080;
@@ -66,6 +70,20 @@ public class VertxServer extends AbstractVerticle {
             port = Integer.parseInt(portAsString);
         }
         return port;
+    }
+
+    public static void main(String[] args) throws IOException {
+        Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new DropwizardMetricsOptions().setEnabled(true).setJmxEnabled(true)));
+
+        vertx.deployVerticle(VertxServer.class.getName());
+
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            vertx.close();
+        }
+        ));
+
+        System.in.read();
+        System.exit(0);
     }
 
 }
