@@ -1,4 +1,4 @@
-package de.hanbei.rxsearch.searcher.github;
+package de.hanbei.rxsearch.searcher.webhose;
 
 import com.ning.http.client.Request;
 import de.hanbei.rxsearch.searcher.RequestUrlBuilderTest;
@@ -8,30 +8,31 @@ import org.junit.Test;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
-public class GithubRequestUrlBuilderTest extends RequestUrlBuilderTest {
+public class WebhoseRequestBuilderTest extends RequestUrlBuilderTest {
 
     @Before
     public void setUp() throws Exception {
-        urlBuilder = new GithubRequestUrlBuilder("test/repo");
+        urlBuilder = new WebhoseRequestBuilder("some-key");
     }
+
 
     @Test
     public void emptyKeyViolatesNotEmptyPrecondition() {
         expectedException.expect(IllegalArgumentException.class);
-        new GithubRequestUrlBuilder("");
+        new WebhoseRequestBuilder("");
     }
 
     @Test
     public void nullKeyViolatesNotEmptyPrecondition() {
         expectedException.expect(IllegalArgumentException.class);
-        new GithubRequestUrlBuilder(null);
+        new WebhoseRequestBuilder(null);
     }
 
 
     @Test
     public void correctRequestUrlIsBuilt() throws Exception {
-        Request input = urlBuilder.createRequestUrl("input");
-        assertThat(input.getUrl(), is("https://api.github.com/search/code?q=input+repo:test/repo"));
+        Request input = urlBuilder.createRequest("input");
+        assertThat(input.getUrl(), is("https://webhose.io/search?q=input&token=some-key&format=json&size=10"));
     }
 
 }

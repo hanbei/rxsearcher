@@ -8,17 +8,17 @@ public abstract class RequestUrlBuilderTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
-    protected RequestUrlBuilder urlBuilder;
+    protected RequestBuilder urlBuilder;
 
     @Test
     public void emptyInputViolatesPrecondition() throws Exception {
         expectedException.expect(IllegalArgumentException.class);
-        urlBuilder.createRequestUrl("");
+        urlBuilder.createRequest("");
     }
 
     @Test
     public void nullInputViolatesPrecondition() throws Exception {
         expectedException.expect(IllegalArgumentException.class);
-        urlBuilder.createRequestUrl("");
+        urlBuilder.createRequest("");
     }
 }

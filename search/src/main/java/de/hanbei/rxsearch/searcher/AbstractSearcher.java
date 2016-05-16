@@ -14,11 +14,11 @@ public abstract class AbstractSearcher implements Searcher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSearcher.class);
     private final String name;
-    private final RequestUrlBuilder urlBuilder;
+    private final RequestBuilder urlBuilder;
     private final ResponseParser responseParser;
     private final AsyncHttpClient asyncHttpClient;
 
-    public AbstractSearcher(String name, RequestUrlBuilder urlBuilder, ResponseParser responseParser, AsyncHttpClient asyncHttpClient) {
+    public AbstractSearcher(String name, RequestBuilder urlBuilder, ResponseParser responseParser, AsyncHttpClient asyncHttpClient) {
         this.name = name;
         this.urlBuilder = urlBuilder;
         this.responseParser = responseParser;
@@ -39,7 +39,7 @@ public abstract class AbstractSearcher implements Searcher {
 
     private Observable<Response> asyncGet(String searchInput) {
         return Observable.create(subscriber -> {
-            asyncHttpClient.executeRequest(urlBuilder.createRequestUrl(searchInput), new AsyncCompletionHandler<Response>() {
+            asyncHttpClient.executeRequest(urlBuilder.createRequest(searchInput), new AsyncCompletionHandler<Response>() {
                 @Override
                 public Response onCompleted(Response response) throws Exception {
                     if (response.getStatusCode() < 300) {

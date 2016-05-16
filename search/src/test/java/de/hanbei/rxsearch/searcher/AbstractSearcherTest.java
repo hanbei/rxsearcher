@@ -33,8 +33,8 @@ public class AbstractSearcherTest {
 
     @Before
     public void setUp() throws Exception {
-        RequestUrlBuilder urlBuilder = mock(RequestUrlBuilder.class);
-        when(urlBuilder.createRequestUrl(anyString())).thenReturn(mock(Request.class));
+        RequestBuilder urlBuilder = mock(RequestBuilder.class);
+        when(urlBuilder.createRequest(anyString())).thenReturn(mock(Request.class));
 
         responseParser = mock(ResponseParser.class);
         when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.from(expectedSearchResults));
@@ -133,7 +133,7 @@ public class AbstractSearcherTest {
     }
 
     private static class TestSearcher extends AbstractSearcher {
-        TestSearcher(String name, RequestUrlBuilder urlBuilder, ResponseParser responseParser, AsyncHttpClient asyncHttpClient) {
+        TestSearcher(String name, RequestBuilder urlBuilder, ResponseParser responseParser, AsyncHttpClient asyncHttpClient) {
             super(name, urlBuilder, responseParser, asyncHttpClient);
         }
     }

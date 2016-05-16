@@ -3,15 +3,14 @@ package de.hanbei.rxsearch.searcher.duckduckgo;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.ning.http.client.Request;
-import com.ning.http.client.RequestBuilder;
-import de.hanbei.rxsearch.searcher.RequestUrlBuilder;
+import de.hanbei.rxsearch.searcher.RequestBuilder;
 
-public class DuckDuckGoRequestUrlBuilder implements RequestUrlBuilder {
+public class DuckDuckGoRequestBuilder implements RequestBuilder {
 
     @Override
-    public Request createRequestUrl(String searchInput) {
+    public Request createRequest(String searchInput) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(searchInput));
-        return new RequestBuilder("GET")
+        return new com.ning.http.client.RequestBuilder("GET")
                 .setUrl("http://api.duckduckgo.com")
                 .addQueryParam("format", "json")
                 .addQueryParam("t", "hanbeirxsearch")
