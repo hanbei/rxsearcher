@@ -4,6 +4,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.ning.http.client.AsyncHttpClient;
 import de.hanbei.rxsearch.searcher.duckduckgo.DuckDuckGoSearcher;
+import de.hanbei.rxsearch.searcher.dummy.DummySearcher;
 import de.hanbei.rxsearch.searcher.github.GithubSearcher;
 import de.hanbei.rxsearch.searcher.webhose.WebhoseSearcher;
 import io.vertx.core.AbstractVerticle;
@@ -32,10 +33,10 @@ public class VertxServer extends AbstractVerticle {
     public VertxServer() {
         asyncHttpClient = new AsyncHttpClient();
         searchRouter = new SearchRouter(Lists.newArrayList(
-                new DuckDuckGoSearcher("ddgo", asyncHttpClient),
-                new GithubSearcher("github", "jquery/jquery", asyncHttpClient),
-                new GithubSearcher("github2", "hanbei/mock-httpserver", asyncHttpClient),
-                new WebhoseSearcher("webhose", "5925ae9d-b5a2-48bf-a904-90b54604b9c2", asyncHttpClient)));
+                new DummySearcher("dummy1", "http://dummysearcher1.herokuapp.com", asyncHttpClient),
+                new DummySearcher("dummy2", "http://dummysearcher2.herokuapp.com", asyncHttpClient),
+                new DummySearcher("dummy3", "http://dummysearcher3.herokuapp.com", asyncHttpClient)
+        ));
 
     }
 
