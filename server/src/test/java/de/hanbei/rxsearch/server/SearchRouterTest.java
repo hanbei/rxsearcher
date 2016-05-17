@@ -1,7 +1,7 @@
 package de.hanbei.rxsearch.server;
 
 import com.google.common.collect.Lists;
-import de.hanbei.rxsearch.model.SearchResult;
+import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.searcher.Searcher;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
@@ -42,8 +42,8 @@ public class SearchRouterTest {
 
     @Test
     public void whenSearcherRespondRendersCorrectJson() throws Exception {
-        when(searcher1.search("search_term")).thenReturn(Observable.just(new SearchResult("url", "title", "searcher1")));
-        when(searcher2.search("search_term")).thenReturn(Observable.just(new SearchResult("url", "title", "searcher2")));
+        when(searcher1.search("search_term")).thenReturn(Observable.just(new Offer("title", "searcher1", "url")));
+        when(searcher2.search("search_term")).thenReturn(Observable.just(new Offer("title", "searcher2", "url")));
 
         router.handle(routingContext);
 

@@ -3,7 +3,7 @@ package de.hanbei.rxsearch.searcher;
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
-import de.hanbei.rxsearch.model.SearchResult;
+import de.hanbei.rxsearch.model.Offer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
@@ -29,7 +29,7 @@ public abstract class AbstractSearcher implements Searcher {
         return name;
     }
 
-    public Observable<SearchResult> search(String searchInput) {
+    public Observable<Offer> search(String searchInput) {
         return asyncGet(searchInput)
                 .timeout(2, TimeUnit.SECONDS)
                 .onErrorResumeNext(this::handleSearcherError)
@@ -65,7 +65,7 @@ public abstract class AbstractSearcher implements Searcher {
         return Observable.empty();
     }
 
-    private Observable<? extends SearchResult> handleParserError(Throwable t) {
+    private Observable<? extends Offer> handleParserError(Throwable t) {
         LOGGER.error(getName() + " experienced parsing error: " + t.getMessage() + " - " + t);
         return Observable.empty();
     }

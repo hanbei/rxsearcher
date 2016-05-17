@@ -4,7 +4,7 @@ import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Request;
 import com.ning.http.client.Response;
-import de.hanbei.rxsearch.model.SearchResult;
+import de.hanbei.rxsearch.model.Offer;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
@@ -22,10 +22,10 @@ import static org.mockito.Mockito.when;
 public class AbstractSearcherTest {
 
     private static final String TEST_SEARCHER = "TestSearcher";
-    private final SearchResult[] expectedSearchResults = {
-            new SearchResult("url0", "title0", "icon0", TEST_SEARCHER),
-            new SearchResult("url1", "title1", "icon1", TEST_SEARCHER),
-            new SearchResult("url2", "title2", "icon2", TEST_SEARCHER),
+    private final Offer[] expectedOffers = {
+            new Offer("title0", "icon0", "url0", TEST_SEARCHER),
+            new Offer("title1", "icon1", "url1", TEST_SEARCHER),
+            new Offer("title2", "icon2", "url2", TEST_SEARCHER),
     };
     private TestSearcher searcher;
     private ResponseParser responseParser;
@@ -37,7 +37,7 @@ public class AbstractSearcherTest {
         when(urlBuilder.createRequest(anyString())).thenReturn(mock(Request.class));
 
         responseParser = mock(ResponseParser.class);
-        when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.from(expectedSearchResults));
+        when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.from(expectedOffers));
 
         httpClient = mock(AsyncHttpClient.class, RETURNS_DEEP_STUBS);
 
@@ -48,22 +48,22 @@ public class AbstractSearcherTest {
     public void searcherReturnsCorrectResults() throws Exception {
         givenHttpClientSendsResponse(ok());
 
-        Observable<SearchResult> observable = searcher.search("something");
+        Observable<Offer> observable = searcher.search("something");
 
-        TestSubscriber<SearchResult> subscriber = new TestSubscriber<>();
+        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
-        subscriber.assertValueCount(expectedSearchResults.length);
+        subscriber.assertValueCount(expectedOffers.length);
         subscriber.assertCompleted();
-        subscriber.assertValues(expectedSearchResults);
+        subscriber.assertValues(expectedOffers);
     }
 
     @Test
     public void searcherHandlesExceptionFromHttpClient() throws Exception {
         givenHttpClientThrows();
 
-        Observable<SearchResult> observable = searcher.search("something");
+        Observable<Offer> observable = searcher.search("something");
 
-        TestSubscriber<SearchResult> subscriber = new TestSubscriber<>();
+        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
         subscriber.assertNoValues();
         subscriber.assertCompleted();
@@ -74,8 +74,8 @@ public class AbstractSearcherTest {
         givenHttpClientSendsResponse(ok());
         givenResponseParserSendsErrorObservable();
 
-        Observable<SearchResult> observable = searcher.search("something");
-        TestSubscriber<SearchResult> subscriber = new TestSubscriber<>();
+        Observable<Offer> observable = searcher.search("something");
+        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
         subscriber.assertNoValues();
         subscriber.assertNoErrors();
@@ -87,8 +87,8 @@ public class AbstractSearcherTest {
         givenHttpClientSendsResponse(badRequest());
         givenResponseParserSendsErrorObservable();
 
-        Observable<SearchResult> observable = searcher.search("something");
-        TestSubscriber<SearchResult> subscriber = new TestSubscriber<>();
+        Observable<Offer> observable = searcher.search("something");
+        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
         subscriber.assertNoValues();
         subscriber.assertNoErrors();

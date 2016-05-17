@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
 import com.ning.http.client.Response;
-import de.hanbei.rxsearch.model.SearchResult;
+import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.searcher.ResponseParser;
 import rx.Observable;
 
@@ -25,7 +25,7 @@ public class DuckDuckGoResponseParser implements ResponseParser {
     }
 
     @Override
-    public Observable<SearchResult> toSearchResults(Response response) {
+    public Observable<Offer> toSearchResults(Response response) {
         checkNotNull(response);
 
         try {
@@ -47,8 +47,8 @@ public class DuckDuckGoResponseParser implements ResponseParser {
         }
     }
 
-    private List<SearchResult> extractResultNodes(JsonNode jsonNode) {
-        List<SearchResult> results = new ArrayList<>();
+    private List<Offer> extractResultNodes(JsonNode jsonNode) {
+        List<Offer> results = new ArrayList<>();
         for (JsonNode relatedTopic : jsonNode) {
             if (relatedTopic.has("Topics")) {
                 results.addAll(extractResultNodes(relatedTopic.get("Topics")));
@@ -59,11 +59,11 @@ public class DuckDuckGoResponseParser implements ResponseParser {
         return results;
     }
 
-    private SearchResult toSearchResult(JsonNode relatedTopic) {
+    private Offer toSearchResult(JsonNode relatedTopic) {
         String url = getFieldStringValue(relatedTopic, "FirstURL");
         String title = getFieldStringValue(relatedTopic, "Text");
         String icon = getIcon(relatedTopic);
-        return new SearchResult(url, title, name, icon);
+        return new Offer(title, name, url, icon);
     }
 
     private String getIcon(JsonNode relatedTopic) {

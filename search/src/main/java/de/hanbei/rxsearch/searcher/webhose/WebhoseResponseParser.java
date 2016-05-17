@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.ning.http.client.Response;
-import de.hanbei.rxsearch.model.SearchResult;
+import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.searcher.ResponseParser;
 import rx.Observable;
 
@@ -26,10 +26,10 @@ public class WebhoseResponseParser implements ResponseParser {
     }
 
     @Override
-    public Observable<SearchResult> toSearchResults(Response response) {
+    public Observable<Offer> toSearchResults(Response response) {
         checkNotNull(response);
 
-        List<SearchResult> results = new ArrayList<>();
+        List<Offer> results = new ArrayList<>();
         try {
             String responseAsString = response.getResponseBody(Charsets.UTF_8.name());
 
@@ -47,10 +47,10 @@ public class WebhoseResponseParser implements ResponseParser {
         return Observable.from(results);
     }
 
-    private SearchResult toSearchResult(JsonNode relatedTopic) {
+    private Offer toSearchResult(JsonNode relatedTopic) {
         String url = getFieldStringValue(relatedTopic, "url");
         String title = getFieldStringValue(relatedTopic, "title");
-        return new SearchResult(url, title, name);
+        return new Offer(title, name, url);
     }
 
     private String getFieldStringValue(JsonNode node, String fieldName) {
