@@ -56,7 +56,7 @@ public class SimpleLoadTest {
                 return;
             }
             String keyword = choice(keywords, random);
-            client.prepareGet("http://localhost:8080/search/" + keyword)
+            client.prepareGet("http://rxsearch.herokuapp.com/search/" + keyword)
                     .execute(new AsyncCompletionHandler<Void>() {
                                  @Override
                                  public Void onCompleted(Response response) throws Exception {
@@ -65,7 +65,7 @@ public class SimpleLoadTest {
                                          String substring = header.substring(0, header.length() - 2);
                                          long duration = Long.parseLong(substring);
                                          //System.out.println(header + " -> " + duration);
-                                         registry.timer("requests-" + keyword).update(duration, TimeUnit.MILLISECONDS);
+                                         registry.timer("requests").update(duration, TimeUnit.MILLISECONDS);
                                          registry.counter("requests-ok").inc();
                                      } else {
                                          System.err.println("Failed request: " + keyword);
@@ -73,7 +73,13 @@ public class SimpleLoadTest {
                                      }
                                      return null;
                                  }
+
+                                 @Override
+                                 public void onThrowable(Throwable t) {
+                                     registry.counter("requests-failed").inc();
+                                 }
                              }
+
                     );
         }
 
