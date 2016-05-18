@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.Offer;
+import de.hanbei.rxsearch.model.Price;
 import de.hanbei.rxsearch.searcher.ResponseParser;
 import rx.Observable;
 
@@ -35,8 +36,10 @@ public class DummySearcherResponseParser implements ResponseParser {
             for (JsonNode offer : jsonNode) {
                 String url = getFieldStringValue(offer, "url");
                 String title = getFieldStringValue(offer, "title");
-                String icon = getFieldStringValue(offer, "imageUrl");
-                results.add(new Offer(title, name, url, icon));
+                String image = getFieldStringValue(offer, "imageUrl");
+                String currency = getFieldStringValue(offer, "currency");
+                double priceAmount = Double.parseDouble(getFieldStringValue(offer, "price"));
+                results.add(new Offer(title, name, url, new Price(priceAmount, currency), image));
             }
         } catch (IOException e) {
             return Observable.error(e);

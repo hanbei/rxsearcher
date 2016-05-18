@@ -47,7 +47,7 @@ public class SearchRouterTest {
 
         router.handle(routingContext);
 
-        verify(response, times(1)).end("{\"results\":[{\"url\":\"url\",\"title\":\"title\",\"icon\":\"\",\"searchSource\":\"searcher1\"},{\"url\":\"url\",\"title\":\"title\",\"icon\":\"\",\"searchSource\":\"searcher2\"}]}");
+        verify(response, times(1)).end("{\"results\":[{\"title\":\"title\",\"searchSource\":\"searcher1\",\"url\":\"url\",\"image\":\"\",\"price\":{\"currency\":\"USD\",\"amount\":0.0}},{\"title\":\"title\",\"searchSource\":\"searcher2\",\"url\":\"url\",\"image\":\"\",\"price\":{\"currency\":\"USD\",\"amount\":0.0}}]}");
     }
 
     @Test
