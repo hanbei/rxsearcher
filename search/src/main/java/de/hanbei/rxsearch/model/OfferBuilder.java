@@ -39,8 +39,14 @@ public class OfferBuilder {
         String url;
         String productName;
         String searcher;
+        String manufacturer;
+        Merchant merchant;
+
         String category = "";
         String image = "";
+        String description = "";
+        String originalUrl;
+        Money shippingCosts = null;
 
         public SearcherStep price(Double amount, Currency currency) {
             price = new Money(amount, currency);
