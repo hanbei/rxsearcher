@@ -41,10 +41,10 @@ public class GithubResponseParserTest {
         observable.subscribe(subscriber);
         subscriber.assertValueCount(4);
         subscriber.assertCompleted();
-        subscriber.assertValues(new Offer("localfile.html", GITHUB_SEARCHER, "https://github.com/jquery/jquery/blob/055cb7534e2dcf7ee8ad145be83cb2d74b5331c7/test/localfile.html"),
-                new Offer("classes.js", GITHUB_SEARCHER, "https://github.com/jquery/jquery/blob/055cb7534e2dcf7ee8ad145be83cb2d74b5331c7/src/attributes/classes.js"),
-                new Offer("attributes.js", GITHUB_SEARCHER, "https://github.com/jquery/jquery/blob/44cb97e0cfc8d3e62bef7c621bfeba6fe4f65d7c/test/unit/attributes.js"),
-                new Offer("effects.js", GITHUB_SEARCHER, "https://github.com/jquery/jquery/blob/755e7ccf018eb150eddefe78063a9ec58b3229e3/test/unit/effects.js"));
+        subscriber.assertValues(Offer.build("https://github.com/jquery/jquery/blob/055cb7534e2dcf7ee8ad145be83cb2d74b5331c7/test/localfile.html", "localfile.html", GITHUB_SEARCHER, ""),
+                Offer.build("https://github.com/jquery/jquery/blob/055cb7534e2dcf7ee8ad145be83cb2d74b5331c7/src/attributes/classes.js", "classes.js", GITHUB_SEARCHER, ""),
+                Offer.build("https://github.com/jquery/jquery/blob/44cb97e0cfc8d3e62bef7c621bfeba6fe4f65d7c/test/unit/attributes.js", "attributes.js", GITHUB_SEARCHER, ""),
+                Offer.build("https://github.com/jquery/jquery/blob/755e7ccf018eb150eddefe78063a9ec58b3229e3/test/unit/effects.js", "effects.js", GITHUB_SEARCHER, ""));
     }
 
     @Test

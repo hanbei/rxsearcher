@@ -23,9 +23,9 @@ public class AbstractSearcherTest {
 
     private static final String TEST_SEARCHER = "TestSearcher";
     private final Offer[] expectedOffers = {
-            new Offer("title0", "icon0", "url0", TEST_SEARCHER),
-            new Offer("title1", "icon1", "url1", TEST_SEARCHER),
-            new Offer("title2", "icon2", "url2", TEST_SEARCHER),
+            Offer.build("url0", "title0", "icon0", TEST_SEARCHER),
+            Offer.build("url1", "title1", "icon1", TEST_SEARCHER),
+            Offer.build("url2", "title2", "icon2", TEST_SEARCHER),
     };
     private TestSearcher searcher;
     private ResponseParser responseParser;
@@ -102,7 +102,6 @@ public class AbstractSearcherTest {
         return response;
     }
 
-
     private Response ok() throws IOException {
         Response response = mock(Response.class);
         when(response.getResponseBody()).thenReturn("");
@@ -114,7 +113,6 @@ public class AbstractSearcherTest {
         when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.error(new RuntimeException("response parser error")));
     }
 
-
     private void givenHttpClientSendsResponse(Response response) throws IOException {
         when(httpClient.executeRequest(any(Request.class), any(AsyncCompletionHandler.class)))
                 .thenAnswer((Answer<Void>) invocation -> {
@@ -122,7 +120,6 @@ public class AbstractSearcherTest {
                     return null;
                 });
     }
-
 
     private void givenHttpClientThrows() throws IOException {
         when(httpClient.executeRequest(any(Request.class), any(AsyncCompletionHandler.class)))

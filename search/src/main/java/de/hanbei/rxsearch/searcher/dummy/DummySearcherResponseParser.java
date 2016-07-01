@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.Offer;
-import de.hanbei.rxsearch.model.Price;
 import de.hanbei.rxsearch.searcher.ResponseParser;
 import rx.Observable;
 
@@ -33,13 +32,13 @@ public class DummySearcherResponseParser implements ResponseParser {
         try {
             String responseBodyAsString = response.getResponseBody(Charsets.UTF_8.name());
             JsonNode jsonNode = mapper.readTree(responseBodyAsString);
-            for (JsonNode offer : jsonNode) {
-                String url = getFieldStringValue(offer, "url");
-                String title = getFieldStringValue(offer, "title");
-                String image = getFieldStringValue(offer, "imageUrl");
-                String currency = getFieldStringValue(offer, "currency");
-                double priceAmount = Double.parseDouble(getFieldStringValue(offer, "price"));
-                results.add(new Offer(title, name, url, new Price(priceAmount, currency), image));
+            for (JsonNode jsonOffer : jsonNode) {
+                Offer offer = Offer.builder()
+                        .url(getFieldStringValue(jsonOffer, "url"))
+                        .title(getFieldStringValue(jsonOffer, "title"))
+                        .price(Double.parseDouble(getFieldStringValue(jsonOffer, "price")), getFieldStringValue(jsonOffer, "currency"))
+                        .searcher(name).image(getFieldStringValue(jsonOffer, "imageUrl")).build();
+                results.add(offer);
             }
         } catch (IOException e) {
             return Observable.error(e);

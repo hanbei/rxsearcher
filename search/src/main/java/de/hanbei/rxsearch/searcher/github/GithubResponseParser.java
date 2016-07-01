@@ -54,6 +54,11 @@ public class GithubResponseParser implements ResponseParser {
         String url = item.findValue("html_url").asText("");
         String title = item.findValue("name").asText("");
         String icon = "";
-        return new Offer(title, name, url, icon);
+
+        return Offer.builder()
+                .url(url)
+                .title(title)
+                .price(0.0, "USD")
+                .searcher(name).image(icon).build();
     }
 }

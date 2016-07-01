@@ -63,7 +63,12 @@ public class DuckDuckGoResponseParser implements ResponseParser {
         String url = getFieldStringValue(relatedTopic, "FirstURL");
         String title = getFieldStringValue(relatedTopic, "Text");
         String icon = getIcon(relatedTopic);
-        return new Offer(title, name, url, icon);
+
+        return Offer.builder()
+                .url(url)
+                .title(title)
+                .price(0.0, "USD")
+                .searcher(name).image(icon).build();
     }
 
     private String getIcon(JsonNode relatedTopic) {

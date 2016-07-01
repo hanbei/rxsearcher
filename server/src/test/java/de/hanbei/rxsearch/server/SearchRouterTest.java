@@ -10,7 +10,12 @@ import org.junit.Before;
 import org.junit.Test;
 import rx.Observable;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class SearchRouterTest {
 
@@ -42,8 +47,8 @@ public class SearchRouterTest {
 
     @Test
     public void whenSearcherRespondRendersCorrectJson() throws Exception {
-        when(searcher1.search("search_term")).thenReturn(Observable.just(new Offer("title", "searcher1", "url")));
-        when(searcher2.search("search_term")).thenReturn(Observable.just(new Offer("title", "searcher2", "url")));
+        when(searcher1.search("search_term")).thenReturn(Observable.just(Offer.builder().url("url").title("title").price(0.0, "USD").searcher("searcher1").build()));
+        when(searcher2.search("search_term")).thenReturn(Observable.just(Offer.builder().url("url").title("title").price(0.0, "USD").searcher("searcher2").build()));
 
         router.handle(routingContext);
 

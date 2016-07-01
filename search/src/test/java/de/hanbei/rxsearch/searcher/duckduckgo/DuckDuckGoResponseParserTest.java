@@ -42,14 +42,14 @@ public class DuckDuckGoResponseParserTest {
         subscriber.assertCompleted();
         subscriber.assertValueCount(8);
         subscriber.assertValues(
-                new Offer("Google An American multinational technology company specializing in Internet-related services and...", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/Google", "https://duckduckgo.com/i/8f85c93f.png"),
-                new Offer("Google SearchA web search engine owned by Google Inc. It is the most-used search engine on the World Wide Web...", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/Google_Search", "https://duckduckgo.com/i/8f85c93f.png"),
-                new Offer("Google (verb)Using the Google search engine to obtain information on something or somebody on the World Wide Web.", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/Google_(verb)"),
-                new Offer("Google.org, founded in October 2005, is the charitable arm of Google, an Internet search engine...", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/Google.org", "https://duckduckgo.com/i/a707b7ea.png"),
-                new Offer("Googal, DevadurgaA village in the Devadurga taluk of Raichur district in Karnataka state, India.", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/Googal%2C_Devadurga"),
-                new Offer("Goggles or safety glasses are forms of protective eyewear that usually enclose or protect the...", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/Goggles", "https://duckduckgo.com/i/82de7b2a.jpg"),
-                new Offer("Goggles! Goggles! is a 1969 children's picture book by American author and illustrator Ezra Jack Keats...", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/Goggles!", "https://duckduckgo.com/i/d291493f.jpeg"),
-                new Offer("Googly eyesGoogly eyes, or jiggly eyes are small plastic craft supplies used to imitate eyeballs.", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/Googly_eyes", "https://duckduckgo.com/i/cf399a0e.jpg"));
+                Offer.build("https://duckduckgo.com/Google", "Google An American multinational technology company specializing in Internet-related services and...", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/i/8f85c93f.png"),
+                Offer.build("https://duckduckgo.com/Google_Search", "Google SearchA web search engine owned by Google Inc. It is the most-used search engine on the World Wide Web...", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/i/8f85c93f.png"),
+                Offer.build("https://duckduckgo.com/Google_(verb)", "Google (verb)Using the Google search engine to obtain information on something or somebody on the World Wide Web.", DUCK_DUCK_GO_SEARCHER, ""),
+                Offer.build("https://duckduckgo.com/Google.org", "Google.org, founded in October 2005, is the charitable arm of Google, an Internet search engine...", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/i/a707b7ea.png"),
+                Offer.build("https://duckduckgo.com/Googal%2C_Devadurga", "Googal, DevadurgaA village in the Devadurga taluk of Raichur district in Karnataka state, India.", DUCK_DUCK_GO_SEARCHER, ""),
+                Offer.build("https://duckduckgo.com/Goggles", "Goggles or safety glasses are forms of protective eyewear that usually enclose or protect the...", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/i/82de7b2a.jpg"),
+                Offer.build("https://duckduckgo.com/Goggles!", "Goggles! Goggles! is a 1969 children's picture book by American author and illustrator Ezra Jack Keats...", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/i/d291493f.jpeg"),
+                Offer.build("https://duckduckgo.com/Googly_eyes", "Googly eyesGoogly eyes, or jiggly eyes are small plastic craft supplies used to imitate eyeballs.", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/i/cf399a0e.jpg"));
 
     }
 
