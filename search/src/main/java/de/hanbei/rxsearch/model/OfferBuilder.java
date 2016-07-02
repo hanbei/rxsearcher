@@ -25,9 +25,21 @@ public class OfferBuilder {
     }
 
     public interface OtherStep extends BuildStep {
-        OtherStep productCategory(String category);
+        OtherStep category(String category);
 
         OtherStep image(String image);
+
+        OtherStep manufacturer(String manufacturer);
+
+        OtherStep merchant(Merchant merchant);
+
+        OtherStep description(String description);
+
+        OtherStep originalUrl(String originalUrl);
+
+        OtherStep shippingCosts(Money shippingCosts);
+        OtherStep brand(String brand);
+
     }
 
     public interface BuildStep {
@@ -47,6 +59,7 @@ public class OfferBuilder {
         String description = "";
         String originalUrl;
         Money shippingCosts = null;
+        String brand = null;
 
         public SearcherStep price(Double amount, Currency currency) {
             price = new Money(amount, currency);
@@ -78,13 +91,49 @@ public class OfferBuilder {
             return this;
         }
 
-        public OtherStep productCategory(String category) {
+        public OtherStep category(String category) {
             this.category = category;
             return this;
         }
 
         public OtherStep image(String image) {
             this.image = image;
+            return this;
+        }
+
+        @Override
+        public OtherStep manufacturer(String manufacturer) {
+            this.manufacturer = manufacturer;
+            return this;
+        }
+
+        @Override
+        public OtherStep merchant(Merchant merchant) {
+            this.merchant = merchant;
+            return this;
+        }
+
+        @Override
+        public OtherStep description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        @Override
+        public OtherStep originalUrl(String originalUrl) {
+            this.originalUrl = originalUrl;
+            return this;
+        }
+
+        @Override
+        public OtherStep shippingCosts(Money shippingCosts) {
+            this.shippingCosts = shippingCosts;
+            return this;
+        }
+
+        @Override
+        public OtherStep brand(String brand) {
+            this.brand = brand;
             return this;
         }
 
