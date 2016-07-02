@@ -23,10 +23,11 @@ public class AbstractSearcherTest {
 
     private static final String TEST_SEARCHER = "TestSearcher";
     private final Offer[] expectedOffers = {
-            Offer.build("url0", "title0", "icon0", TEST_SEARCHER),
-            Offer.build("url1", "title1", "icon1", TEST_SEARCHER),
-            Offer.build("url2", "title2", "icon2", TEST_SEARCHER),
+            Offer.builder().url("url0").title("title0").price(0.0, "USD").searcher("icon0").image(TEST_SEARCHER).build(),
+            Offer.builder().url("url1").title("title1").price(0.0, "USD").searcher("icon1").image(TEST_SEARCHER).build(),
+            Offer.builder().url("url2").title("title2").price(0.0, "USD").searcher("icon2").image(TEST_SEARCHER).build(),
     };
+
     private TestSearcher searcher;
     private ResponseParser responseParser;
     private AsyncHttpClient httpClient;
