@@ -3,37 +3,38 @@ package de.hanbei.rxsearch.model;
 public class Merchant {
 
     private final String name;
-
-    private final String merchantImage;
-
-    private final String merchantId;
-
-    private final String merchantCategory;
+    private final String image;
+    private final String id;
+    private final String category;
 
     private Merchant() {
         this("", "", "", "");
     }
 
-    Merchant(String name, String merchantImage, String merchantId, String merchantCategory) {
+    Merchant(String name, String image, String id, String category) {
         this.name = name;
-        this.merchantImage = merchantImage;
-        this.merchantId = merchantId;
-        this.merchantCategory = merchantCategory;
+        this.image = image;
+        this.id = id;
+        this.category = category;
     }
 
     public String getName() {
         return name;
     }
 
-    public String getMerchantImage() {
-        return merchantImage;
+    public String getImage() {
+        return image;
     }
 
-    public String getMerchantId() {
-        return merchantId;
+    public String getId() {
+        return id;
     }
 
-    public String getMerchantCategory() {
-        return merchantCategory;
+    public String getCategory() {
+        return category;
+    }
+
+    public static MerchantBuilder.NameStep builder() {
+        return new MerchantBuilder.Steps();
     }
 }

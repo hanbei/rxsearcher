@@ -9,11 +9,6 @@ import static org.junit.Assert.assertThat;
 
 public class OfferTest {
 
-    @Before
-    public void setUp() throws Exception {
-
-    }
-
     @Test
     public void testMinimalCreation() {
         Offer offer = Offer.builder().url("url").title("title").price(0.0, "USD").searcher("searcher").build();
