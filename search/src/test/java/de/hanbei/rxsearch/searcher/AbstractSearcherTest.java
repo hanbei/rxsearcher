@@ -114,6 +114,8 @@ public class AbstractSearcherTest {
         when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.error(new RuntimeException("response parser error")));
     }
 
+
+    @SuppressWarnings("unchecked")
     private void givenHttpClientSendsResponse(Response response) throws IOException {
         when(httpClient.executeRequest(any(Request.class), any(AsyncCompletionHandler.class)))
                 .thenAnswer((Answer<Void>) invocation -> {
@@ -122,6 +124,7 @@ public class AbstractSearcherTest {
                 });
     }
 
+    @SuppressWarnings("unchecked")
     private void givenHttpClientThrows() throws IOException {
         when(httpClient.executeRequest(any(Request.class), any(AsyncCompletionHandler.class)))
                 .thenAnswer((Answer<Void>) invocation -> {
