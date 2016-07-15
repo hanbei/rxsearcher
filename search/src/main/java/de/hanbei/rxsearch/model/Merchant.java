@@ -37,4 +37,47 @@ public class Merchant {
     public static MerchantBuilder.NameStep builder() {
         return new MerchantBuilder.Steps();
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        Merchant merchant = (Merchant) o;
+
+        if (getName() != null ? !getName().equals(merchant.getName()) : merchant.getName() != null) {
+            return false;
+        }
+        if (getImage() != null ? !getImage().equals(merchant.getImage()) : merchant.getImage() != null) {
+            return false;
+        }
+        if (getId() != null ? !getId().equals(merchant.getId()) : merchant.getId() != null) {
+            return false;
+        }
+        return getCategory() != null ? getCategory().equals(merchant.getCategory()) : merchant.getCategory() == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = getName() != null ? getName().hashCode() : 0;
+        result = 31 * result + (getImage() != null ? getImage().hashCode() : 0);
+        result = 31 * result + (getId() != null ? getId().hashCode() : 0);
+        result = 31 * result + (getCategory() != null ? getCategory().hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "Merchant{" +
+                "name='" + name + '\'' +
+                ", image='" + image + '\'' +
+                ", id='" + id + '\'' +
+                ", category='" + category + '\'' +
+                '}';
+    }
 }
