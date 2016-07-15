@@ -20,7 +20,8 @@ public class DummySearcherRequestBuilder implements RequestBuilder {
 
     @Override
     public Request createRequest(String searchInput) {
-        com.ning.http.client.RequestBuilder requestBuilder = new com.ning.http.client.RequestBuilder("GET").setUrl(serverUrl + "/search/" + searchInput);
+        com.ning.http.client.RequestBuilder requestBuilder = new com.ning.http.client.RequestBuilder("GET").setUrl(serverUrl + "/search")
+                .addQueryParam("q", searchInput);
         return requestBuilder.build();
     }
 }

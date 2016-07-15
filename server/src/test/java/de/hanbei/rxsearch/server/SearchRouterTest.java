@@ -1,7 +1,7 @@
 package de.hanbei.rxsearch.server;
 
 import com.google.common.collect.Lists;
-import de.hanbei.rxsearch.model.SearchResult;
+import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.searcher.Searcher;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
@@ -10,7 +10,12 @@ import org.junit.Before;
 import org.junit.Test;
 import rx.Observable;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class SearchRouterTest {
 
@@ -42,12 +47,15 @@ public class SearchRouterTest {
 
     @Test
     public void whenSearcherRespondRendersCorrectJson() throws Exception {
-        when(searcher1.search("search_term")).thenReturn(Observable.just(new SearchResult("url", "title", "searcher1")));
-        when(searcher2.search("search_term")).thenReturn(Observable.just(new SearchResult("url", "title", "searcher2")));
+        when(searcher1.search("search_term")).thenReturn(Observable.just(Offer.builder().url("url").title("title").price(0.0, "USD").searcher("searcher1").build()));
+        when(searcher2.search("search_term")).thenReturn(Observable.just(Offer.builder().url("url").title("title").price(0.0, "USD").searcher("searcher2").build()));
 
         router.handle(routingContext);
 
-        verify(response, times(1)).end("{\"results\":[{\"url\":\"url\",\"title\":\"title\",\"icon\":\"\",\"searchSource\":\"searcher1\"},{\"url\":\"url\",\"title\":\"title\",\"icon\":\"\",\"searchSource\":\"searcher2\"}]}");
+        verify(response, times(1)).end("{\"results\":["
+                + "{\"url\":\"url\",\"title\":\"title\",\"price\":{\"amount\":0.0,\"currency\":\"USD\"},\"searcher\":\"searcher1\"},"
+                + "{\"url\":\"url\",\"title\":\"title\",\"price\":{\"amount\":0.0,\"currency\":\"USD\"},\"searcher\":\"searcher2\"}"
+                + "]}");
     }
 
     @Test

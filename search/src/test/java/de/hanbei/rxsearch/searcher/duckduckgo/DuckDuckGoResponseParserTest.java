@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.ning.http.client.Response;
-import de.hanbei.rxsearch.model.SearchResult;
+import de.hanbei.rxsearch.model.Offer;
 import org.junit.Before;
 import org.junit.Test;
 import rx.Observable;
@@ -36,20 +36,20 @@ public class DuckDuckGoResponseParserTest {
 
     @Test
     public void correctResponseIsParseable() throws Exception {
-        Observable<SearchResult> observable = responseParser.toSearchResults(response);
-        TestSubscriber<SearchResult> subscriber = new TestSubscriber<>();
+        Observable<Offer> observable = responseParser.toSearchResults(response);
+        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
         subscriber.assertCompleted();
         subscriber.assertValueCount(8);
         subscriber.assertValues(
-                new SearchResult("https://duckduckgo.com/Google", "Google An American multinational technology company specializing in Internet-related services and...", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/i/8f85c93f.png"),
-                new SearchResult("https://duckduckgo.com/Google_Search", "Google SearchA web search engine owned by Google Inc. It is the most-used search engine on the World Wide Web...", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/i/8f85c93f.png"),
-                new SearchResult("https://duckduckgo.com/Google_(verb)", "Google (verb)Using the Google search engine to obtain information on something or somebody on the World Wide Web.", DUCK_DUCK_GO_SEARCHER),
-                new SearchResult("https://duckduckgo.com/Google.org", "Google.org, founded in October 2005, is the charitable arm of Google, an Internet search engine...", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/i/a707b7ea.png"),
-                new SearchResult("https://duckduckgo.com/Googal%2C_Devadurga", "Googal, DevadurgaA village in the Devadurga taluk of Raichur district in Karnataka state, India.", DUCK_DUCK_GO_SEARCHER),
-                new SearchResult("https://duckduckgo.com/Goggles", "Goggles or safety glasses are forms of protective eyewear that usually enclose or protect the...", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/i/82de7b2a.jpg"),
-                new SearchResult("https://duckduckgo.com/Goggles!", "Goggles! Goggles! is a 1969 children's picture book by American author and illustrator Ezra Jack Keats...", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/i/d291493f.jpeg"),
-                new SearchResult("https://duckduckgo.com/Googly_eyes", "Googly eyesGoogly eyes, or jiggly eyes are small plastic craft supplies used to imitate eyeballs.", DUCK_DUCK_GO_SEARCHER, "https://duckduckgo.com/i/cf399a0e.jpg"));
+                Offer.builder().url("https://duckduckgo.com/Google").title("Google An American multinational technology company specializing in Internet-related services and...").price(0.0, "USD").searcher(DUCK_DUCK_GO_SEARCHER).image("https://duckduckgo.com/i/8f85c93f.png").build(),
+                Offer.builder().url("https://duckduckgo.com/Google_Search").title("Google SearchA web search engine owned by Google Inc. It is the most-used search engine on the World Wide Web...").price(0.0, "USD").searcher(DUCK_DUCK_GO_SEARCHER).image("https://duckduckgo.com/i/8f85c93f.png").build(),
+                Offer.builder().url("https://duckduckgo.com/Google_(verb)").title("Google (verb)Using the Google search engine to obtain information on something or somebody on the World Wide Web.").price(0.0, "USD").searcher(DUCK_DUCK_GO_SEARCHER).image("").build(),
+                Offer.builder().url("https://duckduckgo.com/Google.org").title("Google.org, founded in October 2005, is the charitable arm of Google, an Internet search engine...").price(0.0, "USD").searcher(DUCK_DUCK_GO_SEARCHER).image("https://duckduckgo.com/i/a707b7ea.png").build(),
+                Offer.builder().url("https://duckduckgo.com/Googal%2C_Devadurga").title("Googal, DevadurgaA village in the Devadurga taluk of Raichur district in Karnataka state, India.").price(0.0, "USD").searcher(DUCK_DUCK_GO_SEARCHER).image("").build(),
+                Offer.builder().url("https://duckduckgo.com/Goggles").title("Goggles or safety glasses are forms of protective eyewear that usually enclose or protect the...").price(0.0, "USD").searcher(DUCK_DUCK_GO_SEARCHER).image("https://duckduckgo.com/i/82de7b2a.jpg").build(),
+                Offer.builder().url("https://duckduckgo.com/Goggles!").title("Goggles! Goggles! is a 1969 children's picture book by American author and illustrator Ezra Jack Keats...").price(0.0, "USD").searcher(DUCK_DUCK_GO_SEARCHER).image("https://duckduckgo.com/i/d291493f.jpeg").build(),
+                Offer.builder().url("https://duckduckgo.com/Googly_eyes").title("Googly eyesGoogly eyes, or jiggly eyes are small plastic craft supplies used to imitate eyeballs.").price(0.0, "USD").searcher(DUCK_DUCK_GO_SEARCHER).image("https://duckduckgo.com/i/cf399a0e.jpg").build());
 
     }
 
@@ -57,9 +57,9 @@ public class DuckDuckGoResponseParserTest {
     public void brokenJsonReturnsErrorObservable() throws IOException {
         when(response.getResponseBody(anyString())).thenReturn("{");
 
-        Observable<SearchResult> observable = responseParser.toSearchResults(response);
+        Observable<Offer> observable = responseParser.toSearchResults(response);
 
-        TestSubscriber<SearchResult> subscriber = new TestSubscriber<>();
+        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
         subscriber.assertError(JsonParseException.class);
     }
@@ -68,9 +68,9 @@ public class DuckDuckGoResponseParserTest {
     public void correctButEmptyJsonReturnsEmptyObservable() throws IOException {
         when(response.getResponseBody(anyString())).thenReturn("{}");
 
-        Observable<SearchResult> observable = responseParser.toSearchResults(response);
+        Observable<Offer> observable = responseParser.toSearchResults(response);
 
-        TestSubscriber<SearchResult> subscriber = new TestSubscriber<>();
+        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
         subscriber.assertNoValues();
         subscriber.assertNoErrors();

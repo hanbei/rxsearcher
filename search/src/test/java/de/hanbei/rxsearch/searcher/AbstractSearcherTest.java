@@ -4,7 +4,7 @@ import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Request;
 import com.ning.http.client.Response;
-import de.hanbei.rxsearch.model.SearchResult;
+import de.hanbei.rxsearch.model.Offer;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
@@ -22,11 +22,12 @@ import static org.mockito.Mockito.when;
 public class AbstractSearcherTest {
 
     private static final String TEST_SEARCHER = "TestSearcher";
-    private final SearchResult[] expectedSearchResults = {
-            new SearchResult("url0", "title0", "icon0", TEST_SEARCHER),
-            new SearchResult("url1", "title1", "icon1", TEST_SEARCHER),
-            new SearchResult("url2", "title2", "icon2", TEST_SEARCHER),
+    private final Offer[] expectedOffers = {
+            Offer.builder().url("url0").title("title0").price(0.0, "USD").searcher("icon0").image(TEST_SEARCHER).build(),
+            Offer.builder().url("url1").title("title1").price(0.0, "USD").searcher("icon1").image(TEST_SEARCHER).build(),
+            Offer.builder().url("url2").title("title2").price(0.0, "USD").searcher("icon2").image(TEST_SEARCHER).build(),
     };
+
     private TestSearcher searcher;
     private ResponseParser responseParser;
     private AsyncHttpClient httpClient;
@@ -37,7 +38,7 @@ public class AbstractSearcherTest {
         when(urlBuilder.createRequest(anyString())).thenReturn(mock(Request.class));
 
         responseParser = mock(ResponseParser.class);
-        when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.from(expectedSearchResults));
+        when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.from(expectedOffers));
 
         httpClient = mock(AsyncHttpClient.class, RETURNS_DEEP_STUBS);
 
@@ -48,22 +49,22 @@ public class AbstractSearcherTest {
     public void searcherReturnsCorrectResults() throws Exception {
         givenHttpClientSendsResponse(ok());
 
-        Observable<SearchResult> observable = searcher.search("something");
+        Observable<Offer> observable = searcher.search("something");
 
-        TestSubscriber<SearchResult> subscriber = new TestSubscriber<>();
+        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
-        subscriber.assertValueCount(expectedSearchResults.length);
+        subscriber.assertValueCount(expectedOffers.length);
         subscriber.assertCompleted();
-        subscriber.assertValues(expectedSearchResults);
+        subscriber.assertValues(expectedOffers);
     }
 
     @Test
     public void searcherHandlesExceptionFromHttpClient() throws Exception {
         givenHttpClientThrows();
 
-        Observable<SearchResult> observable = searcher.search("something");
+        Observable<Offer> observable = searcher.search("something");
 
-        TestSubscriber<SearchResult> subscriber = new TestSubscriber<>();
+        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
         subscriber.assertNoValues();
         subscriber.assertCompleted();
@@ -74,8 +75,8 @@ public class AbstractSearcherTest {
         givenHttpClientSendsResponse(ok());
         givenResponseParserSendsErrorObservable();
 
-        Observable<SearchResult> observable = searcher.search("something");
-        TestSubscriber<SearchResult> subscriber = new TestSubscriber<>();
+        Observable<Offer> observable = searcher.search("something");
+        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
         subscriber.assertNoValues();
         subscriber.assertNoErrors();
@@ -87,8 +88,8 @@ public class AbstractSearcherTest {
         givenHttpClientSendsResponse(badRequest());
         givenResponseParserSendsErrorObservable();
 
-        Observable<SearchResult> observable = searcher.search("something");
-        TestSubscriber<SearchResult> subscriber = new TestSubscriber<>();
+        Observable<Offer> observable = searcher.search("something");
+        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
         subscriber.assertNoValues();
         subscriber.assertNoErrors();
@@ -102,7 +103,6 @@ public class AbstractSearcherTest {
         return response;
     }
 
-
     private Response ok() throws IOException {
         Response response = mock(Response.class);
         when(response.getResponseBody()).thenReturn("");
@@ -115,6 +115,7 @@ public class AbstractSearcherTest {
     }
 
 
+    @SuppressWarnings("unchecked")
     private void givenHttpClientSendsResponse(Response response) throws IOException {
         when(httpClient.executeRequest(any(Request.class), any(AsyncCompletionHandler.class)))
                 .thenAnswer((Answer<Void>) invocation -> {
@@ -123,7 +124,7 @@ public class AbstractSearcherTest {
                 });
     }
 
-
+    @SuppressWarnings("unchecked")
     private void givenHttpClientThrows() throws IOException {
         when(httpClient.executeRequest(any(Request.class), any(AsyncCompletionHandler.class)))
                 .thenAnswer((Answer<Void>) invocation -> {

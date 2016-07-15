@@ -1,6 +1,6 @@
 package de.hanbei.rxsearch.searcher;
 
-import de.hanbei.rxsearch.model.SearchResult;
+import de.hanbei.rxsearch.model.Offer;
 import rx.Observable;
 
 /**
@@ -9,5 +9,5 @@ import rx.Observable;
 public interface Searcher {
     String getName();
 
-    Observable<SearchResult> search(String searchInput);
+    Observable<Offer> search(String searchInput);
 }
