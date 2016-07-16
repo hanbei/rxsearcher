@@ -4,6 +4,7 @@ import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.Offer;
+import de.hanbei.rxsearch.model.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rx.Observable;
@@ -29,17 +30,17 @@ public abstract class AbstractSearcher implements Searcher {
         return name;
     }
 
-    public Observable<Offer> search(String searchInput) {
-        return asyncGet(searchInput)
+    public Observable<Offer> search(Query query) {
+        return asyncGet(query)
                 .timeout(2, TimeUnit.SECONDS)
                 .onErrorResumeNext(this::handleSearcherError)
                 .flatMap(responseParser::toSearchResults)
                 .onErrorResumeNext(this::handleParserError);
     }
 
-    private Observable<Response> asyncGet(String searchInput) {
+    private Observable<Response> asyncGet(Query query) {
         return Observable.create(subscriber -> {
-            asyncHttpClient.executeRequest(urlBuilder.createRequest(searchInput), new AsyncCompletionHandler<Response>() {
+            asyncHttpClient.executeRequest(urlBuilder.createRequest(query), new AsyncCompletionHandler<Response>() {
                 @Override
                 public Response onCompleted(Response response) throws Exception {
                     if (response.getStatusCode() < 300) {

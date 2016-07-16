@@ -2,6 +2,7 @@ package de.hanbei.rxsearch.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.Searcher;
 import io.vertx.core.Handler;
 import io.vertx.core.http.HttpServerResponse;
@@ -24,12 +25,15 @@ public class SearchRouter implements Handler<RoutingContext> {
     @Override
     public void handle(RoutingContext routingContext) {
         String keyword = routingContext.request().getParam("keyword").toLowerCase();
-        startSearch(routingContext, keyword);
+        String requestId = routingContext.request().getHeader("X-Request-ID");
+
+
+        startSearch(routingContext, new Query(keyword, requestId));
     }
 
-    private void startSearch(RoutingContext routingContext, String keyword) {
+    private void startSearch(RoutingContext routingContext, Query query) {
         Observable.from(searcher)
-                .flatMap(searcher -> searcher.search(keyword)).toList().subscribe(
+                .flatMap(searcher -> searcher.search(query)).toList().subscribe(
                 results -> {
                     try {
                         Map<String, Object> wrapper = new HashMap<>();

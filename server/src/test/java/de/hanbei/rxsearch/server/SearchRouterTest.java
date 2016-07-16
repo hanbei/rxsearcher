@@ -2,6 +2,7 @@ package de.hanbei.rxsearch.server;
 
 import com.google.common.collect.Lists;
 import de.hanbei.rxsearch.model.Offer;
+import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.Searcher;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
@@ -25,7 +26,6 @@ public class SearchRouterTest {
     private Searcher searcher1;
     private Searcher searcher2;
 
-    private HttpServerRequest request;
     private HttpServerResponse response;
 
     @Before
@@ -33,8 +33,9 @@ public class SearchRouterTest {
         searcher1 = mock(Searcher.class);
         searcher2 = mock(Searcher.class);
 
-        request = mock(HttpServerRequest.class);
+        HttpServerRequest request = mock(HttpServerRequest.class);
         when(request.getParam("keyword")).thenReturn("search_term");
+        when(request.getHeader("X-Request-ID")).thenReturn("id");
         response = mock(HttpServerResponse.class);
         when(response.putHeader(anyString(), anyString())).thenReturn(response);
 
@@ -47,8 +48,8 @@ public class SearchRouterTest {
 
     @Test
     public void whenSearcherRespondRendersCorrectJson() throws Exception {
-        when(searcher1.search("search_term")).thenReturn(Observable.just(Offer.builder().url("url").title("title").price(0.0, "USD").searcher("searcher1").build()));
-        when(searcher2.search("search_term")).thenReturn(Observable.just(Offer.builder().url("url").title("title").price(0.0, "USD").searcher("searcher2").build()));
+        when(searcher1.search(new Query("search_term", "id"))).thenReturn(Observable.just(Offer.builder().url("url").title("title").price(0.0, "USD").searcher("searcher1").build()));
+        when(searcher2.search(new Query("search_term", "id"))).thenReturn(Observable.just(Offer.builder().url("url").title("title").price(0.0, "USD").searcher("searcher2").build()));
 
         router.handle(routingContext);
 
@@ -60,7 +61,7 @@ public class SearchRouterTest {
 
     @Test
     public void sendsErrorResponseWhenSearchThrows() {
-        when(searcher1.search("search_term")).thenReturn(Observable.error(new RuntimeException("SearchError")));
+        when(searcher1.search(new Query("search_term", "id"))).thenReturn(Observable.error(new RuntimeException("SearchError")));
 
         router.handle(routingContext);
 

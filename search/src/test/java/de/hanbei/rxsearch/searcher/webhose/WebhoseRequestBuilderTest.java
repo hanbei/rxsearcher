@@ -1,6 +1,7 @@
 package de.hanbei.rxsearch.searcher.webhose;
 
 import com.ning.http.client.Request;
+import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.RequestUrlBuilderTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,7 +32,7 @@ public class WebhoseRequestBuilderTest extends RequestUrlBuilderTest {
 
     @Test
     public void correctRequestUrlIsBuilt() throws Exception {
-        Request input = urlBuilder.createRequest("input");
+        Request input = urlBuilder.createRequest(new Query("input", "id"));
         assertThat(input.getUrl(), is("https://webhose.io/search?q=input&token=some-key&format=json&size=10"));
     }
 

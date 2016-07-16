@@ -1,6 +1,7 @@
 package de.hanbei.rxsearch.searcher.dummy;
 
 import com.ning.http.client.Request;
+import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.RequestBuilder;
 
 public class DummySearcherRequestBuilder implements RequestBuilder {
@@ -19,9 +20,9 @@ public class DummySearcherRequestBuilder implements RequestBuilder {
     }
 
     @Override
-    public Request createRequest(String searchInput) {
+    public Request createRequest(Query query) {
         com.ning.http.client.RequestBuilder requestBuilder = new com.ning.http.client.RequestBuilder("GET").setUrl(serverUrl + "/search")
-                .addQueryParam("q", searchInput);
+                .addQueryParam("q", query.keywords());
         return requestBuilder.build();
     }
 }

@@ -1,6 +1,7 @@
 package de.hanbei.rxsearch.searcher.dummy;
 
 import com.ning.http.client.Request;
+import de.hanbei.rxsearch.model.Query;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -21,14 +22,14 @@ public class DummySearcherRequestBuilderTest {
 
     @Test
     public void correctRequestUrlIsBuilt() throws Exception {
-        Request input = requestBuilder.createRequest("input");
+        Request input = requestBuilder.createRequest(new Query("input", "id"));
         assertThat(input.getUrl(), is("http://www.example.de/search?q=input"));
     }
 
     @Test
     public void trailingSlashIsRemoved() throws Exception {
         requestBuilder = new DummySearcherRequestBuilder("http://www.example2.de/");
-        Request input = requestBuilder.createRequest("input2");
+        Request input = requestBuilder.createRequest(new Query("input2", "id"));
         assertThat(input.getUrl(), is("http://www.example2.de/search?q=input2"));
     }
 
