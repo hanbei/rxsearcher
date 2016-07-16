@@ -15,4 +15,9 @@ public class SearcherException extends RuntimeException {
         super(throwable);
         this.query = query;
     }
+
+    @Override
+    public String getMessage() {
+        return super.getMessage();
+    }
 }

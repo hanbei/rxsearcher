@@ -21,8 +21,11 @@ public class DummySearcherRequestBuilder implements RequestBuilder {
 
     @Override
     public Request createRequest(Query query) {
-        com.ning.http.client.RequestBuilder requestBuilder = new com.ning.http.client.RequestBuilder("GET").setUrl(serverUrl + "/search")
-                .addQueryParam("q", query.keywords());
+        com.ning.http.client.RequestBuilder requestBuilder =
+                new com.ning.http.client.RequestBuilder("GET")
+                        .setUrl(serverUrl + "/search/fred")
+                        .addQueryParam("country", "br")
+                        .addQueryParam("q", query.keywords());
         return requestBuilder.build();
     }
 }

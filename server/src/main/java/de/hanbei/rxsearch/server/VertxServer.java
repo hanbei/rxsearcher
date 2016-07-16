@@ -7,6 +7,7 @@ import de.hanbei.rxsearch.searcher.duckduckgo.DuckDuckGoSearcher;
 import de.hanbei.rxsearch.searcher.dummy.DummySearcher;
 import de.hanbei.rxsearch.searcher.github.GithubSearcher;
 import de.hanbei.rxsearch.searcher.webhose.WebhoseSearcher;
+import de.hanbei.rxsearch.searcher.zoom.ZoomSearcher;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
@@ -35,7 +36,7 @@ public class VertxServer extends AbstractVerticle {
         searchRouter = new SearchRouter(Lists.newArrayList(
                 new DummySearcher("dummy1", "http://dummysearcher1.herokuapp.com", asyncHttpClient),
                 new DummySearcher("dummy2", "http://dummysearcher2.herokuapp.com", asyncHttpClient),
-                new DummySearcher("dummy3", "http://dummysearcher3.herokuapp.com", asyncHttpClient)
+                new ZoomSearcher("zoom", "http://dummysearcher3.herokuapp.com/search/zoom", asyncHttpClient)
         ));
 
     }
@@ -57,7 +58,7 @@ public class VertxServer extends AbstractVerticle {
         router.route().handler(ResponseTimeHandler.create());
         router.route().handler(TimeoutHandler.create(6000));
 
-        router.route("/search/:keyword").handler(searchRouter);
+        router.route("/search/offers").handler(searchRouter);
 
         Integer port = port();
         LOGGER.info("Starting server on " + port);

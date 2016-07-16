@@ -8,6 +8,7 @@ import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
 
 import java.util.List;
+import java.util.Optional;
 
 public class SearchRouter implements Handler<RoutingContext> {
 
@@ -20,8 +21,8 @@ public class SearchRouter implements Handler<RoutingContext> {
 
     @Override
     public void handle(RoutingContext routingContext) {
-        String keyword = routingContext.request().getParam("keyword").toLowerCase();
-        String requestId = routingContext.request().getHeader("X-Request-ID");
+        String keyword = routingContext.request().getParam("q").toLowerCase();
+        String requestId = Optional.ofNullable(routingContext.request().getHeader("X-Request-ID")).orElse("some_id");
 
         Query query = new Query(keyword, requestId);
         ResponseHandler responseHandler = new VertxResponseHandler(routingContext);

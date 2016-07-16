@@ -31,11 +31,12 @@ public abstract class AbstractSearcher implements Searcher {
     }
 
     public Observable<Offer> search(Query query) {
+        ErrorHandler errorHandler = new ErrorHandler(getName(),query);
         return asyncGet(query)
                 .timeout(2, TimeUnit.SECONDS)
-                .onErrorResumeNext(this::handleSearcherError)
+                .onErrorResumeNext(errorHandler::handleSearcherError)
                 .flatMap(responseParser::toSearchResults)
-                .onErrorResumeNext(this::handleParserError);
+                .onErrorResumeNext(errorHandler::handleParserError);
     }
 
     private Observable<Response> asyncGet(Query query) {
@@ -61,14 +62,25 @@ public abstract class AbstractSearcher implements Searcher {
     }
 
 
-    private Observable<? extends Response> handleSearcherError(Throwable t) {
-        LOGGER.error(getName() + " experienced error: " + t.getMessage() + " - " + t);
-        return Observable.empty();
-    }
+    private static class ErrorHandler {
 
-    private Observable<? extends Offer> handleParserError(Throwable t) {
-        LOGGER.error(getName() + " experienced parsing error: " + t.getMessage() + " - " + t);
-        return Observable.empty();
-    }
 
+        private final String name;
+        private final Query query;
+
+        public ErrorHandler(String name, Query query) {
+            this.name = name;
+            this.query = query;
+        }
+
+        private Observable<? extends Response> handleSearcherError(Throwable t) {
+            LOGGER.error(name + " - " + query + " experienced error: " + t.getMessage() + " - " + t);
+            return Observable.empty();
+        }
+
+        private Observable<? extends Offer> handleParserError(Throwable t) {
+            LOGGER.error(name + " - " + query + " experienced parsing error: " + t.getMessage() + " - " + t);
+            return Observable.empty();
+        }
+    }
 }

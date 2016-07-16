@@ -6,12 +6,16 @@ import de.hanbei.rxsearch.coordination.ResponseHandler;
 import de.hanbei.rxsearch.model.Offer;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class VertxResponseHandler implements ResponseHandler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(VertxResponseHandler.class);
 
     private final RoutingContext routingContext;
     private final ObjectMapper objectMapper;
@@ -38,6 +42,7 @@ public class VertxResponseHandler implements ResponseHandler {
 
     @Override
     public void handleError(Throwable t) {
+        LOGGER.warn(t.getMessage());
         routingContext.fail(t);
     }
 
