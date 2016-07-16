@@ -27,6 +27,8 @@ allprojects {
     dependencyManagement {
         dependencies {
             dependency "com.fasterxml.jackson.core:jackson-databind:2.7.3"
+            dependency "org.jooq:joox:1.4.0"
+
             dependency "com.google.guava:guava:19.0"
 
             dependencySet(group: "org.slf4j", version: "1.7.21") {
