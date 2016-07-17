@@ -20,4 +20,8 @@ public class SearcherException extends RuntimeException {
     public String getMessage() {
         return super.getMessage();
     }
+
+    public Query getQuery() {
+        return query;
+    }
 }
