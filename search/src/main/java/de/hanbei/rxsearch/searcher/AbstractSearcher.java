@@ -64,7 +64,6 @@ public abstract class AbstractSearcher implements Searcher {
 
     private static class ErrorHandler {
 
-
         private final String name;
         private final Query query;
 

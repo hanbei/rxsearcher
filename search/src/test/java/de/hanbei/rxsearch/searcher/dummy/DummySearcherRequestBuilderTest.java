@@ -23,14 +23,14 @@ public class DummySearcherRequestBuilderTest {
     @Test
     public void correctRequestUrlIsBuilt() throws Exception {
         Request input = requestBuilder.createRequest(new Query("input", "id"));
-        assertThat(input.getUrl(), is("http://www.example.de/search?q=input"));
+        assertThat(input.getUrl(), is("http://www.example.de/search/fred?country=br&q=input"));
     }
 
     @Test
     public void trailingSlashIsRemoved() throws Exception {
         requestBuilder = new DummySearcherRequestBuilder("http://www.example2.de/");
         Request input = requestBuilder.createRequest(new Query("input2", "id"));
-        assertThat(input.getUrl(), is("http://www.example2.de/search?q=input2"));
+        assertThat(input.getUrl(), is("http://www.example2.de/search/fred?country=br&q=input2"));
     }
 
 }

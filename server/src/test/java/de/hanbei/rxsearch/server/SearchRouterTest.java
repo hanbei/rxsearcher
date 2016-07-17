@@ -34,7 +34,7 @@ public class SearchRouterTest {
         searcher2 = mock(Searcher.class);
 
         HttpServerRequest request = mock(HttpServerRequest.class);
-        when(request.getParam("keyword")).thenReturn("search_term");
+        when(request.getParam("q")).thenReturn("search_term");
         when(request.getHeader("X-Request-ID")).thenReturn("id");
         response = mock(HttpServerResponse.class);
         when(response.putHeader(anyString(), anyString())).thenReturn(response);

@@ -21,7 +21,7 @@ public class SearchRouter implements Handler<RoutingContext> {
 
     @Override
     public void handle(RoutingContext routingContext) {
-        String keyword = routingContext.request().getParam("q").toLowerCase();
+        String keyword = routingContext.request().getParam("q");
         String requestId = Optional.ofNullable(routingContext.request().getHeader("X-Request-ID")).orElse("some_id");
 
         Query query = new Query(keyword, requestId);

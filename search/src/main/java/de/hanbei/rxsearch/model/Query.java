@@ -50,9 +50,11 @@ public class Query {
 
     @Override
     public String toString() {
-        return "Query{" +
-                "requestId='" + requestId + '\'' +
-                ", keywords='" + keywords + '\'' +
-                '}';
+        final StringBuilder sb = new StringBuilder("{\"Query\":{")
+                .append("\"keywords\":\"").append(keywords).append('"')
+                .append(", ")
+                .append("\"requestId\":\"").append(requestId).append('"')
+                .append("}}");
+        return sb.toString();
     }
 }

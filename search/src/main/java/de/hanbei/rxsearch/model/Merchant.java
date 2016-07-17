@@ -73,11 +73,15 @@ public class Merchant {
 
     @Override
     public String toString() {
-        return "Merchant{" +
-                "name='" + name + '\'' +
-                ", image='" + image + '\'' +
-                ", id='" + id + '\'' +
-                ", category='" + category + '\'' +
-                '}';
+        final StringBuilder sb = new StringBuilder("{\"Merchant\":{")
+                .append("\"name\":\"").append(name).append('"')
+                .append(", ")
+                .append("\"image\":\"").append(image).append('"')
+                .append(", ")
+                .append("\"id\":\"").append(id).append('"')
+                .append(", ")
+                .append("\"category\":\"").append(category).append('"')
+                .append("}}");
+        return sb.toString();
     }
 }
