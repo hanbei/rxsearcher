@@ -1,0 +1,135 @@
+#%RAML 1.0
+title: RxSearcher
+version: v1
+baseUri: http://rxsearch.herokuapp.com/
+types:
+  Money:
+    type: object
+    properties:
+      amount:
+        type: number
+        required: true
+      currency:
+        type: string
+        required: true
+  Merchant:
+    type: object
+    properties:
+      name:
+        type: string
+        required: true
+      image:
+        type: string
+        required: false
+      id:
+        type: string
+        required: false
+      category:
+        type: string
+        required: false
+  Offer:
+    type: object
+    properties:
+      url:
+        type: string
+        required: true
+      title:
+        type: string
+        required: true
+      price:
+        type: Money
+        required: true
+      searcher:
+        type: string
+        required: true
+      image:
+        type: string
+        required: false
+      category:
+        type: string
+        required: false
+      merchant:
+        type: Merchant
+        required: false
+      originalUrl:
+        type: string
+        required: false
+      shippingCosts:
+        type: Money
+        required: false
+      manufacturer:
+        type: string
+        required: false
+      description:
+        type: string
+        required: false
+      brand:
+        type: string
+        required: false
+  Result:
+    type: object
+    properties:
+      results:
+        type: Offer[]
+        required: false    
+/search/offers:
+  get:
+    headers:
+      X-Request-ID:
+        description: The id to identify this request througout the system
+    queryParameters:
+      q:
+        displayName: offer_search_q
+        description: Search for offers
+        type: string
+        required: true
+        example: Samsung Galaxy S3
+      size:
+        displayName: offer_search_size
+        description: The number of offers to return
+        type: integer
+        required: false
+        example: 10
+        default: 100
+    responses:
+      200:
+        description: Successful answer when offers were found.
+        headers:
+          x-response-time:
+            description: The number of milliseconds the request took
+        body:
+          application/json:
+            type: Result
+            example: |
+                {
+                    "results": [{
+                        "url": "http://ecs.br.kelkoo.com.br/ctl/go/offersearchGo?.ts=1455626808010&.sig=1GtoQa8PRkCYazPrZXZiVPrra.U-&catId=100020213&localCatId=100020213&comId=14619313&offerId=65d955ac560891659a41b02797139e1e&searchId=null&affiliationId=96947160&country=br&wait=true&contextLevel=2&service=11",
+                        "title": "Sony Smartphone Sony Xperia Z3 Branco com Tela 5 2 Dual Chip 4G Câmera 20 7MP Android 5 0 e Processador Qualcomm Octa core de 64 bits",
+                        "price": {
+                            "amount": 2209.0,
+                            "currency": "BRL"
+                        },
+                        "searcher": "dummy2",
+                        "image": "http://r.kelkoo.com/r/br/14619313/100020213/90/90/http%3A%2F%2Fwww.extra-imagens.com.br%2FControl%2FArquivoExibir.aspx%3FIdArquivo%3D160266248/83rsvi0P6oV7f1E4KdsLlkRvaX7iixH03sZROhiiA40-"
+                    }, {
+                        "url": "http://www.zoom.com.br/lead?oid=17277895&sortorder=-1&index=&searchterm=&pagesize=&channel=12&og=19164&utm_source=foxy_deal&utm_medium=parceiros&utm_term=Celular+e+Smartphone&utm_campaign=Acess%C3%B3riosapple+%26+Mult&utm_content=iPhone+6+16GB+Apple+Cinza+Espacial",
+                        "title": "iPhone 6 16GB Apple Cinza Espacial",
+                        "price": {
+                            "amount": 2819.67,
+                            "currency": "BRL"
+                        },
+                        "searcher": "zoom",
+                        "image": "http://i3.zst.com.br/thumbs/8/20/11/48683844.jpg",
+                        "category": "Celular e Smartphone",
+                        "merchant": {
+                            "name": "Acessóriosapple & Mult",
+                            "image": "http://i4.zst.com.br/thumbs/46/30/3e/50806552.jpg",
+                            "id": "3541",
+                            "category": null
+                        },
+                        "description": "O iPhone 6 é o smartphone da Apple lançado em setembro de 2014 rodando o sistema operacional iOS 8. O aparelho possui uma tela de 4,7 polegadas HD Retina com 1334 x 750 pixels de resolução, com 326 ppi. O dispositivo tem 6,8 mm de espessura e possui um processador A8 com 64 bits e um coprocessador M8. A câmera traseira do iPhone é de 8...",
+                        "brand": "Apple"
+                    }]
+                }
+      500:
+        description: Something went wrong

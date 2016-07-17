@@ -1,0 +1,4 @@
+dependencies {
+    compile project(':server')
+    compile "guru.nidi.raml:raml-tester:0.8.8"
+}
