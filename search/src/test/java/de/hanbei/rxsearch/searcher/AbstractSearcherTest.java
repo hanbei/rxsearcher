@@ -5,6 +5,7 @@ import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Request;
 import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.Offer;
+import de.hanbei.rxsearch.model.Query;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
@@ -35,7 +36,7 @@ public class AbstractSearcherTest {
     @Before
     public void setUp() throws Exception {
         RequestBuilder urlBuilder = mock(RequestBuilder.class);
-        when(urlBuilder.createRequest(anyString())).thenReturn(mock(Request.class));
+        when(urlBuilder.createRequest(any(Query.class))).thenReturn(mock(Request.class));
 
         responseParser = mock(ResponseParser.class);
         when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.from(expectedOffers));
@@ -49,7 +50,7 @@ public class AbstractSearcherTest {
     public void searcherReturnsCorrectResults() throws Exception {
         givenHttpClientSendsResponse(ok());
 
-        Observable<Offer> observable = searcher.search("something");
+        Observable<Offer> observable = searcher.search(new Query("something", "id"));
 
         TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
@@ -62,7 +63,7 @@ public class AbstractSearcherTest {
     public void searcherHandlesExceptionFromHttpClient() throws Exception {
         givenHttpClientThrows();
 
-        Observable<Offer> observable = searcher.search("something");
+        Observable<Offer> observable = searcher.search(new Query("something", "id"));
 
         TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
@@ -75,7 +76,7 @@ public class AbstractSearcherTest {
         givenHttpClientSendsResponse(ok());
         givenResponseParserSendsErrorObservable();
 
-        Observable<Offer> observable = searcher.search("something");
+        Observable<Offer> observable = searcher.search(new Query("something", "id"));
         TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
         subscriber.assertNoValues();
@@ -88,7 +89,7 @@ public class AbstractSearcherTest {
         givenHttpClientSendsResponse(badRequest());
         givenResponseParserSendsErrorObservable();
 
-        Observable<Offer> observable = searcher.search("something");
+        Observable<Offer> observable = searcher.search(new Query("something", "id"));
         TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
         subscriber.assertNoValues();

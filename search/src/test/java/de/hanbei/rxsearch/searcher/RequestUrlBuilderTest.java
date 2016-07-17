@@ -1,5 +1,6 @@
 package de.hanbei.rxsearch.searcher;
 
+import de.hanbei.rxsearch.model.Query;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -13,12 +14,12 @@ public abstract class RequestUrlBuilderTest {
     @Test
     public void emptyInputViolatesPrecondition() throws Exception {
         expectedException.expect(IllegalArgumentException.class);
-        urlBuilder.createRequest("");
+        urlBuilder.createRequest(new Query("", "id"));
     }
 
     @Test
     public void nullInputViolatesPrecondition() throws Exception {
         expectedException.expect(IllegalArgumentException.class);
-        urlBuilder.createRequest("");
+        urlBuilder.createRequest(new Query("", "id"));
     }
 }

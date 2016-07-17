@@ -3,6 +3,7 @@ package de.hanbei.rxsearch.searcher.webhose;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import com.ning.http.client.Request;
+import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.RequestBuilder;
 
 public class WebhoseRequestBuilder implements RequestBuilder {
@@ -16,11 +17,11 @@ public class WebhoseRequestBuilder implements RequestBuilder {
     }
 
     @Override
-    public Request createRequest(String searchInput) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(searchInput));
+    public Request createRequest(Query query) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(query.keywords()));
         return new com.ning.http.client.RequestBuilder("GET", true)
                 .setUrl("https://webhose.io/search")
-                .addQueryParam("q", searchInput)
+                .addQueryParam("q", query.keywords())
                 .addQueryParam("token", key)
                 .addQueryParam("format", "json")
                 .addQueryParam("size", "10")

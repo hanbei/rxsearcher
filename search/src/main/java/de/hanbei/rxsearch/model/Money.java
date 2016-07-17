@@ -51,10 +51,11 @@ public class Money {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("Money{");
-        sb.append("amount=").append(amount);
-        sb.append(", currency=").append(currency);
-        sb.append('}');
+        final StringBuilder sb = new StringBuilder("{\"Money\":{")
+                .append("\"amount\":").append(amount)
+                .append(", ")
+                .append("\"currency\":\"").append(currency).append('"')
+                .append("}}");
         return sb.toString();
     }
 }
