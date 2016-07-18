@@ -1,11 +1,16 @@
 package de.hanbei.rxsearcher.integration;
 
+import de.hanbei.rxsearch.server.VertxServer;
 import guru.nidi.ramltester.RamlDefinition;
 import guru.nidi.ramltester.RamlLoaders;
 import guru.nidi.ramltester.httpcomponents.RamlHttpClient;
+import io.vertx.core.Vertx;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.junit.AfterClass;
 import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -17,6 +22,18 @@ import static org.junit.Assert.assertThat;
 public class SearcherIntegrationTest {
 
     private RamlDefinition api;
+    private static Vertx vertx;
+
+    @BeforeClass
+    public static void startServer() {
+        vertx = Vertx.vertx();
+        vertx.deployVerticle(VertxServer.class.getName());
+    }
+
+    @AfterClass
+    public static void stopServer() {
+        vertx.close();
+    }
 
     @Before
     public void createTarget() {
