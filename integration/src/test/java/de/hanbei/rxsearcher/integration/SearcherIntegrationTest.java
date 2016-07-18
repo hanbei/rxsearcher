@@ -20,9 +20,8 @@ public class SearcherIntegrationTest {
 
     @Before
     public void createTarget() {
-        api = RamlLoaders.fromClasspath().load("docs/api.raml").assumingBaseUri("http://localhost:8080/");
+        api = RamlLoaders.fromClasspath().load("docs/api.raml").assumingBaseUri("http://localhost:8080");
         assertThat(api.validate(), validates());
-
     }
 
     @Test
