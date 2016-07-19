@@ -1,4 +1,4 @@
-package de.hanbei.rxsearcher.integration;
+package de.hanbei.rxsearch.server;
 
 import de.hanbei.rxsearch.server.VertxServer;
 import guru.nidi.ramltester.RamlDefinition;
@@ -40,7 +40,7 @@ public class ApiContractTest {
     @Before
     public void loadRamlDefinition() {
         api = RamlLoaders.fromClasspath().load("docs/api.raml").assumingBaseUri("http://localhost:8080");
-        assertThat(api.validate(), validates());
+        assertThat(api.validate(), RamlMatchers.validates());
     }
 
     @Test
@@ -50,7 +50,7 @@ public class ApiContractTest {
         get.addHeader("X-Request-ID", "id");
         client.execute(get);
 
-        assertThat(client.getLastReport(), checks());
+        assertThat(client.getLastReport(), RamlMatchers.checks());
     }
 
 

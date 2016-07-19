@@ -1,6 +1,0 @@
-dependencies {
-    compile project(':server')
-
-    testCompile "guru.nidi.raml:raml-tester"
-    testCompile "io.vertx:vertx-unit"
-}
