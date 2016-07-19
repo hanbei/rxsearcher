@@ -1,9 +1,9 @@
 package de.hanbei.rxsearch.server;
 
-import de.hanbei.rxsearch.server.VertxServer;
 import guru.nidi.ramltester.RamlDefinition;
 import guru.nidi.ramltester.RamlLoaders;
 import guru.nidi.ramltester.httpcomponents.RamlHttpClient;
+import guru.nidi.ramltester.junit.RamlMatchers;
 import io.vertx.core.Vertx;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
@@ -16,8 +16,6 @@ import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
-import static guru.nidi.ramltester.junit.RamlMatchers.checks;
-import static guru.nidi.ramltester.junit.RamlMatchers.validates;
 import static org.junit.Assert.assertThat;
 
 @RunWith(VertxUnitRunner.class)
@@ -39,7 +37,7 @@ public class ApiContractTest {
 
     @Before
     public void loadRamlDefinition() {
-        api = RamlLoaders.fromClasspath().load("docs/api.raml").assumingBaseUri("http://localhost:8080");
+        api = RamlLoaders.fromClasspath().load("apidocs/raml/api.raml").assumingBaseUri("http://localhost:8080");
         assertThat(api.validate(), RamlMatchers.validates());
     }
 
