@@ -59,16 +59,21 @@ public class VertxServer extends AbstractVerticle {
 
         Integer port = port();
         LOGGER.info("Starting server on " + port);
-        httpServer.requestHandler(router::accept).listen(port);
+        httpServer.requestHandler(router::accept).listen(port, result -> {
+            if (result.succeeded()) {
+                fut.complete();
+            } else {
+                fut.fail(result.cause());
+            }
+        });
     }
 
     @Override
     public void stop(Future<Void> stopFuture) throws Exception {
-        super.stop(stopFuture);
         LOGGER.info("Stopping server");
-        httpServer.close();
         asyncHttpClient.close();
-        stopFuture.complete();
+        httpServer.close();
+        super.stop(stopFuture);
     }
 
     private Integer port() {

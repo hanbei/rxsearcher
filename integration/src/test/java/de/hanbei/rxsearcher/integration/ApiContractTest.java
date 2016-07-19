@@ -5,13 +5,14 @@ import guru.nidi.ramltester.RamlDefinition;
 import guru.nidi.ramltester.RamlLoaders;
 import guru.nidi.ramltester.httpcomponents.RamlHttpClient;
 import io.vertx.core.Vertx;
-import org.apache.http.HttpResponse;
+import io.vertx.ext.unit.TestContext;
+import io.vertx.ext.unit.junit.VertxUnitRunner;
 import org.apache.http.client.methods.HttpGet;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.io.IOException;
 
@@ -19,24 +20,25 @@ import static guru.nidi.ramltester.junit.RamlMatchers.checks;
 import static guru.nidi.ramltester.junit.RamlMatchers.validates;
 import static org.junit.Assert.assertThat;
 
-public class SearcherIntegrationTest {
+@RunWith(VertxUnitRunner.class)
+public class ApiContractTest {
 
     private RamlDefinition api;
     private static Vertx vertx;
 
     @BeforeClass
-    public static void startServer() {
+    public static void startServer(TestContext context) throws InterruptedException {
         vertx = Vertx.vertx();
-        vertx.deployVerticle(VertxServer.class.getName());
+        vertx.deployVerticle(VertxServer.class.getName(), context.asyncAssertSuccess());
     }
 
     @AfterClass
-    public static void stopServer() {
-        vertx.close();
+    public static void stopServer(TestContext context) {
+        vertx.close(context.asyncAssertSuccess());
     }
 
     @Before
-    public void createTarget() {
+    public void loadRamlDefinition() {
         api = RamlLoaders.fromClasspath().load("docs/api.raml").assumingBaseUri("http://localhost:8080");
         assertThat(api.validate(), validates());
     }
@@ -46,9 +48,10 @@ public class SearcherIntegrationTest {
         RamlHttpClient client = api.createHttpClient();
         HttpGet get = new HttpGet("http://localhost:8080/search/offers?q=test");
         get.addHeader("X-Request-ID", "id");
-        HttpResponse response = client.execute(get);
+        client.execute(get);
 
         assertThat(client.getLastReport(), checks());
     }
+
 
 }

@@ -1,5 +1,6 @@
 dependencies {
     compile project(':server')
 
-    testCompile "guru.nidi.raml:raml-tester:0.8.8"
+    testCompile "guru.nidi.raml:raml-tester"
+    testCompile "io.vertx:vertx-unit"
 }
