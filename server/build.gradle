@@ -14,4 +14,6 @@ dependencies {
 
     testCompile 'io.dropwizard.metrics:metrics-core'
     testCompile 'com.ning:async-http-client'
+    testCompile "guru.nidi.raml:raml-tester"
+    testCompile "io.vertx:vertx-unit"
 }

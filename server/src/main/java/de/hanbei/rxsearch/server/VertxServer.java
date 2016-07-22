@@ -14,6 +14,7 @@ import io.vertx.ext.dropwizard.DropwizardMetricsOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.LoggerHandler;
 import io.vertx.ext.web.handler.ResponseTimeHandler;
+import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.handler.TimeoutHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,18 +58,29 @@ public class VertxServer extends AbstractVerticle {
 
         router.route("/search/offers").handler(searchRouter);
 
+        router.route().handler(StaticHandler.create()
+                .setWebRoot("apidocs")
+                .setFilesReadOnly(false)
+                .setCachingEnabled(false));
+
         Integer port = port();
-        LOGGER.info("Starting server on " + port);
-        httpServer.requestHandler(router::accept).listen(port);
+        httpServer.requestHandler(router::accept).listen(port, result -> {
+            if (result.succeeded()) {
+                fut.complete();
+                LOGGER.info("Started server on {}", port);
+            } else {
+                LOGGER.info("Failed starting server: {}", result.cause());
+                fut.fail(result.cause());
+            }
+        });
     }
 
     @Override
     public void stop(Future<Void> stopFuture) throws Exception {
-        super.stop(stopFuture);
         LOGGER.info("Stopping server");
-        httpServer.close();
         asyncHttpClient.close();
-        stopFuture.complete();
+        httpServer.close();
+        super.stop(stopFuture);
     }
 
     private Integer port() {

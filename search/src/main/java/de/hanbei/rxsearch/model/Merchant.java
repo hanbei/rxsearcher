@@ -1,5 +1,8 @@
 package de.hanbei.rxsearch.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Merchant {
 
     private final String name;
