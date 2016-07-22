@@ -16,7 +16,7 @@ public class SearchCoordinator {
 
     public void startSearch(Query query, ResponseHandler handler) {
         Observable.from(searcher)
-                .flatMap(searcher -> searcher.search(query)).toList().subscribe(
+                .flatMap(searcher -> searcher.search(query).onErrorResumeNext(handler::searcherError)).toList().subscribe(
                 handler::handleSuccess,
                 handler::handleError
         );

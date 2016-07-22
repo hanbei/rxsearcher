@@ -34,9 +34,7 @@ public abstract class AbstractSearcher implements Searcher {
         ErrorHandler errorHandler = new ErrorHandler(getName(),query);
         return asyncGet(query)
                 .timeout(2, TimeUnit.SECONDS)
-                .onErrorResumeNext(errorHandler::handleSearcherError)
-                .flatMap(responseParser::toSearchResults)
-                .onErrorResumeNext(errorHandler::handleParserError);
+                .flatMap(responseParser::toSearchResults);
     }
 
     private Observable<Response> asyncGet(Query query) {
