@@ -2,12 +2,14 @@ package de.hanbei.rxsearch.server;
 
 import guru.nidi.ramltester.RamlDefinition;
 import guru.nidi.ramltester.RamlLoaders;
-import guru.nidi.ramltester.httpcomponents.RamlHttpClient;
+import guru.nidi.ramltester.jaxrs.CheckingWebTarget;
 import guru.nidi.ramltester.junit.RamlMatchers;
 import io.vertx.core.Vertx;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
-import org.apache.http.client.methods.HttpGet;
+import org.glassfish.jersey.client.JerseyClient;
+import org.glassfish.jersey.client.JerseyClientBuilder;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -21,8 +23,11 @@ import static org.junit.Assert.assertThat;
 @RunWith(VertxUnitRunner.class)
 public class ApiContractTest {
 
-    private RamlDefinition api;
+    private static final String SERVER = "http://localhost:8080";
     private static Vertx vertx;
+
+    private RamlDefinition ramlDefinition;
+    private JerseyClient client;
 
     @BeforeClass
     public static void startServer(TestContext context) throws InterruptedException {
@@ -37,19 +42,26 @@ public class ApiContractTest {
 
     @Before
     public void loadRamlDefinition() {
-        api = RamlLoaders.fromClasspath().load("apidocs/raml/api.raml").assumingBaseUri("http://localhost:8080");
-        assertThat(api.validate(), RamlMatchers.validates());
+        ramlDefinition = RamlLoaders.fromClasspath().load("apidocs/raml/api.raml");
+        assertThat(ramlDefinition.validate(), RamlMatchers.validates());
+        ramlDefinition.getRaml().setBaseUri(SERVER);
+    }
+
+    @Before
+    public void setupClient() {
+        client = new JerseyClientBuilder().build();
+    }
+
+    @After
+    public void closeClient() {
+        client.close();
     }
 
     @Test
-    public void testSearchOffers() throws IOException {
-        RamlHttpClient client = api.createHttpClient();
-        HttpGet get = new HttpGet("http://localhost:8080/search/offers?q=test");
-        get.addHeader("X-Request-ID", "id");
-        client.execute(get);
+    public void testSearchOffersJersey() throws IOException {
+        CheckingWebTarget checking = ramlDefinition.createWebTarget(client.target(SERVER));
 
-        assertThat(client.getLastReport(), RamlMatchers.checks());
+        checking.path("/search/offers").queryParam("q", "test").request().get();
+        assertThat(checking.getLastReport(), RamlMatchers.hasNoViolations());
     }
-
-
 }
