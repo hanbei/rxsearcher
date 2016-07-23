@@ -8,7 +8,7 @@ allprojects {
     apply plugin: "io.spring.dependency-management"
     apply plugin: 'com.github.johnrengelman.shadow'
 
-    version = '0.1.0'
+    version = '0.2.0'
     sourceCompatibility = 1.8
 
     repositories {
@@ -53,12 +53,12 @@ allprojects {
                 exclude 'org.hamcrest:hamcrest-core'
             }
             dependency "guru.nidi.raml:raml-tester:0.8.8"
-            dependency  "io.vertx:vertx-unit:3.3.2"
-
+            dependency "io.vertx:vertx-unit:3.3.2"
+            dependency "org.glassfish.jersey.core:jersey-client:2.23.1"
         }
     }
 
-    [ compileJava, compileTestJava ]*.options*.encoding = 'UTF-8'
+    [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 }
 
