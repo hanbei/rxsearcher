@@ -21,7 +21,16 @@ public class SearcherException extends RuntimeException {
         return super.getMessage();
     }
 
+
     public Query getQuery() {
         return query;
     }
+
+    public static SearcherException wrap(Query query, Throwable t) {
+        if (t instanceof SearcherException) {
+            return (SearcherException) t;
+        }
+        return new SearcherException(query, t);
+    }
+
 }

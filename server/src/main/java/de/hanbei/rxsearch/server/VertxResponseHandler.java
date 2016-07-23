@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class VertxResponseHandler implements ResponseHandler {
+class VertxResponseHandler implements ResponseHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxResponseHandler.class);
 
@@ -21,7 +21,7 @@ public class VertxResponseHandler implements ResponseHandler {
     private final ObjectMapper objectMapper;
 
 
-    public VertxResponseHandler(RoutingContext routingContext) {
+    VertxResponseHandler(RoutingContext routingContext) {
         this.routingContext = routingContext;
 
         this.objectMapper = new ObjectMapper();
