@@ -1,3 +1,4 @@
 include 'search'
+include 'config'
 include 'server'
 
