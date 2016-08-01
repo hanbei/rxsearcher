@@ -45,6 +45,10 @@ public final class OfferBuilder {
 
         OtherStep shippingCosts(Money shippingCosts);
 
+        OtherStep shippingCosts(Double amount, Currency currency);
+
+        OtherStep shippingCosts(Double amount, String currency);
+
         OtherStep brand(String brand);
 
         OtherStep eec(Offer.EEC eec);
@@ -171,6 +175,16 @@ public final class OfferBuilder {
         public OtherStep shippingCosts(Money shippingCosts) {
             this.shippingCosts = shippingCosts;
             return this;
+        }
+
+        @Override
+        public OtherStep shippingCosts(Double amount, Currency currency) {
+            return shippingCosts(new Money(amount, currency));
+        }
+
+        @Override
+        public OtherStep shippingCosts(Double amount, String currency) {
+            return shippingCosts(new Money(amount, currency));
         }
 
         @Override
