@@ -76,6 +76,7 @@ public class SearchCoordinatorTest {
         coordinator.startSearch(new Query("query", "id"), new ResponseHandler() {
             @Override
             public void handleSuccess(List<Offer> results) {
+                assertThat(results.size(), is(0));
             }
 
             @Override

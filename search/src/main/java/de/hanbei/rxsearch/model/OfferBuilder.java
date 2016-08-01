@@ -2,10 +2,10 @@ package de.hanbei.rxsearch.model;
 
 import java.util.Currency;
 
-public class OfferBuilder {
+public final class OfferBuilder {
 
     private OfferBuilder() {
-        // not allowed to be constructed.
+        // construction not allowed
     }
 
     public interface UrlStep {

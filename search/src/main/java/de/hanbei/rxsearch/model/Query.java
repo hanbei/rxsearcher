@@ -3,6 +3,8 @@ package de.hanbei.rxsearch.model;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
+import java.util.Objects;
+
 public class Query {
 
     private final String keywords;
@@ -31,21 +33,14 @@ public class Query {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         Query query = (Query) o;
-
-        if (!keywords.equals(query.keywords)) {
-            return false;
-        }
-        return requestId.equals(query.requestId);
-
+        return Objects.equals(keywords, query.keywords) &&
+                Objects.equals(requestId, query.requestId);
     }
 
     @Override
     public int hashCode() {
-        int result = keywords.hashCode();
-        result = 31 * result + requestId.hashCode();
-        return result;
+        return Objects.hash(keywords, requestId);
     }
 
     @Override

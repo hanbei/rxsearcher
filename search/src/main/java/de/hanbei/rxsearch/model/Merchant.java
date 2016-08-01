@@ -2,6 +2,8 @@ package de.hanbei.rxsearch.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
+import java.util.Objects;
+
 @JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Merchant {
 
@@ -42,39 +44,6 @@ public class Merchant {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-
-        Merchant merchant = (Merchant) o;
-
-        if (getName() != null ? !getName().equals(merchant.getName()) : merchant.getName() != null) {
-            return false;
-        }
-        if (getImage() != null ? !getImage().equals(merchant.getImage()) : merchant.getImage() != null) {
-            return false;
-        }
-        if (getId() != null ? !getId().equals(merchant.getId()) : merchant.getId() != null) {
-            return false;
-        }
-        return getCategory() != null ? getCategory().equals(merchant.getCategory()) : merchant.getCategory() == null;
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = getName() != null ? getName().hashCode() : 0;
-        result = 31 * result + (getImage() != null ? getImage().hashCode() : 0);
-        result = 31 * result + (getId() != null ? getId().hashCode() : 0);
-        result = 31 * result + (getCategory() != null ? getCategory().hashCode() : 0);
-        return result;
-    }
-
-    @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("{\"Merchant\":{")
                 .append("\"name\":\"").append(name).append('"')
@@ -86,5 +55,25 @@ public class Merchant {
                 .append("\"category\":\"").append(category).append('"')
                 .append("}}");
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Merchant merchant = (Merchant) o;
+        return Objects.equals(name, merchant.name) &&
+                Objects.equals(image, merchant.image) &&
+                Objects.equals(id, merchant.id) &&
+                Objects.equals(category, merchant.category);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, image, id, category);
     }
 }

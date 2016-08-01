@@ -1,9 +1,9 @@
 package de.hanbei.rxsearch.model;
 
-public class MerchantBuilder {
+public final class MerchantBuilder {
 
     private MerchantBuilder() {
-
+        // construction not allowed
     }
 
     public interface NameStep {
