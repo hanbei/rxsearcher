@@ -2,7 +2,11 @@ package de.hanbei.rxsearch.model;
 
 import java.util.Currency;
 
-public class OfferBuilder {
+public final class OfferBuilder {
+
+    private OfferBuilder() {
+        // construction not allowed
+    }
 
     public interface UrlStep {
         TitleStep url(String url);
@@ -38,6 +42,7 @@ public class OfferBuilder {
         OtherStep originalUrl(String originalUrl);
 
         OtherStep shippingCosts(Money shippingCosts);
+
         OtherStep brand(String brand);
 
     }
@@ -140,10 +145,6 @@ public class OfferBuilder {
         public Offer build() {
             return new Offer(this);
         }
-    }
-
-    private OfferBuilder() {
-        // not allowed to be constructed.
     }
 
 }

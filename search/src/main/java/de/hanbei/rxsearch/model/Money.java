@@ -1,6 +1,7 @@
 package de.hanbei.rxsearch.model;
 
 import java.util.Currency;
+import java.util.Objects;
 
 public class Money {
 
@@ -32,21 +33,14 @@ public class Money {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-
         Money money = (Money) o;
-
-        if (!amount.equals(money.amount)) {
-            return false;
-        }
-        return currency.equals(money.currency);
-
+        return Objects.equals(amount, money.amount) &&
+                Objects.equals(currency, money.currency);
     }
 
     @Override
     public int hashCode() {
-        int result = amount.hashCode();
-        result = 31 * result + currency.hashCode();
-        return result;
+        return Objects.hash(amount, currency);
     }
 
     @Override

@@ -1,6 +1,10 @@
 package de.hanbei.rxsearch.model;
 
-public class MerchantBuilder {
+public final class MerchantBuilder {
+
+    private MerchantBuilder() {
+        // construction not allowed
+    }
 
     public interface NameStep {
         OtherStep name(String name);
@@ -53,9 +57,5 @@ public class MerchantBuilder {
             this.category = category;
             return this;
         }
-    }
-
-    private MerchantBuilder() {
-
     }
 }
