@@ -21,6 +21,10 @@ public class Merchant {
         this.category = category;
     }
 
+    public static MerchantBuilder.NameStep builder() {
+        return new MerchantBuilder.Steps();
+    }
+
     public String getName() {
         return name;
     }
@@ -35,10 +39,6 @@ public class Merchant {
 
     public String getCategory() {
         return category;
-    }
-
-    public static MerchantBuilder.NameStep builder() {
-        return new MerchantBuilder.Steps();
     }
 
     @Override

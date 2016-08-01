@@ -4,6 +4,10 @@ import java.util.Currency;
 
 public class OfferBuilder {
 
+    private OfferBuilder() {
+        // not allowed to be constructed.
+    }
+
     public interface UrlStep {
         TitleStep url(String url);
     }
@@ -38,6 +42,7 @@ public class OfferBuilder {
         OtherStep originalUrl(String originalUrl);
 
         OtherStep shippingCosts(Money shippingCosts);
+
         OtherStep brand(String brand);
 
     }
@@ -140,10 +145,6 @@ public class OfferBuilder {
         public Offer build() {
             return new Offer(this);
         }
-    }
-
-    private OfferBuilder() {
-        // not allowed to be constructed.
     }
 
 }
