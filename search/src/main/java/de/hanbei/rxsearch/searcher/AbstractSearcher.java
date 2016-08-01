@@ -2,18 +2,16 @@ package de.hanbei.rxsearch.searcher;
 
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
+import com.ning.http.client.Request;
 import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import rx.Observable;
 
 import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractSearcher implements Searcher {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSearcher.class);
     private final String name;
     private final RequestBuilder urlBuilder;
     private final ResponseParser responseParser;
@@ -31,55 +29,31 @@ public abstract class AbstractSearcher implements Searcher {
     }
 
     public Observable<Offer> search(Query query) {
-        ErrorHandler errorHandler = new ErrorHandler(getName(),query);
         return asyncGet(query)
                 .timeout(2, TimeUnit.SECONDS)
-                .onErrorResumeNext(errorHandler::handleSearcherError)
-                .flatMap(responseParser::toSearchResults)
-                .onErrorResumeNext(errorHandler::handleParserError);
+                .flatMap(responseParser::toSearchResults);
     }
 
     private Observable<Response> asyncGet(Query query) {
         return Observable.create(subscriber -> {
-            asyncHttpClient.executeRequest(urlBuilder.createRequest(query), new AsyncCompletionHandler<Response>() {
-                @Override
-                public Response onCompleted(Response response) throws Exception {
-                    if (response.getStatusCode() < 300) {
-                        subscriber.onNext(response);
-                        subscriber.onCompleted();
-                    } else {
-                        subscriber.onError(new SearcherException(query, getName() + ":" + response.getStatusCode() + " " + response.getStatusText()));
-                    }
-                    return response;
+                    asyncHttpClient.executeRequest(urlBuilder.createRequest(query), new AsyncCompletionHandler<Response>() {
+                        @Override
+                        public Response onCompleted(Response response) throws Exception {
+                            if (response.getStatusCode() < 300) {
+                                subscriber.onNext(response);
+                                subscriber.onCompleted();
+                            } else {
+                                subscriber.onError(new SearcherException(query, getName() + ":" + response.getStatusCode() + " " + response.getStatusText()));
+                            }
+                            return response;
+                        }
+
+                        @Override
+                        public void onThrowable(Throwable t) {
+                            subscriber.onError(new SearcherException(query, t));
+                        }
+                    });
                 }
-
-                @Override
-                public void onThrowable(Throwable t) {
-                    subscriber.onError(new SearcherException(query, t));
-                }
-            });
-        });
-    }
-
-
-    private static class ErrorHandler {
-
-        private final String name;
-        private final Query query;
-
-        public ErrorHandler(String name, Query query) {
-            this.name = name;
-            this.query = query;
-        }
-
-        private Observable<? extends Response> handleSearcherError(Throwable t) {
-            LOGGER.error(name + " - " + query + " experienced error: " + t.getMessage() + " - " + t);
-            return Observable.empty();
-        }
-
-        private Observable<? extends Offer> handleParserError(Throwable t) {
-            LOGGER.error(name + " - " + query + " experienced parsing error: " + t.getMessage() + " - " + t);
-            return Observable.empty();
-        }
+        );
     }
 }

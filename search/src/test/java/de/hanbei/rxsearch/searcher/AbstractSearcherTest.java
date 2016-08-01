@@ -15,7 +15,6 @@ import rx.observers.TestSubscriber;
 import java.io.IOException;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -60,7 +59,7 @@ public class AbstractSearcherTest {
     }
 
     @Test
-    public void searcherHandlesExceptionFromHttpClient() throws Exception {
+    public void searcherEmitsExceptionFromHttpClient() throws Exception {
         givenHttpClientThrows();
 
         Observable<Offer> observable = searcher.search(new Query("something", "id"));
@@ -68,11 +67,11 @@ public class AbstractSearcherTest {
         TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
         subscriber.assertNoValues();
-        subscriber.assertCompleted();
+        subscriber.assertError(SearcherException.class);
     }
 
     @Test
-    public void searcherHandlesExceptionFromResponseParser() throws Exception {
+    public void searcherEmitsExceptionFromResponseParser() throws Exception {
         givenHttpClientSendsResponse(ok());
         givenResponseParserSendsErrorObservable();
 
@@ -80,12 +79,11 @@ public class AbstractSearcherTest {
         TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
         subscriber.assertNoValues();
-        subscriber.assertNoErrors();
-        subscriber.assertCompleted();
+        subscriber.assertError(SearcherException.class);
     }
 
     @Test
-    public void searcherHandlesExceptionFromOnCompleted() throws Exception {
+    public void searcherEmitsExceptionFromOnCompleted() throws Exception {
         givenHttpClientSendsResponse(badRequest());
         givenResponseParserSendsErrorObservable();
 
@@ -93,8 +91,7 @@ public class AbstractSearcherTest {
         TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);
         subscriber.assertNoValues();
-        subscriber.assertNoErrors();
-        subscriber.assertCompleted();
+        subscriber.assertError(SearcherException.class);
     }
 
     private Response badRequest() throws IOException {
@@ -112,7 +109,7 @@ public class AbstractSearcherTest {
     }
 
     private void givenResponseParserSendsErrorObservable() {
-        when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.error(new RuntimeException("response parser error")));
+        when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.error(new SearcherException(new Query("t", "id"), "response parser error")));
     }
 
 

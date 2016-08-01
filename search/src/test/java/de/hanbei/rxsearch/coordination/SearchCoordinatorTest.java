@@ -11,9 +11,11 @@ import rx.Observable;
 
 import java.util.List;
 
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
@@ -62,6 +64,57 @@ public class SearchCoordinatorTest {
             public void handleError(Throwable t) {
                 assertThat(t, instanceOf(SearcherException.class));
                 assertThat(t.getMessage(), is("message"));
+                assertThat(((SearcherException) t).getQuery(), is(new Query("q", "id")));
+            }
+        });
+    }
+
+    @Test
+    public void searchThrowsRuntimeExceptionIsWrappedInSearcherException() throws Exception {
+        when(searcher.search(any(Query.class))).thenReturn(Observable.error(new IllegalArgumentException("message")));
+
+        coordinator.startSearch(new Query("query", "id"), new ResponseHandler() {
+            @Override
+            public void handleSuccess(List<Offer> results) {
+            }
+
+            @Override
+            public void handleError(Throwable t) {
+                fail("Global error not expected");
+            }
+
+            @Override
+            public Observable<Offer> searcherError(SearcherException t) {
+                assertThat(t, instanceOf(SearcherException.class));
+                assertThat(t.getMessage(), containsString("message"));
+                assertThat(t.getQuery(), is(new Query("query", "id")));
+                assertThat(t.getCause(), instanceOf(IllegalArgumentException.class));
+                return Observable.empty();
+            }
+        });
+    }
+
+    @Test
+    public void searchThrowsSearcherExceptionIsNotWrappedInSearcherException() throws Exception {
+        when(searcher.search(any(Query.class))).thenReturn(Observable.error(new SearcherException(new Query("q", "i"), "message")));
+
+        coordinator.startSearch(new Query("query", "id"), new ResponseHandler() {
+            @Override
+            public void handleSuccess(List<Offer> results) {
+            }
+
+            @Override
+            public void handleError(Throwable t) {
+                fail("Global error not expected");
+            }
+
+            @Override
+            public Observable<Offer> searcherError(SearcherException t) {
+                assertThat(t, instanceOf(SearcherException.class));
+                assertThat(t.getMessage(), containsString("message"));
+                assertThat(t.getQuery(), is(new Query("q", "i")));
+                assertThat(t.getCause(), is(nullValue()));
+                return Observable.empty();
             }
         });
     }
