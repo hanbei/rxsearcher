@@ -1,6 +1,8 @@
 package de.hanbei.rxsearch.model;
 
+import java.util.ArrayList;
 import java.util.Currency;
+import java.util.List;
 
 public final class OfferBuilder {
 
@@ -45,6 +47,32 @@ public final class OfferBuilder {
 
         OtherStep brand(String brand);
 
+        OtherStep eec(Offer.EEC eec);
+
+        OtherStep type(Offer.Type type);
+
+        OtherStep availability(Offer.Availability availability);
+
+        OtherStep ecpc(Money ecpc);
+
+        OtherStep ecpc(Double amount, Currency currency);
+
+        OtherStep ecpc(Double amount, String currency);
+
+        OtherStep listPrice(Money ecpc);
+
+        OtherStep listPrice(Double amount, Currency currency);
+
+        OtherStep listPrice(Double amount, String currency);
+
+        OtherStep ean(String ean);
+
+        OtherStep mpn(String mpn);
+
+        OtherStep upc(String upc);
+
+        OtherStep gtin(String gtin);
+
     }
 
     public interface BuildStep {
@@ -65,6 +93,15 @@ public final class OfferBuilder {
         String originalUrl;
         Money shippingCosts = null;
         String brand = null;
+        Offer.EEC eec;
+        Offer.Type type;
+        Offer.Availability availability;
+        Money ecpc;
+        Money listPrice;
+        List<String> eans = new ArrayList<>();
+        List<String> mpns = new ArrayList<>();
+        List<String> gtins = new ArrayList<>();
+        List<String> upcs = new ArrayList<>();
 
         public SearcherStep price(Double amount, Currency currency) {
             price = new Money(amount, currency);
@@ -139,6 +176,81 @@ public final class OfferBuilder {
         @Override
         public OtherStep brand(String brand) {
             this.brand = brand;
+            return this;
+        }
+
+        @Override
+        public OtherStep eec(Offer.EEC eec) {
+            this.eec = eec;
+            return this;
+        }
+
+        @Override
+        public OtherStep type(Offer.Type type) {
+            this.type = type;
+            return this;
+        }
+
+        @Override
+        public OtherStep availability(Offer.Availability availability) {
+            this.availability = availability;
+            return this;
+        }
+
+        @Override
+        public OtherStep ecpc(Money ecpc) {
+            this.ecpc = ecpc;
+            return this;
+        }
+
+        @Override
+        public OtherStep ecpc(Double amount, Currency currency) {
+            return ecpc(new Money(amount, currency));
+        }
+
+        @Override
+        public OtherStep ecpc(Double amount, String currency) {
+            return ecpc(new Money(amount, currency));
+        }
+
+        @Override
+        public OtherStep listPrice(Money listPrice) {
+            this.listPrice = listPrice;
+            return this;
+        }
+
+        @Override
+        public OtherStep listPrice(Double amount, Currency currency) {
+            return listPrice(new Money(amount, currency));
+        }
+
+        @Override
+        public OtherStep listPrice(Double amount, String currency) {
+            return listPrice(new Money(amount, currency));
+        }
+
+        @Override
+        public OtherStep ean(String ean) {
+            eans.add(ean);
+            return this;
+        }
+
+        @Override
+        public OtherStep mpn(String mpn) {
+            mpns.add(mpn);
+            return this;
+
+        }
+
+        @Override
+        public OtherStep upc(String upc) {
+            upcs.add(upc);
+            return this;
+        }
+
+        @Override
+        public OtherStep gtin(String gtin) {
+            gtins.add(gtin);
             return this;
         }
 
