@@ -4,5 +4,6 @@ dependencies {
     compile project(':search')
     compile "org.codehaus.groovy:groovy-all"
 
-    testCompile "junit:junit"
+    testCompile "org.spockframework:spock-core"
+    testCompile "cglib:cglib-nodep"
 }

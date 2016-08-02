@@ -5,4 +5,4 @@
 /server/build
 /.idea
 *.iml
-config/
+/config/build/
