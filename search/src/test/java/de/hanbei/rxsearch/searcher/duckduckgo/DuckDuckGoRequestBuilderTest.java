@@ -17,10 +17,9 @@ public class DuckDuckGoRequestBuilderTest extends RequestUrlBuilderTest {
     }
 
     @Test
-    public void correctRequestUrlIsBuilt() throws Exception {
+    public void correctRequestUrlIsBuilt() {
         Request input = urlBuilder.createRequest(new Query("input", "id"));
         assertThat(input.getUrl(), is("http://api.duckduckgo.com?format=json&t=hanbeirxsearch&q=input"));
     }
-
 
 }

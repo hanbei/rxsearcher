@@ -12,13 +12,13 @@ public abstract class RequestUrlBuilderTest {
     protected RequestBuilder urlBuilder;
 
     @Test
-    public void emptyInputViolatesPrecondition() throws Exception {
+    public void emptyInputViolatesPrecondition() {
         expectedException.expect(IllegalArgumentException.class);
         urlBuilder.createRequest(new Query("", "id"));
     }
 
     @Test
-    public void nullInputViolatesPrecondition() throws Exception {
+    public void nullInputViolatesPrecondition() {
         expectedException.expect(IllegalArgumentException.class);
         urlBuilder.createRequest(new Query("", "id"));
     }
