@@ -27,7 +27,7 @@ public class WebhoseResponseParserTest {
     private Response response;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() throws IOException {
         String stringResponse = Resources.toString(getResource("searcher/webhose/response_ok.json"), Charsets.UTF_8);
         response = mock(Response.class);
         when(response.getResponseBody(anyString())).thenReturn(stringResponse);
@@ -36,7 +36,7 @@ public class WebhoseResponseParserTest {
     }
 
     @Test
-    public void testToSearchResults() throws Exception {
+    public void testToSearchResults() {
         Observable<Offer> observable = responseParser.toSearchResults(response);
         TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         observable.subscribe(subscriber);

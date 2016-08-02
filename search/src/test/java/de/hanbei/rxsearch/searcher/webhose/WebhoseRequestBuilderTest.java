@@ -12,10 +12,9 @@ import static org.junit.Assert.assertThat;
 public class WebhoseRequestBuilderTest extends RequestUrlBuilderTest {
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         urlBuilder = new WebhoseRequestBuilder("some-key");
     }
-
 
     @Test
     public void emptyKeyViolatesNotEmptyPrecondition() {
@@ -29,9 +28,8 @@ public class WebhoseRequestBuilderTest extends RequestUrlBuilderTest {
         new WebhoseRequestBuilder(null);
     }
 
-
     @Test
-    public void correctRequestUrlIsBuilt() throws Exception {
+    public void correctRequestUrlIsBuilt() {
         Request input = urlBuilder.createRequest(new Query("input", "id"));
         assertThat(input.getUrl(), is("https://webhose.io/search?q=input&token=some-key&format=json&size=10"));
     }

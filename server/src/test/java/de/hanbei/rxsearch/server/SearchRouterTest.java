@@ -29,7 +29,7 @@ public class SearchRouterTest {
     private HttpServerResponse response;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         searcher1 = mock(Searcher.class);
         searcher2 = mock(Searcher.class);
 
@@ -47,7 +47,7 @@ public class SearchRouterTest {
     }
 
     @Test
-    public void whenSearcherRespondRendersCorrectJson() throws Exception {
+    public void whenSearcherRespondRendersCorrectJson() {
         when(searcher1.search(new Query("search_term", "id"))).thenReturn(Observable.just(Offer.builder().url("url").title("title").price(0.0, "USD").searcher("searcher1").build()));
         when(searcher2.search(new Query("search_term", "id"))).thenReturn(Observable.just(Offer.builder().url("url").title("title").price(0.0, "USD").searcher("searcher2").build()));
 

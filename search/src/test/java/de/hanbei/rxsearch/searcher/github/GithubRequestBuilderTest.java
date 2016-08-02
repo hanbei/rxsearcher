@@ -12,7 +12,7 @@ import static org.junit.Assert.assertThat;
 public class GithubRequestBuilderTest extends RequestUrlBuilderTest {
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         urlBuilder = new GithubRequestBuilder("test/repo");
     }
 
@@ -28,9 +28,8 @@ public class GithubRequestBuilderTest extends RequestUrlBuilderTest {
         new GithubRequestBuilder(null);
     }
 
-
     @Test
-    public void correctRequestUrlIsBuilt() throws Exception {
+    public void correctRequestUrlIsBuilt() {
         Request input = urlBuilder.createRequest(new Query("input", "id"));
         assertThat(input.getUrl(), is("https://api.github.com/search/code?q=input+repo:test/repo"));
     }

@@ -28,13 +28,13 @@ public class SearchCoordinatorTest {
     private Searcher searcher;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         searcher = mock(Searcher.class);
         coordinator = new SearchCoordinator(Lists.newArrayList(searcher));
     }
 
     @Test
-    public void searchReturnSucessfulCallsSuccessHandler() throws Exception {
+    public void searchReturnSucessfulCallsSuccessHandler() {
         when(searcher.search(any(Query.class))).thenReturn(Observable.just(Offer.builder().url("").title("").price(0.0, "EUR").searcher("test").build()));
 
         coordinator.startSearch(new Query("query", "id"), new ResponseHandler() {
@@ -51,7 +51,7 @@ public class SearchCoordinatorTest {
     }
 
     @Test
-    public void searchThrowsCallsErrorHandler() throws Exception {
+    public void searchThrowsCallsErrorHandler() {
         when(searcher.search(any(Query.class))).thenThrow(new SearcherException(new Query("q", "id"), "message"));
 
         coordinator.startSearch(new Query("query", "id"), new ResponseHandler() {
@@ -70,7 +70,7 @@ public class SearchCoordinatorTest {
     }
 
     @Test
-    public void searchThrowsRuntimeExceptionIsWrappedInSearcherException() throws Exception {
+    public void searchThrowsRuntimeExceptionIsWrappedInSearcherException() {
         when(searcher.search(any(Query.class))).thenReturn(Observable.error(new IllegalArgumentException("message")));
 
         coordinator.startSearch(new Query("query", "id"), new ResponseHandler() {
@@ -96,7 +96,7 @@ public class SearchCoordinatorTest {
     }
 
     @Test
-    public void searchThrowsSearcherExceptionIsNotWrappedInSearcherException() throws Exception {
+    public void searchThrowsSearcherExceptionIsNotWrappedInSearcherException() {
         when(searcher.search(any(Query.class))).thenReturn(Observable.error(new SearcherException(new Query("q", "i"), "message")));
 
         coordinator.startSearch(new Query("query", "id"), new ResponseHandler() {
