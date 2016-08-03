@@ -2,12 +2,12 @@
 
 # RxSearcher #
 
-Reactive searcher for offer searches. Using RxJava and Vertx as Proof of Concept slowly migrating to a productive app.
+Reactive searcher for offer searches. Using RxJava and vertreten as auf proof of concept. There are some rules I try to abide to:
 
-### What is this repository for? ###
+* be reactive 
+* no state 
+* everything is imutable
 
-* Quick summary
-* Version
 
 ### How do I get set up? ###
 
