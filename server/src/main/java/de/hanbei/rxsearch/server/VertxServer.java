@@ -54,8 +54,8 @@ public class VertxServer extends AbstractVerticle {
 
         router.route().handler(LoggerHandler.create());
         router.route().handler(ResponseTimeHandler.create());
-        router.route().handler(TimeoutHandler.create(6000));
 
+        router.route("/search/offers").handler(TimeoutHandler.create());
         router.route("/search/offers").handler(searchRouter);
 
         router.route().handler(StaticHandler.create()

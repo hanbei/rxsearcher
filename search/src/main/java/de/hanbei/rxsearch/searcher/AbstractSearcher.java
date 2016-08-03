@@ -2,6 +2,7 @@ package de.hanbei.rxsearch.searcher;
 
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
+import com.ning.http.client.Request;
 import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
@@ -35,13 +36,15 @@ public abstract class AbstractSearcher implements Searcher {
 
     private Observable<Response> asyncGet(Query query) {
         return Observable.create(subscriber -> {
-                    asyncHttpClient.executeRequest(urlBuilder.createRequest(query), new AsyncCompletionHandler<Response>() {
+            final Request request = urlBuilder.createRequest(query);
+            asyncHttpClient.executeRequest(request, new AsyncCompletionHandler<Response>() {
                         @Override
                         public Response onCompleted(Response response) throws Exception {
                             if (response.getStatusCode() < 300) {
                                 subscriber.onNext(response);
                                 subscriber.onCompleted();
                             } else {
+                                System.out.println(request);
                                 subscriber.onError(new SearcherException(query, getName() + ":" + response.getStatusCode() + " " + response.getStatusText()));
                             }
                             return response;
