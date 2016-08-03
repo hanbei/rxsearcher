@@ -6,7 +6,7 @@ Reactive searcher for offer searches. Using RxJava and vertreten as auf proof of
 
 * be reactive 
 * no state 
-* everything is imutable
+* everything is immutable
 
 
 ### How do I get set up? ###
