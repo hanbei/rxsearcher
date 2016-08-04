@@ -21,4 +21,30 @@ class ConfigurationLoaderTest extends Specification {
         then:
         content == "test/staging"
     }
+
+    def "load not existing configuration"() {
+        when:
+        configurationLoader.load("does", "not", "exist")
+
+        then:
+        def e = thrown(ConfigurationException)
+        e.message == "config not found"
+        e.cause instanceof IllegalArgumentException
+        e.environment == "not"
+        e.country == "exist"
+        e.appName == "does"
+    }
+
+    def "load empty configuration"() {
+        when:
+        configurationLoader.load("test", "staging", "empty")
+
+        then:
+        def e = thrown(ConfigurationException)
+        e.message == "config is empty"
+        e.cause == null
+        e.environment == "staging"
+        e.country == "empty"
+        e.appName == "test"
+    }
 }

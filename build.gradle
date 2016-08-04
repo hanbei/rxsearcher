@@ -63,6 +63,7 @@ allprojects {
             dependency "org.glassfish.jersey.core:jersey-client:2.23.1"
             dependency "org.spockframework:spock-core:1.0-groovy-2.4"
             dependency "cglib:cglib-nodep:3.2.4"
+            dependency "org.slf4j:slf4j-nop:1.7.21"
         }
     }
 

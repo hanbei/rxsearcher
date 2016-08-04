@@ -1,6 +1,7 @@
 package de.hanbei.rxsearch.config
 
 import com.ning.http.client.AsyncHttpClient
+import de.hanbei.rxsearch.searcher.Searcher
 
 class SearcherConfiguration {
 
@@ -12,14 +13,17 @@ class SearcherConfiguration {
         this.searchConfigBuilder = new SearchConfigBuilder(asynHttpClient)
     }
 
-    def loadConfiguration(String name, String environment, String country) {
-        String configuration = configurationLoader.load(name, environment, country)
+    List<Searcher> loadConfiguration(String appName, String environment, String country) {
+        String configuration = configurationLoader.load(appName, environment, country)
 
-        def instance = new GroovyClassLoader().parseClass(configuration).newInstance()
-        instance.binding = new BuilderBinding(builder: searchConfigBuilder)
-        def searchers = instance.run()
-
-        return searchers?.searchers
+        try {
+            def instance = new GroovyClassLoader().parseClass(configuration).newInstance()
+            instance.binding = new BuilderBinding(builder: searchConfigBuilder)
+            def searchers = instance.run()
+            return searchers?.searchers
+        } catch (ConfigurationException e) {
+            throw e.appName(appName).environment(environment).country(country)
+        }
     }
 
     private class BuilderBinding extends Binding {

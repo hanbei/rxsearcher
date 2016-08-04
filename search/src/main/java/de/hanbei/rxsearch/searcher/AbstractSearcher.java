@@ -55,4 +55,12 @@ public abstract class AbstractSearcher implements Searcher {
                 }
         );
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("{\"" + getClass().getSimpleName() + "\":{")
+                .append("\"name\":\"").append(name).append('"')
+                .append("}}");
+        return sb.toString();
+    }
 }

@@ -5,7 +5,6 @@ import de.hanbei.rxsearch.searcher.duckduckgo.DuckDuckGoSearcher
 import de.hanbei.rxsearch.searcher.fred.FredSearcher
 import de.hanbei.rxsearch.searcher.github.GithubSearcher
 import de.hanbei.rxsearch.searcher.webhose.WebhoseSearcher
-import de.hanbei.rxsearch.searcher.zoom.ZoomRequestBuilder
 import de.hanbei.rxsearch.searcher.zoom.ZoomSearcher
 import spock.lang.Specification
 
@@ -20,7 +19,7 @@ class SearchConfigBuilderTest extends Specification {
             zoom(name: "zoom", baseUrl: "http://example.com/zoom")
             webhose(name: "webhose", key: "71asda23")
             github(name: "github", repo: "hanbei/mockhttpserver")
-            fred(name: "fred", serverUrl: "hanbei/mockhttpserver")
+            fred(name: "fred", baseUrl: "hanbei/mockhttpserver")
             duckduckgo(name: "ddgo")
         }
 
@@ -40,5 +39,40 @@ class SearchConfigBuilderTest extends Specification {
 
         then:
         searcher.name == "zoom"
+    }
+
+    def "create unknown searcher"() {
+        when:
+        searchConfigBuilder.unknown([name: "zoom", baseUrl: "http://example.com/zoom"])
+
+        then:
+        def e = thrown(ConfigurationException)
+        e.message == "Encountered unknown searcher: unknown"
+    }
+
+    def "wrapped into wrong object"() {
+        when:
+        searchConfigBuilder.zoom([name: "zoom", baseUrl: "http://example.com/zoom"]) {
+            webhose(name: "webhose", key: "71asda23")
+        }
+
+        then:
+        def e = thrown(ConfigurationException)
+        e.message == "{\"WebhoseSearcher\":{\"name\":\"webhose\"}} wrapped in parent object that is not a Searcher"
+        e.appName == null
+        e.environment == null
+        e.country == null
+    }
+
+    def "missing argument"() {
+        when:
+        searchConfigBuilder.zoom([baseUrl: "http://example.com/zoom"])
+
+        then:
+        def e = thrown(ConfigurationException)
+        e.message == "Missing config value 'name' for 'ZoomSearcher'"
+        e.appName == null
+        e.environment == null
+        e.country == null
     }
 }

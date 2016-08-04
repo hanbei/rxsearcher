@@ -26,13 +26,21 @@ class SearcherConfigurationTest extends Specification {
 
     def "load not existing configuration"() {
         when:
-        List<Searcher> searcher = searcherConfig.loadConfiguration("test2", "bla", "foo")
+        searcherConfig.loadConfiguration("test2", "bla", "foo")
         then:
-        searcher.size() == 5
-        searcher.get(0) instanceof ZoomSearcher
-        searcher.get(1) instanceof WebhoseSearcher
-        searcher.get(2) instanceof GithubSearcher
-        searcher.get(3) instanceof FredSearcher
-        searcher.get(4) instanceof DuckDuckGoSearcher
+        def e = thrown(ConfigurationException)
+        e.country == "foo"
+        e.environment == "bla"
+        e.appName == "test2"
+    }
+
+    def "load broken configuration"() {
+        when:
+        searcherConfig.loadConfiguration("test", "staging", "broken")
+        then:
+        def e = thrown(ConfigurationException)
+        e.country == "broken"
+        e.environment == "staging"
+        e.appName == "test"
     }
 }

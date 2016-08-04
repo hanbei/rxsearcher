@@ -4,6 +4,6 @@ import de.hanbei.rxsearch.searcher.Searcher
 
 class Searchers {
 
-    ArrayList<Searcher> searchers = new ArrayList<>()
+    final ArrayList<Searcher> searchers = new ArrayList<>()
 
 }
