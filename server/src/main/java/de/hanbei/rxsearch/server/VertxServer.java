@@ -1,10 +1,9 @@
 package de.hanbei.rxsearch.server;
 
 import com.google.common.base.Strings;
-import com.google.common.collect.Lists;
 import com.ning.http.client.AsyncHttpClient;
-import de.hanbei.rxsearch.searcher.fred.FredSearcher;
-import de.hanbei.rxsearch.searcher.zoom.ZoomSearcher;
+import de.hanbei.rxsearch.config.SearcherConfiguration;
+import de.hanbei.rxsearch.searcher.Searcher;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
@@ -20,6 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.List;
 
 public class VertxServer extends AbstractVerticle {
 
@@ -27,24 +27,16 @@ public class VertxServer extends AbstractVerticle {
 
     private final AsyncHttpClient asyncHttpClient;
     private final SearchRouter searchRouter;
+    private final SearcherConfiguration searcherConfiguration;
+
     private HttpServer httpServer;
 
     public VertxServer() {
         asyncHttpClient = new AsyncHttpClient();
-        searchRouter = new SearchRouter(Lists.newArrayList(
-                new FredSearcher("dummy1", "http://dummysearcher1.herokuapp.com", asyncHttpClient),
-                new FredSearcher("dummy2", "http://dummysearcher2.herokuapp.com", asyncHttpClient),
-                new ZoomSearcher("zoom", "http://dummysearcher3.herokuapp.com/search/zoom", asyncHttpClient)
-        ));
+        searcherConfiguration = new SearcherConfiguration(asyncHttpClient);
 
-    }
-
-    public static void main(String[] args) throws IOException {
-        Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new DropwizardMetricsOptions().setEnabled(true).setJmxEnabled(true)));
-
-        vertx.deployVerticle(VertxServer.class.getName());
-
-        Runtime.getRuntime().addShutdownHook(new Thread(vertx::close));
+        List<Searcher> searchers = searcherConfiguration.loadConfiguration("rxsearch", "testing", "de");
+        searchRouter = new SearchRouter(searchers);
     }
 
     @Override
@@ -90,6 +82,14 @@ public class VertxServer extends AbstractVerticle {
             port = Integer.parseInt(portAsString);
         }
         return port;
+    }
+
+    public static void main(String[] args) throws IOException {
+        Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new DropwizardMetricsOptions().setEnabled(true).setJmxEnabled(true)));
+
+        vertx.deployVerticle(VertxServer.class.getName());
+
+        Runtime.getRuntime().addShutdownHook(new Thread(vertx::close));
     }
 
 }
