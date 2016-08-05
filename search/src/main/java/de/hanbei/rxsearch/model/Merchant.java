@@ -12,11 +12,7 @@ public class Merchant {
     private final String id;
     private final String category;
 
-    private Merchant() {
-        this("", "", "", "");
-    }
-
-    Merchant(String name, String image, String id, String category) {
+    private Merchant(String name, String image, String id, String category) {
         this.name = name;
         this.image = image;
         this.id = id;

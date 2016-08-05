@@ -24,6 +24,9 @@ import static org.mockito.Mockito.when;
 
 public class SearchCoordinatorTest {
 
+    private static final String MESSAGE = "message";
+    private static final String QUERY = "query";
+    private static final String ID = "id";
     private SearchCoordinator coordinator;
     private Searcher searcher;
 
@@ -37,7 +40,7 @@ public class SearchCoordinatorTest {
     public void searchReturnSucessfulCallsSuccessHandler() {
         when(searcher.search(any(Query.class))).thenReturn(Observable.just(Offer.builder().url("").title("").price(0.0, "EUR").searcher("test").build()));
 
-        coordinator.startSearch(new Query("query", "id"), new ResponseHandler() {
+        coordinator.startSearch(new Query(QUERY, ID), new ResponseHandler() {
             @Override
             public void handleSuccess(List<Offer> results) {
                 assertThat(results.size(), is(not(0)));
@@ -52,9 +55,9 @@ public class SearchCoordinatorTest {
 
     @Test
     public void searchThrowsCallsErrorHandler() {
-        when(searcher.search(any(Query.class))).thenThrow(new SearcherException(new Query("q", "id"), "message"));
+        when(searcher.search(any(Query.class))).thenThrow(new SearcherException(new Query("q", ID), MESSAGE));
 
-        coordinator.startSearch(new Query("query", "id"), new ResponseHandler() {
+        coordinator.startSearch(new Query(QUERY, ID), new ResponseHandler() {
             @Override
             public void handleSuccess(List<Offer> results) {
                 fail("Success not expected");
@@ -63,17 +66,17 @@ public class SearchCoordinatorTest {
             @Override
             public void handleError(Throwable t) {
                 assertThat(t, instanceOf(SearcherException.class));
-                assertThat(t.getMessage(), is("message"));
-                assertThat(((SearcherException) t).getQuery(), is(new Query("q", "id")));
+                assertThat(t.getMessage(), is(MESSAGE));
+                assertThat(((SearcherException) t).getQuery(), is(new Query("q", ID)));
             }
         });
     }
 
     @Test
     public void searchThrowsRuntimeExceptionIsWrappedInSearcherException() {
-        when(searcher.search(any(Query.class))).thenReturn(Observable.error(new IllegalArgumentException("message")));
+        when(searcher.search(any(Query.class))).thenReturn(Observable.error(new IllegalArgumentException(MESSAGE)));
 
-        coordinator.startSearch(new Query("query", "id"), new ResponseHandler() {
+        coordinator.startSearch(new Query(QUERY, ID), new ResponseHandler() {
             @Override
             public void handleSuccess(List<Offer> results) {
                 assertThat(results.size(), is(0));
@@ -87,8 +90,8 @@ public class SearchCoordinatorTest {
             @Override
             public Observable<Offer> searcherError(SearcherException t) {
                 assertThat(t, instanceOf(SearcherException.class));
-                assertThat(t.getMessage(), containsString("message"));
-                assertThat(t.getQuery(), is(new Query("query", "id")));
+                assertThat(t.getMessage(), containsString(MESSAGE));
+                assertThat(t.getQuery(), is(new Query(QUERY, ID)));
                 assertThat(t.getCause(), instanceOf(IllegalArgumentException.class));
                 return Observable.empty();
             }
@@ -97,11 +100,12 @@ public class SearchCoordinatorTest {
 
     @Test
     public void searchThrowsSearcherExceptionIsNotWrappedInSearcherException() {
-        when(searcher.search(any(Query.class))).thenReturn(Observable.error(new SearcherException(new Query("q", "i"), "message")));
+        when(searcher.search(any(Query.class))).thenReturn(Observable.error(new SearcherException(new Query("q", "i"), MESSAGE)));
 
-        coordinator.startSearch(new Query("query", "id"), new ResponseHandler() {
+        coordinator.startSearch(new Query(QUERY, ID), new ResponseHandler() {
             @Override
             public void handleSuccess(List<Offer> results) {
+                // do nothing we are only interested in searcherError
             }
 
             @Override
@@ -112,7 +116,7 @@ public class SearchCoordinatorTest {
             @Override
             public Observable<Offer> searcherError(SearcherException t) {
                 assertThat(t, instanceOf(SearcherException.class));
-                assertThat(t.getMessage(), containsString("message"));
+                assertThat(t.getMessage(), containsString(MESSAGE));
                 assertThat(t.getQuery(), is(new Query("q", "i")));
                 assertThat(t.getCause(), is(nullValue()));
                 return Observable.empty();

@@ -10,7 +10,7 @@ import io.vertx.ext.web.RoutingContext;
 import java.util.List;
 import java.util.Optional;
 
-public class SearchRouter implements Handler<RoutingContext> {
+class SearchRouter implements Handler<RoutingContext> {
 
 
     private final SearchCoordinator searchCoordinator;

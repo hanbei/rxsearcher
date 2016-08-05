@@ -17,12 +17,9 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-/**
- * Created by fschulz on 22.04.2016.
- */
 public class GithubResponseParserTest {
     private static final String GITHUB_SEARCHER = "GithubSearcher";
-    public static final String USD = "USD";
+    private static final String USD = "USD";
 
     private GithubResponseParser responseParser;
     private Response response;

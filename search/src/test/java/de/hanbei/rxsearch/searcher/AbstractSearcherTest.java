@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 public class AbstractSearcherTest {
 
     private static final String TEST_SEARCHER = "TestSearcher";
-    public static final Query DUMMY_QUERY = new Query("something", "id");
+    private static final Query DUMMY_QUERY = new Query("something", "id");
     private final Offer[] expectedOffers = {
             Offer.builder().url("url0").title("title0").price(0.0, "USD").searcher("icon0").image(TEST_SEARCHER).build(),
             Offer.builder().url("url1").title("title1").price(0.0, "USD").searcher("icon1").image(TEST_SEARCHER).build(),
@@ -114,7 +114,7 @@ public class AbstractSearcherTest {
     }
 
     @SuppressWarnings("unchecked")
-    private void givenHttpClientSendsResponse(Response response) throws IOException {
+    private void givenHttpClientSendsResponse(Response response) {
         when(httpClient.executeRequest(any(Request.class), any(AsyncCompletionHandler.class)))
                 .thenAnswer((Answer<Void>) invocation -> {
                     ((AsyncCompletionHandler) invocation.getArguments()[1]).onCompleted(response);
@@ -123,7 +123,7 @@ public class AbstractSearcherTest {
     }
 
     @SuppressWarnings("unchecked")
-    private void givenHttpClientThrows() throws IOException {
+    private void givenHttpClientThrows() {
         when(httpClient.executeRequest(any(Request.class), any(AsyncCompletionHandler.class)))
                 .thenAnswer((Answer<Void>) invocation -> {
                     ((AsyncCompletionHandler) invocation.getArguments()[1]).onThrowable(new RuntimeException("client error"));
