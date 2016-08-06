@@ -95,17 +95,17 @@ public final class OfferBuilder {
         String image = "";
         String description = "";
         String originalUrl;
-        Money shippingCosts = null;
-        String brand = null;
+        Money shippingCosts;
+        String brand;
         Offer.EEC eec;
         Offer.Type type;
         Offer.Availability availability;
         Money ecpc;
         Money listPrice;
-        List<String> eans = new ArrayList<>();
-        List<String> mpns = new ArrayList<>();
-        List<String> gtins = new ArrayList<>();
-        List<String> upcs = new ArrayList<>();
+        final List<String> eans = new ArrayList<>();
+        final List<String> mpns = new ArrayList<>();
+        final List<String> gtins = new ArrayList<>();
+        final List<String> upcs = new ArrayList<>();
 
         public SearcherStep price(Double amount, Currency currency) {
             price = new Money(amount, currency);

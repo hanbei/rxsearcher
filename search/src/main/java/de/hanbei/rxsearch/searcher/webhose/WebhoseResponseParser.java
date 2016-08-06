@@ -15,12 +15,9 @@ import java.util.List;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-/**
- * Created by fschulz on 22.04.2016.
- */
 public class WebhoseResponseParser implements ResponseParser {
     private static final ObjectMapper mapper = new ObjectMapper();
-    private String name;
+    private final String name;
 
     public WebhoseResponseParser(String name) {
         this.name = name;

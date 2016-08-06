@@ -14,7 +14,7 @@ public interface ResponseParser {
      * Observable that contains the exception should be returned. If the response is parseable but contains no
      * results an empty Observable should be returned
      *
-     * @param response
+     * @param response The response to parse
      * @return An observable
      */
     Observable<Offer> toSearchResults(Response response);

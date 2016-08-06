@@ -36,15 +36,14 @@ public abstract class AbstractSearcher implements Searcher {
 
     private Observable<Response> asyncGet(Query query) {
         return Observable.create(subscriber -> {
-            final Request request = urlBuilder.createRequest(query);
-            asyncHttpClient.executeRequest(request, new AsyncCompletionHandler<Response>() {
+                    final Request request = urlBuilder.createRequest(query);
+                    asyncHttpClient.executeRequest(request, new AsyncCompletionHandler<Response>() {
                         @Override
                         public Response onCompleted(Response response) throws Exception {
                             if (response.getStatusCode() < 300) {
                                 subscriber.onNext(response);
                                 subscriber.onCompleted();
                             } else {
-                                System.out.println(request);
                                 subscriber.onError(new SearcherException(query, getName() + ":" + response.getStatusCode() + " " + response.getStatusText()));
                             }
                             return response;
@@ -61,7 +60,7 @@ public abstract class AbstractSearcher implements Searcher {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("{\"" + getClass().getSimpleName() + "\":{")
+        final StringBuilder sb = new StringBuilder("{\"").append(getClass().getSimpleName()).append("\":{")
                 .append("\"name\":\"").append(name).append('"')
                 .append("}}");
         return sb.toString();

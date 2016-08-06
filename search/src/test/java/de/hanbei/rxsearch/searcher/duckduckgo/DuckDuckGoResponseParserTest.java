@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 public class DuckDuckGoResponseParserTest {
 
     private static final String DUCK_DUCK_GO_SEARCHER = "DuckDuckGoSearcher";
-    public static final String USD = "USD";
+    private static final String USD = "USD";
     private Response response;
     private DuckDuckGoResponseParser responseParser;
 
