@@ -30,7 +30,7 @@ public class WebhoseRequestBuilderTest extends RequestUrlBuilderTest {
 
     @Test
     public void correctRequestUrlIsBuilt() {
-        Request input = urlBuilder.createRequest(new Query("input", "id"));
+        Request input = urlBuilder.createRequest(query);
         assertThat(input.getUrl(), is("https://webhose.io/search?q=input&token=some-key&format=json&size=10"));
     }
 

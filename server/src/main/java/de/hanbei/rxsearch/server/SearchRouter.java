@@ -22,9 +22,11 @@ class SearchRouter implements Handler<RoutingContext> {
     @Override
     public void handle(RoutingContext routingContext) {
         String keyword = routingContext.request().getParam("q");
+        String country = Optional.ofNullable(routingContext.request().getParam("country")).orElse("de");
         String requestId = Optional.ofNullable(routingContext.request().getHeader("X-Request-ID")).orElse("some_id");
 
-        Query query = new Query(keyword, requestId);
+        Query query = Query.builder().keywords(keyword).requestId(requestId).country(country).build();
+
         ResponseHandler responseHandler = new VertxResponseHandler(routingContext);
         searchCoordinator.startSearch(query, responseHandler);
     }

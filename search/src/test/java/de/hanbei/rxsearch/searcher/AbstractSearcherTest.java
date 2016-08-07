@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 public class AbstractSearcherTest {
 
     private static final String TEST_SEARCHER = "TestSearcher";
-    private static final Query DUMMY_QUERY = new Query("something", "id");
+    private static final Query DUMMY_QUERY = Query.builder().keywords("something").requestId("id").country("de").build();
     private final Offer[] expectedOffers = {
             Offer.builder().url("url0").title("title0").price(0.0, "USD").searcher("icon0").image(TEST_SEARCHER).build(),
             Offer.builder().url("url1").title("title1").price(0.0, "USD").searcher("icon1").image(TEST_SEARCHER).build(),
@@ -110,7 +110,7 @@ public class AbstractSearcherTest {
     }
 
     private void givenResponseParserSendsErrorObservable() {
-        when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.error(new SearcherException(new Query("t", "id"), "response parser error")));
+        when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.error(new SearcherException(DUMMY_QUERY, "response parser error")));
     }
 
     @SuppressWarnings("unchecked")

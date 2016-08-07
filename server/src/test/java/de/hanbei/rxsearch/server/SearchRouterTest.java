@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.Searcher;
+import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
@@ -13,6 +14,7 @@ import rx.Observable;
 
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -21,6 +23,9 @@ import static org.mockito.Mockito.when;
 public class SearchRouterTest {
 
     private static final String SEARCH_TERM = "search_term";
+    private static final String ID = "id";
+    private static final String DE = "de";
+    private static final Query QUERY = Query.builder().keywords(SEARCH_TERM).requestId(ID).country(DE).build();
     private SearchRouter router;
     private RoutingContext routingContext;
 
@@ -36,9 +41,10 @@ public class SearchRouterTest {
 
         HttpServerRequest request = mock(HttpServerRequest.class);
         when(request.getParam("q")).thenReturn(SEARCH_TERM);
-        when(request.getHeader("X-Request-ID")).thenReturn("id");
+        when(request.getParam("country")).thenReturn(DE);
+        when(request.getHeader("X-Request-ID")).thenReturn(ID);
         response = mock(HttpServerResponse.class);
-        when(response.putHeader(anyString(), anyString())).thenReturn(response);
+        when(response.putHeader(eq(HttpHeaders.CONTENT_TYPE), anyString())).thenReturn(response);
 
         routingContext = mock(RoutingContext.class);
         when(routingContext.request()).thenReturn(request);
@@ -49,8 +55,8 @@ public class SearchRouterTest {
 
     @Test
     public void whenSearcherRespondRendersCorrectJson() {
-        when(searcher1.search(new Query(SEARCH_TERM, "id"))).thenReturn(Observable.just(Offer.builder().url("url").title("title").price(0.0, "USD").searcher("searcher1").build()));
-        when(searcher2.search(new Query(SEARCH_TERM, "id"))).thenReturn(Observable.just(Offer.builder().url("url").title("title").price(0.0, "USD").searcher("searcher2").build()));
+        when(searcher1.search(QUERY)).thenReturn(Observable.just(Offer.builder().url("url").title("title").price(0.0, "USD").searcher("searcher1").build()));
+        when(searcher2.search(QUERY)).thenReturn(Observable.just(Offer.builder().url("url").title("title").price(0.0, "USD").searcher("searcher2").build()));
 
         router.handle(routingContext);
 
@@ -62,7 +68,7 @@ public class SearchRouterTest {
 
     @Test
     public void sendsErrorResponseWhenSearchThrows() {
-        when(searcher1.search(new Query(SEARCH_TERM, "id"))).thenReturn(Observable.error(new RuntimeException("SearchError")));
+        when(searcher1.search(QUERY)).thenReturn(Observable.error(new RuntimeException("SearchError")));
 
         router.handle(routingContext);
 

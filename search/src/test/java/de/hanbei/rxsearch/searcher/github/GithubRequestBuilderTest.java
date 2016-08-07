@@ -1,7 +1,6 @@
 package de.hanbei.rxsearch.searcher.github;
 
 import com.ning.http.client.Request;
-import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.RequestUrlBuilderTest;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +29,7 @@ public class GithubRequestBuilderTest extends RequestUrlBuilderTest {
 
     @Test
     public void correctRequestUrlIsBuilt() {
-        Request input = urlBuilder.createRequest(new Query("input", "id"));
+        Request input = urlBuilder.createRequest(query);
         assertThat(input.getUrl(), is("https://api.github.com/search/code?q=input+repo:test/repo"));
     }
 
