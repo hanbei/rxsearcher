@@ -62,3 +62,16 @@ schemas:
                   }
                 ]
               }
+      204:
+        headers:
+          x-response-time:
+            type: string
+            description: The time the request took
+        description: No offers could be found for the query. Either all searchers timed out or were actually no offers found.
+      408:
+        headers:
+          x-response-time:
+            type: string
+            description: The time the request took
+        description: The request took longer than six seconds and timed out. No response returned.
+

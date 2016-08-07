@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.hanbei.rxsearch.coordination.ResponseHandler;
 import de.hanbei.rxsearch.model.Offer;
+import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import java.util.Map;
 class VertxResponseHandler implements ResponseHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxResponseHandler.class);
+    private static final String MEDIATYPE_JSON = "application/json";
 
     private final RoutingContext routingContext;
     private final ObjectMapper objectMapper;
@@ -29,6 +31,11 @@ class VertxResponseHandler implements ResponseHandler {
 
     @Override
     public void handleSuccess(List<Offer> results) {
+        if (results.isEmpty()) {
+            sendNoContent(routingContext);
+            return;
+        }
+
         try {
             Map<String, Object> wrapper = new HashMap<>();
             wrapper.put("results", results);
@@ -38,6 +45,16 @@ class VertxResponseHandler implements ResponseHandler {
             handleError(e);
         }
 
+    }
+
+    private void sendNoContent(RoutingContext routingContext) {
+        HttpServerResponse response = routingContext.response();
+
+        if (!response.ended()) {
+            response.putHeader(HttpHeaders.CONTENT_TYPE, MEDIATYPE_JSON).setStatusCode(204).end();
+        } else {
+            logResponseAlreadyEnded();
+        }
     }
 
     @Override
@@ -50,8 +67,14 @@ class VertxResponseHandler implements ResponseHandler {
         HttpServerResponse response = routingContext.response();
 
         if (!response.ended()) {
-            response.putHeader("Content-Type", "application/json").end(s);
+            response.putHeader(HttpHeaders.CONTENT_TYPE, MEDIATYPE_JSON).end(s);
+        } else {
+            logResponseAlreadyEnded();
         }
+    }
+
+    private void logResponseAlreadyEnded() {
+        LOGGER.warn("Reponse already ended");
     }
 
 }
