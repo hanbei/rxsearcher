@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 
-class VertxServer extends AbstractVerticle {
+public class VertxServer extends AbstractVerticle {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxServer.class);
 
