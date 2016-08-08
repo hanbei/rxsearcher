@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.Searcher;
+import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
@@ -11,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 import rx.Observable;
 
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.mock;
@@ -38,7 +40,7 @@ public class SearchRouterTest {
         when(request.getParam("q")).thenReturn(SEARCH_TERM);
         when(request.getHeader("X-Request-ID")).thenReturn("id");
         response = mock(HttpServerResponse.class);
-        when(response.putHeader(anyString(), anyString())).thenReturn(response);
+        when(response.putHeader(eq(HttpHeaders.CONTENT_TYPE), anyString())).thenReturn(response);
 
         routingContext = mock(RoutingContext.class);
         when(routingContext.request()).thenReturn(request);
