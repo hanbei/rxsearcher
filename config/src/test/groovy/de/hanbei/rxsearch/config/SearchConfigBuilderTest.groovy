@@ -41,6 +41,14 @@ class SearchConfigBuilderTest extends Specification {
         searcher.name == "zoom"
     }
 
+    def "create zoom searcher with direct attributes"() {
+        when:
+        ZoomSearcher searcher = searchConfigBuilder.zoom("zoom", "http://example.com/zoom")
+
+        then:
+        searcher.name == "zoom"
+    }
+
     def "create unknown searcher"() {
         when:
         searchConfigBuilder.unknown([name: "zoom", baseUrl: "http://example.com/zoom"])

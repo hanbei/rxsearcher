@@ -11,7 +11,17 @@ import de.hanbei.rxsearch.searcher.zoom.ZoomSearcher
 class SearchConfigBuilder extends BuilderSupport {
 
     private static final String NAME = "name"
-    public static final String BASE_URL = "baseUrl"
+    private static final String REPO = "repo"
+    private static final String KEY = "key"
+    private static final String BASE_URL = "baseUrl"
+
+    private static final String DUCKDUCKGO = "duckduckgo"
+    private static final String FRED = "fred"
+    private static final String GITHUB = "github"
+    private static final String WEBHOSE = "webhose"
+    private static final String ZOOM = "zoom"
+    private static final String SEARCHERS = "searchers"
+
     private AsyncHttpClient asyncHttpClient
 
     SearchConfigBuilder(AsyncHttpClient asyncHttpClient) {
@@ -45,21 +55,41 @@ class SearchConfigBuilder extends BuilderSupport {
     @Override
     protected Object createNode(Object name, Map attributes, Object value) {
         switch (name) {
-            case "searchers":
+            case SEARCHERS:
                 return new Searchers()
-            case "zoom":
+            case ZOOM:
                 return createZoomSearcher(attributes)
-            case "webhose":
+            case WEBHOSE:
                 return createWebhoseSearcher(attributes)
-            case "github":
+            case GITHUB:
                 return createGithubSearcher(attributes)
-            case "fred":
+            case FRED:
                 return createFredSearcher(attributes)
-            case "duckduckgo":
+            case DUCKDUCKGO:
                 return createDuckDuckGoSearcher(attributes)
             default:
                 throw new ConfigurationException("Encountered unknown searcher: ${name}")
         }
+    }
+
+    public Object duckduckgo(String name) {
+        createNode(DUCKDUCKGO, [name: name])
+    }
+
+    public Object fred(String name, String baseUrl) {
+        createNode(FRED, [name: name, baseUrl: baseUrl])
+    }
+
+    public Object github(String name, String repo) {
+        createNode(GITHUB, [name: name, repo: repo])
+    }
+
+    public Object webhose(String name, String key) {
+        createNode(WEBHOSE, [name: name, key: key])
+    }
+
+    public Object zoom(String name, String baseUrl) {
+        createNode(ZOOM, [name: name, baseUrl: baseUrl])
     }
 
     private DuckDuckGoSearcher createDuckDuckGoSearcher(Map attributes) {
@@ -73,13 +103,13 @@ class SearchConfigBuilder extends BuilderSupport {
     }
 
     private GithubSearcher createGithubSearcher(Map attributes) {
-        checkAttributes("GithubSearcher", attributes, NAME, "repo")
-        return new GithubSearcher(attributes.get(NAME) as String, attributes.get("repo") as String, asyncHttpClient)
+        checkAttributes("GithubSearcher", attributes, NAME, REPO)
+        return new GithubSearcher(attributes.get(NAME) as String, attributes.get(REPO) as String, asyncHttpClient)
     }
 
     private WebhoseSearcher createWebhoseSearcher(Map attributes) {
-        checkAttributes("WebhoseSearcher", attributes, NAME, "key")
-        return new WebhoseSearcher(attributes.get(NAME) as String, attributes.get("key") as String, asyncHttpClient)
+        checkAttributes("WebhoseSearcher", attributes, NAME, KEY)
+        return new WebhoseSearcher(attributes.get(NAME) as String, attributes.get(KEY) as String, asyncHttpClient)
     }
 
     private ZoomSearcher createZoomSearcher(Map attributes) {
