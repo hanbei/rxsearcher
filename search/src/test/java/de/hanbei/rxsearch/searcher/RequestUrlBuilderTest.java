@@ -2,7 +2,6 @@ package de.hanbei.rxsearch.searcher;
 
 import de.hanbei.rxsearch.model.Query;
 import org.junit.Rule;
-import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 public abstract class RequestUrlBuilderTest {
@@ -11,15 +10,6 @@ public abstract class RequestUrlBuilderTest {
 
     protected RequestBuilder urlBuilder;
 
-    @Test
-    public void emptyInputViolatesPrecondition() {
-        expectedException.expect(IllegalArgumentException.class);
-        urlBuilder.createRequest(new Query("", "id"));
-    }
+    protected final Query query = Query.builder().keywords("input").requestId("id").country("de").build();
 
-    @Test
-    public void nullInputViolatesPrecondition() {
-        expectedException.expect(IllegalArgumentException.class);
-        urlBuilder.createRequest(new Query("", "id"));
-    }
 }

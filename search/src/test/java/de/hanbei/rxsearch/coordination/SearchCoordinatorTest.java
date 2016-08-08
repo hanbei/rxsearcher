@@ -25,8 +25,8 @@ import static org.mockito.Mockito.when;
 public class SearchCoordinatorTest {
 
     private static final String MESSAGE = "message";
-    private static final String QUERY = "query";
-    private static final String ID = "id";
+    private static final Query QUERY = Query.builder().keywords("query").requestId("id").country("de").build();
+    private static final Query OTHER_QUERY = Query.builder().keywords("q").requestId("i").country("de").build();
     private SearchCoordinator coordinator;
     private Searcher searcher;
 
@@ -40,7 +40,7 @@ public class SearchCoordinatorTest {
     public void searchReturnSucessfulCallsSuccessHandler() {
         when(searcher.search(any(Query.class))).thenReturn(Observable.just(Offer.builder().url("").title("").price(0.0, "EUR").searcher("test").build()));
 
-        coordinator.startSearch(new Query(QUERY, ID), new ResponseHandler() {
+        coordinator.startSearch(QUERY, new ResponseHandler() {
             @Override
             public void handleSuccess(List<Offer> results) {
                 assertThat(results.size(), is(not(0)));
@@ -55,9 +55,9 @@ public class SearchCoordinatorTest {
 
     @Test
     public void searchThrowsCallsErrorHandler() {
-        when(searcher.search(any(Query.class))).thenThrow(new SearcherException(new Query("q", ID), MESSAGE));
+        when(searcher.search(any(Query.class))).thenThrow(new SearcherException(OTHER_QUERY, MESSAGE));
 
-        coordinator.startSearch(new Query(QUERY, ID), new ResponseHandler() {
+        coordinator.startSearch(QUERY, new ResponseHandler() {
             @Override
             public void handleSuccess(List<Offer> results) {
                 fail("Success not expected");
@@ -67,7 +67,7 @@ public class SearchCoordinatorTest {
             public void handleError(Throwable t) {
                 assertThat(t, instanceOf(SearcherException.class));
                 assertThat(t.getMessage(), is(MESSAGE));
-                assertThat(((SearcherException) t).getQuery(), is(new Query("q", ID)));
+                assertThat(((SearcherException) t).getQuery(), is(OTHER_QUERY));
             }
         });
     }
@@ -76,7 +76,7 @@ public class SearchCoordinatorTest {
     public void searchThrowsRuntimeExceptionIsWrappedInSearcherException() {
         when(searcher.search(any(Query.class))).thenReturn(Observable.error(new IllegalArgumentException(MESSAGE)));
 
-        coordinator.startSearch(new Query(QUERY, ID), new ResponseHandler() {
+        coordinator.startSearch(QUERY, new ResponseHandler() {
             @Override
             public void handleSuccess(List<Offer> results) {
                 assertThat(results.size(), is(0));
@@ -91,7 +91,7 @@ public class SearchCoordinatorTest {
             public Observable<Offer> searcherError(SearcherException t) {
                 assertThat(t, instanceOf(SearcherException.class));
                 assertThat(t.getMessage(), containsString(MESSAGE));
-                assertThat(t.getQuery(), is(new Query(QUERY, ID)));
+                assertThat(t.getQuery(), is(QUERY));
                 assertThat(t.getCause(), instanceOf(IllegalArgumentException.class));
                 return Observable.empty();
             }
@@ -100,9 +100,9 @@ public class SearchCoordinatorTest {
 
     @Test
     public void searchThrowsSearcherExceptionIsNotWrappedInSearcherException() {
-        when(searcher.search(any(Query.class))).thenReturn(Observable.error(new SearcherException(new Query("q", "i"), MESSAGE)));
+        when(searcher.search(any(Query.class))).thenReturn(Observable.error(new SearcherException(OTHER_QUERY, MESSAGE)));
 
-        coordinator.startSearch(new Query(QUERY, ID), new ResponseHandler() {
+        coordinator.startSearch(QUERY, new ResponseHandler() {
             @Override
             public void handleSuccess(List<Offer> results) {
                 // do nothing we are only interested in searcherError
@@ -117,7 +117,7 @@ public class SearchCoordinatorTest {
             public Observable<Offer> searcherError(SearcherException t) {
                 assertThat(t, instanceOf(SearcherException.class));
                 assertThat(t.getMessage(), containsString(MESSAGE));
-                assertThat(t.getQuery(), is(new Query("q", "i")));
+                assertThat(t.getQuery(), is(OTHER_QUERY));
                 assertThat(t.getCause(), is(nullValue()));
                 return Observable.empty();
             }
