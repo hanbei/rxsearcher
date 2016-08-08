@@ -1,0 +1,10 @@
+def groovletContext = context(filetypes: ['groovy'], scope: scriptScope())
+
+contributor(groovletContext) {
+    method name: 'searchers', type: 'void'
+    method name: 'zoom', type: "void", params: [name: 'java.lang.String', baseUrl: 'java.lang.String']
+    method name: 'webhose', type: "void", params: [name: 'java.lang.String', key: 'java.lang.String']
+    method name: 'github', type: "void", params: [name: 'java.lang.String', repo: 'java.lang.String']
+    method name: 'fred', type: "void", params: [name: 'java.lang.String', baseUrl: 'java.lang.String']
+    method name: 'duckduckgo', type: "void", params: [name: 'java.lang.String']
+}
