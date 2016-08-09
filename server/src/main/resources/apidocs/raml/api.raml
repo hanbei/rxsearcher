@@ -15,7 +15,11 @@ schemas:
       q:
         type: string
         required: true
-        description: Keyword parameter
+        description: The keywords to search for.
+      country:
+        type: string
+        required: false
+        description: Parameter to force the country searched in.
     headers:
       X-Request-ID:
         type: string
