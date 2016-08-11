@@ -1,5 +1,6 @@
 package de.hanbei.rxsearch.coordination;
 
+import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.Searcher;
 import de.hanbei.rxsearch.searcher.SearcherException;
@@ -15,16 +16,12 @@ public class SearchCoordinator {
         this.searcher = searcher;
     }
 
-    public void startSearch(Query query, ResponseHandler handler) {
-        Observable.from(searcher)
+    public Observable<Offer> startSearch(Query query, ResponseHandler handler) {
+        return Observable.from(searcher)
                 .flatMap(
                         searcher -> searcher.search(query)
                                 .onErrorResumeNext(t -> handler.searcherError(SearcherException.wrap(query, t))
                                 )
-                )
-                .toList().subscribe(
-                handler::handleSuccess,
-                handler::handleError
-        );
+                );
     }
 }
