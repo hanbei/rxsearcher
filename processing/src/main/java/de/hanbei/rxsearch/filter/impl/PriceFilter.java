@@ -1,5 +1,6 @@
-package de.hanbei.rxsearch.filter;
+package de.hanbei.rxsearch.filter.impl;
 
+import de.hanbei.rxsearch.filter.Filter;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import rx.Observable;

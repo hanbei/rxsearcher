@@ -4,7 +4,7 @@ import com.google.common.collect.Lists;
 import de.hanbei.rxsearch.coordination.ResponseHandler;
 import de.hanbei.rxsearch.coordination.SearchCoordinator;
 import de.hanbei.rxsearch.filter.FilterCoordinator;
-import de.hanbei.rxsearch.filter.PriceFilter;
+import de.hanbei.rxsearch.filter.impl.PriceFilter;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.Searcher;
