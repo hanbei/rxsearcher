@@ -1,10 +1,9 @@
 package de.hanbei.rxsearch.server;
 
-import com.google.common.collect.Lists;
 import de.hanbei.rxsearch.coordination.ResponseHandler;
 import de.hanbei.rxsearch.coordination.SearchCoordinator;
-import de.hanbei.rxsearch.filter.FilterCoordinator;
-import de.hanbei.rxsearch.filter.impl.PriceFilter;
+import de.hanbei.rxsearch.filter.OfferProcessor;
+import de.hanbei.rxsearch.filter.OfferProcessorCoordinator;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.Searcher;
@@ -17,14 +16,12 @@ import java.util.Optional;
 
 class SearchRouter implements Handler<RoutingContext> {
 
-
     private final SearchCoordinator searchCoordinator;
-    private final FilterCoordinator filterCoordinator;
+    private final OfferProcessorCoordinator filterCoordinator;
 
-
-    public SearchRouter(List<Searcher> searcher) {
+    public SearchRouter(List<Searcher> searcher, List<OfferProcessor> processors) {
         this.searchCoordinator = new SearchCoordinator(searcher);
-        this.filterCoordinator = new FilterCoordinator(Lists.newArrayList(new PriceFilter()));
+        this.filterCoordinator = new OfferProcessorCoordinator(processors);
     }
 
     @Override
@@ -45,6 +42,5 @@ class SearchRouter implements Handler<RoutingContext> {
         );
 
     }
-
 
 }

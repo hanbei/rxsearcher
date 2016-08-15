@@ -4,8 +4,8 @@ import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import rx.Observable;
 
-public interface Filter {
+public interface OfferProcessor {
 
-    Observable<Offer> filter(Query query, Observable<Offer> observable);
+    Observable<Offer> process(Query query, Observable<Offer> observable);
 
 }

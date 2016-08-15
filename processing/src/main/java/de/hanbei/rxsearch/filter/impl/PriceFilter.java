@@ -1,14 +1,14 @@
 package de.hanbei.rxsearch.filter.impl;
 
-import de.hanbei.rxsearch.filter.Filter;
+import de.hanbei.rxsearch.filter.OfferProcessor;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import rx.Observable;
 
-public class PriceFilter implements Filter {
+public class PriceFilter implements OfferProcessor {
 
     @Override
-    public Observable<Offer> filter(Query query, Observable<Offer> observable) {
+    public Observable<Offer> process(Query query, Observable<Offer> observable) {
         if (query.price() == null) {
             return observable;
         }
