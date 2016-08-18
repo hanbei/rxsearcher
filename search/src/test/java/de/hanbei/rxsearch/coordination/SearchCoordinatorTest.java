@@ -8,6 +8,7 @@ import de.hanbei.rxsearch.searcher.SearcherException;
 import org.junit.Before;
 import org.junit.Test;
 import rx.Observable;
+import rx.observers.TestSubscriber;
 
 import java.util.List;
 
@@ -38,8 +39,10 @@ public class SearchCoordinatorTest {
 
     @Test
     public void searchReturnSucessfulCallsSuccessHandler() {
-        when(searcher.search(any(Query.class))).thenReturn(Observable.just(Offer.builder().url("").title("").price(0.0, "EUR").searcher("test").build()));
+        Offer offer = Offer.builder().url("").title("").price(0.0, "EUR").searcher("test").build();
+        when(searcher.search(any(Query.class))).thenReturn(Observable.just(offer));
 
+        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         coordinator.startSearch(QUERY, new ResponseHandler() {
             @Override
             public void handleSuccess(List<Offer> results) {
@@ -50,13 +53,16 @@ public class SearchCoordinatorTest {
             public void handleError(Throwable t) {
                 fail(t.getMessage());
             }
-        });
+        }).subscribe(subscriber);
+        subscriber.assertCompleted();
+        subscriber.assertValue(offer);
     }
 
     @Test
     public void searchThrowsCallsErrorHandler() {
         when(searcher.search(any(Query.class))).thenThrow(new SearcherException(OTHER_QUERY, MESSAGE));
 
+        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         coordinator.startSearch(QUERY, new ResponseHandler() {
             @Override
             public void handleSuccess(List<Offer> results) {
@@ -65,17 +71,18 @@ public class SearchCoordinatorTest {
 
             @Override
             public void handleError(Throwable t) {
-                assertThat(t, instanceOf(SearcherException.class));
-                assertThat(t.getMessage(), is(MESSAGE));
-                assertThat(((SearcherException) t).getQuery(), is(OTHER_QUERY));
+                fail("Error not expected");
             }
-        });
+        }).subscribe(subscriber);
+        subscriber.assertNotCompleted();
+        subscriber.assertNoValues();
     }
 
     @Test
     public void searchThrowsRuntimeExceptionIsWrappedInSearcherException() {
         when(searcher.search(any(Query.class))).thenReturn(Observable.error(new IllegalArgumentException(MESSAGE)));
 
+        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         coordinator.startSearch(QUERY, new ResponseHandler() {
             @Override
             public void handleSuccess(List<Offer> results) {
@@ -95,7 +102,10 @@ public class SearchCoordinatorTest {
                 assertThat(t.getCause(), instanceOf(IllegalArgumentException.class));
                 return Observable.empty();
             }
-        });
+        }).subscribe(subscriber);
+        subscriber.assertCompleted();
+        subscriber.assertNoValues();
+        ;
     }
 
     @Test
