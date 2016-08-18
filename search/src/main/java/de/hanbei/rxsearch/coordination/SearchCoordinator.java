@@ -20,7 +20,8 @@ public class SearchCoordinator {
         return Observable.from(searcher)
                 .flatMap(
                         searcher -> searcher.search(query)
-                                .onErrorResumeNext(t -> handler.searcherError(SearcherException.wrap(query, t))
+                                .onErrorResumeNext(t ->
+                                        handler.searcherError(SearcherException.wrap(t).searcher(searcher.getName()).query(query))
                                 )
                 );
     }

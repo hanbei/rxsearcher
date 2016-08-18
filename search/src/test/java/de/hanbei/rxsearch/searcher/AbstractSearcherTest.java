@@ -110,7 +110,7 @@ public class AbstractSearcherTest {
     }
 
     private void givenResponseParserSendsErrorObservable() {
-        when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.error(new SearcherException(DUMMY_QUERY, "response parser error")));
+        when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.error(new SearcherException("response parser error").query(DUMMY_QUERY)));
     }
 
     @SuppressWarnings("unchecked")
