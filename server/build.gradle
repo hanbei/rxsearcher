@@ -4,6 +4,7 @@ mainClassName = "de.hanbei.rxsearch.server.VertxServer"
 
 dependencies {
     compile project(":search")
+    compile project(":processing")
     compile project(":config")
 
     compile "io.vertx:vertx-core"

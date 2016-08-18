@@ -8,13 +8,13 @@ import de.hanbei.rxsearch.searcher.SearcherException;
 import org.junit.Before;
 import org.junit.Test;
 import rx.Observable;
+import rx.observers.TestSubscriber;
 
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
-import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -38,55 +38,43 @@ public class SearchCoordinatorTest {
 
     @Test
     public void searchReturnSucessfulCallsSuccessHandler() {
-        when(searcher.search(any(Query.class))).thenReturn(Observable.just(Offer.builder().url("").title("").price(0.0, "EUR").searcher("test").build()));
+        Offer offer = Offer.builder().url("").title("").price(0.0, "EUR").searcher("test").build();
+        when(searcher.search(any(Query.class))).thenReturn(Observable.just(offer));
 
-        coordinator.startSearch(QUERY, new ResponseHandler() {
+        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
+        coordinator.startSearch(QUERY, new SearcherErrorHandler() {
             @Override
-            public void handleSuccess(List<Offer> results) {
-                assertThat(results.size(), is(not(0)));
+            public Observable<Offer> searcherError(SearcherException t) {
+                fail("Should not throw error");
+                return Observable.empty();
             }
-
-            @Override
-            public void handleError(Throwable t) {
-                fail(t.getMessage());
-            }
-        });
+        }).subscribe(subscriber);
+        subscriber.assertCompleted();
+        subscriber.assertValue(offer);
     }
 
     @Test
     public void searchThrowsCallsErrorHandler() {
         when(searcher.search(any(Query.class))).thenThrow(new SearcherException(OTHER_QUERY, MESSAGE));
 
-        coordinator.startSearch(QUERY, new ResponseHandler() {
+        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
+        coordinator.startSearch(QUERY, new SearcherErrorHandler() {
             @Override
-            public void handleSuccess(List<Offer> results) {
-                fail("Success not expected");
+            public Observable<Offer> searcherError(SearcherException t) {
+                fail("Should not throw error");
+                return Observable.empty();
             }
-
-            @Override
-            public void handleError(Throwable t) {
-                assertThat(t, instanceOf(SearcherException.class));
-                assertThat(t.getMessage(), is(MESSAGE));
-                assertThat(((SearcherException) t).getQuery(), is(OTHER_QUERY));
-            }
-        });
+        }).subscribe(subscriber);
+        subscriber.assertNotCompleted();
+        subscriber.assertNoValues();
     }
 
     @Test
     public void searchThrowsRuntimeExceptionIsWrappedInSearcherException() {
         when(searcher.search(any(Query.class))).thenReturn(Observable.error(new IllegalArgumentException(MESSAGE)));
 
-        coordinator.startSearch(QUERY, new ResponseHandler() {
-            @Override
-            public void handleSuccess(List<Offer> results) {
-                assertThat(results.size(), is(0));
-            }
-
-            @Override
-            public void handleError(Throwable t) {
-                fail("Global error not expected");
-            }
-
+        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
+        coordinator.startSearch(QUERY, new SearcherErrorHandler() {
             @Override
             public Observable<Offer> searcherError(SearcherException t) {
                 assertThat(t, instanceOf(SearcherException.class));
@@ -95,24 +83,16 @@ public class SearchCoordinatorTest {
                 assertThat(t.getCause(), instanceOf(IllegalArgumentException.class));
                 return Observable.empty();
             }
-        });
+        }).subscribe(subscriber);
+        subscriber.assertCompleted();
+        subscriber.assertNoValues();
     }
 
     @Test
     public void searchThrowsSearcherExceptionIsNotWrappedInSearcherException() {
         when(searcher.search(any(Query.class))).thenReturn(Observable.error(new SearcherException(OTHER_QUERY, MESSAGE)));
 
-        coordinator.startSearch(QUERY, new ResponseHandler() {
-            @Override
-            public void handleSuccess(List<Offer> results) {
-                // do nothing we are only interested in searcherError
-            }
-
-            @Override
-            public void handleError(Throwable t) {
-                fail("Global error not expected");
-            }
-
+        coordinator.startSearch(QUERY, new SearcherErrorHandler() {
             @Override
             public Observable<Offer> searcherError(SearcherException t) {
                 assertThat(t, instanceOf(SearcherException.class));

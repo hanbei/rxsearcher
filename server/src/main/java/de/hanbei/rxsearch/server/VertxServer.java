@@ -1,8 +1,10 @@
 package de.hanbei.rxsearch.server;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
 import com.ning.http.client.AsyncHttpClient;
 import de.hanbei.rxsearch.config.SearcherConfiguration;
+import de.hanbei.rxsearch.filter.OfferProcessor;
 import de.hanbei.rxsearch.searcher.Searcher;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
@@ -36,7 +38,9 @@ public class VertxServer extends AbstractVerticle {
         searcherConfiguration = new SearcherConfiguration(asyncHttpClient);
 
         List<Searcher> searchers = searcherConfiguration.loadConfiguration("rxsearch", "testing", "de");
-        searchRouter = new SearchRouter(searchers);
+        List<OfferProcessor> processors = Lists.newArrayList();
+
+        searchRouter = new SearchRouter(searchers, processors);
     }
 
     @Override

@@ -7,11 +7,13 @@ public class Query {
     private final String keywords;
     private final String requestId;
     private final String country;
+    private final Money price;
 
-    Query(String keywords, String requestId, String country) {
+    Query(String keywords, String requestId, String country, Money price) {
         this.keywords = keywords;
         this.requestId = requestId;
         this.country = country;
+        this.price = price;
     }
 
     public static QueryBuilder.KeywordStep builder() {
@@ -28,6 +30,10 @@ public class Query {
 
     public String country() {
         return country;
+    }
+
+    public Money price() {
+        return price;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package de.hanbei.rxsearch.server;
 
-import com.google.common.collect.Lists;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.Searcher;
@@ -12,10 +11,10 @@ import org.junit.Before;
 import org.junit.Test;
 import rx.Observable;
 
+import static com.google.common.collect.Lists.newArrayList;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -51,7 +50,7 @@ public class SearchRouterTest {
         when(routingContext.request()).thenReturn(request);
         when(routingContext.response()).thenReturn(response);
 
-        router = new SearchRouter(Lists.newArrayList(searcher1, searcher2));
+        router = new SearchRouter(newArrayList(searcher1, searcher2), newArrayList());
     }
 
     @Test
