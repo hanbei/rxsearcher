@@ -44,14 +44,14 @@ public abstract class AbstractSearcher implements Searcher {
                                 subscriber.onNext(response);
                                 subscriber.onCompleted();
                             } else {
-                                subscriber.onError(new SearcherException(query, getName() + ":" + response.getStatusCode() + " " + response.getStatusText()));
+                                subscriber.onError(new SearcherException(response.getStatusCode() + " " + response.getStatusText()).searcher(getName()).query(query));
                             }
                             return response;
                         }
 
                         @Override
                         public void onThrowable(Throwable t) {
-                            subscriber.onError(new SearcherException(query, t));
+                            subscriber.onError(new SearcherException(t).searcher(getName()).query(query));
                         }
                     });
                 }

@@ -4,32 +4,45 @@ import de.hanbei.rxsearch.model.Query;
 
 public class SearcherException extends RuntimeException {
 
-    private final Query query;
+    private Query query;
+    private String searcher;
 
-    public SearcherException(Query query, String message) {
+    public SearcherException(String message) {
         super(message);
-        this.query = query;
     }
 
-    public SearcherException(Query query, Throwable throwable) {
+    public SearcherException(Throwable throwable) {
         super(throwable);
-        this.query = query;
     }
 
-    public static SearcherException wrap(Query query, Throwable t) {
+    public static SearcherException wrap(Throwable t) {
         if (t instanceof SearcherException) {
             return (SearcherException) t;
         }
-        return new SearcherException(query, t);
+        return new SearcherException(t);
     }
 
     @Override
     public String getMessage() {
-        return super.getMessage();
+        return "searcher=" + searcher + ", query=" + query + ", message=" + super.getMessage();
     }
 
     public Query getQuery() {
         return query;
+    }
+
+    public String getSearcher() {
+        return searcher;
+    }
+
+    public SearcherException query(Query query) {
+        this.query = query;
+        return this;
+    }
+
+    public SearcherException searcher(String searcher) {
+        this.searcher = searcher;
+        return this;
     }
 
 }

@@ -10,8 +10,6 @@ import org.junit.Test;
 import rx.Observable;
 import rx.observers.TestSubscriber;
 
-import java.util.List;
-
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
@@ -55,7 +53,7 @@ public class SearchCoordinatorTest {
 
     @Test
     public void searchThrowsCallsErrorHandler() {
-        when(searcher.search(any(Query.class))).thenThrow(new SearcherException(OTHER_QUERY, MESSAGE));
+        when(searcher.search(any(Query.class))).thenThrow(new SearcherException(MESSAGE).query(OTHER_QUERY));
 
         TestSubscriber<Offer> subscriber = new TestSubscriber<>();
         coordinator.startSearch(QUERY, new SearcherErrorHandler() {
@@ -90,7 +88,7 @@ public class SearchCoordinatorTest {
 
     @Test
     public void searchThrowsSearcherExceptionIsNotWrappedInSearcherException() {
-        when(searcher.search(any(Query.class))).thenReturn(Observable.error(new SearcherException(OTHER_QUERY, MESSAGE)));
+        when(searcher.search(any(Query.class))).thenReturn(Observable.error(new SearcherException(MESSAGE).query(OTHER_QUERY)));
 
         coordinator.startSearch(QUERY, new SearcherErrorHandler() {
             @Override
