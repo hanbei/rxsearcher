@@ -1,7 +1,7 @@
 package de.hanbei.rxsearch.server;
 
-import de.hanbei.rxsearch.coordination.ResponseHandler;
 import de.hanbei.rxsearch.coordination.SearchCoordinator;
+import de.hanbei.rxsearch.coordination.SearcherErrorHandler;
 import de.hanbei.rxsearch.filter.OfferProcessor;
 import de.hanbei.rxsearch.filter.OfferProcessorCoordinator;
 import de.hanbei.rxsearch.model.Offer;
@@ -34,7 +34,8 @@ class SearchRouter implements Handler<RoutingContext> {
 
         ResponseHandler responseHandler = new VertxResponseHandler(routingContext);
 
-        Observable<Offer> offerObservable = searchCoordinator.startSearch(query, responseHandler);
+        Observable<Offer> offerObservable = searchCoordinator.startSearch(query, new SearcherErrorHandler() {
+        });
 
         filterCoordinator.filter(query, offerObservable).toList().subscribe(
                 responseHandler::handleSuccess,

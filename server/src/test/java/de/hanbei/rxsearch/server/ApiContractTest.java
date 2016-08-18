@@ -58,7 +58,7 @@ public class ApiContractTest {
     }
 
     @Test
-    public void testSearchOffersJersey() throws IOException {
+    public void testSearchOffers() throws IOException {
         CheckingWebTarget checking = ramlDefinition.createWebTarget(client.target(SERVER));
 
         checking.path("/search/offers").queryParam("q", "test").request().get();

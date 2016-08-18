@@ -16,7 +16,7 @@ public class SearchCoordinator {
         this.searcher = searcher;
     }
 
-    public Observable<Offer> startSearch(Query query, ResponseHandler handler) {
+    public Observable<Offer> startSearch(Query query, SearcherErrorHandler handler) {
         return Observable.from(searcher)
                 .flatMap(
                         searcher -> searcher.search(query)
