@@ -6,7 +6,35 @@ import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.nullValue;
 import static org.junit.Assert.assertThat;
 
-public class OfferTest {
+public class OfferTest extends EqualsHashcodeTest<Offer> {
+
+    private Offer sourceOffer = Offer.builder()
+            .url("url").title("title").price(0.0, "USD").searcher("searcher")
+            .image("image").category("category").description("desc").manufacturer("manufacturer")
+            .originalUrl("originalUrl").shippingCosts(new Money(1.0, "EUR"))
+            .merchant(new Merchant("ebay", "mimage", "1234", "mcategory"))
+            .brand("brand").build();
+
+
+    @Override
+    protected Offer createEqual() {
+        return sourceOffer;
+    }
+
+    @Override
+    protected Offer createOtherEqual() {
+        return sourceOffer;
+    }
+
+    @Override
+    protected Offer createOther() {
+        return Offer.builder()
+                .url("url2").title("title2").price(0.0, "EUR").searcher("searcher")
+                .image("image").category("category").description("desc").manufacturer("manufacturer")
+                .originalUrl("originalUrl").shippingCosts(new Money(1.0, "EUR"))
+                .merchant(new Merchant("ebay", "mimage", "1234", "mcategory"))
+                .brand("brand").build();
+    }
 
     @Test
     public void testMinimalCreation() {
@@ -28,13 +56,6 @@ public class OfferTest {
 
     @Test
     public void testCreationFromOtherOffer() {
-        Offer sourceOffer = Offer.builder()
-                .url("url").title("title").price(0.0, "USD").searcher("searcher")
-                .image("image").category("category").description("desc").manufacturer("manufacturer")
-                .originalUrl("originalUrl").shippingCosts(new Money(1.0, "EUR"))
-                .merchant(new Merchant("ebay", "mimage", "1234", "mcategory"))
-                .brand("brand").build();
-
         Offer offer = Offer.from(sourceOffer).build();
 
         assertThat(offer.getUrl(), is(sourceOffer.getUrl()));
