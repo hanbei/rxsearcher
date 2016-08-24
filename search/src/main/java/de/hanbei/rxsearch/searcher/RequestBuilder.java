@@ -1,6 +1,7 @@
 package de.hanbei.rxsearch.searcher;
 
 import com.ning.http.client.Request;
+import com.ning.http.util.Base64;
 import de.hanbei.rxsearch.model.Query;
 
 public interface RequestBuilder {
@@ -13,4 +14,8 @@ public interface RequestBuilder {
      * @return The searcher url that can be requested.
      */
     Request createRequest(Query query);
+
+    static String createBasicAuthHeader(String username, String password) {
+        return "Basic " + Base64.encode((username + ":" + password).getBytes());
+    }
 }
