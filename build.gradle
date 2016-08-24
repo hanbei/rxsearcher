@@ -4,6 +4,27 @@ plugins {
     id 'com.github.ben-manes.versions' version '0.13.0'
 }
 
+apply plugin: 'application'
+
+mainClassName = "de.hanbei.rxsearch.server.VertxServer"
+
+dependencies {
+    compile project(":search")
+    compile project(":processing")
+    compile project(":config")
+
+    compile "io.vertx:vertx-core"
+    compile "io.vertx:vertx-web"
+    compile "io.vertx:vertx-dropwizard-metrics"
+
+    compile "ch.qos.logback:logback-classic"
+    compile "org.slf4j:jul-to-slf4j"
+
+    testCompile "guru.nidi.raml:raml-tester"
+    testCompile "io.vertx:vertx-unit"
+    testCompile "org.glassfish.jersey.core:jersey-client"
+}
+
 allprojects {
     apply plugin: 'java'
     apply plugin: "io.spring.dependency-management"
@@ -79,4 +100,4 @@ allprojects {
     }
 }
 
-task stage(dependsOn: ['clean', ':server:installDist'])
+task stage(dependsOn: ['clean', 'installDist'])
