@@ -62,7 +62,7 @@ allprojects {
             }
             dependency "ch.qos.logback:logback-classic:1.1.7"
 
-            dependency 'io.reactivex:rxjava:1.1.8'
+            dependency 'io.reactivex:rxjava:1.1.9'
             dependency 'com.ning:async-http-client:1.9.39'
             dependency 'io.dropwizard.metrics:metrics-core:3.1.2'
 
@@ -82,7 +82,7 @@ allprojects {
                 exclude 'org.hamcrest:hamcrest-core'
             }
             dependency "org.hamcrest:hamcrest-all:1.3"
-            dependency "guru.nidi.raml:raml-tester:0.8.9"
+            dependency "guru.nidi.raml:raml-tester:0.8.10"
             dependency "io.vertx:vertx-unit:3.3.2"
             dependency "org.glassfish.jersey.core:jersey-client:2.23.2"
             dependency "org.spockframework:spock-core:1.0-groovy-2.4"

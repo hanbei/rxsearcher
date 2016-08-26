@@ -1,9 +1,7 @@
 /.gradle
 /.vertx
 /build
-/search/build
-/server/build
 /.idea
 *.iml
-/config/build/
+/**/build/
 .wercker
