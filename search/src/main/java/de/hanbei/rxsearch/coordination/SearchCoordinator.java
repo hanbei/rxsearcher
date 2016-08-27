@@ -32,10 +32,10 @@ public class SearchCoordinator {
         return Observable.from(searchers)
                 .flatMap(
                         searcher -> searcher.search(query)
+                                .doOnCompleted(() -> onCompleted.searcherCompleted(searcher.getName(), query))
                                 .onErrorResumeNext(t ->
                                         onError.searcherError(SearcherException.wrap(t).searcher(searcher.getName()).query(query))
                                 )
-                                .doOnCompleted(() -> onCompleted.searcherCompleted(searcher.getName(), query))
                 );
     }
 
