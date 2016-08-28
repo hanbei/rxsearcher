@@ -10,19 +10,35 @@ import java.util.List;
 
 public class SearchCoordinator {
 
-    private final List<Searcher> searcher;
+    private final List<Searcher> searchers;
+    private final SearcherErrorHandler onError;
+    private final SearcherCompletionHandler onCompleted;
 
     public SearchCoordinator(List<Searcher> searcher) {
-        this.searcher = searcher;
+        this(searcher, t -> Observable.empty(), SearchCoordinator::completionNoop);
     }
 
-    public Observable<Offer> startSearch(Query query, SearcherErrorHandler handler) {
-        return Observable.from(searcher)
+    public SearchCoordinator(List<Searcher> searcher, SearcherErrorHandler onError) {
+        this(searcher, onError, SearchCoordinator::completionNoop);
+    }
+
+    public SearchCoordinator(List<Searcher> searcher, SearcherErrorHandler onError, SearcherCompletionHandler onCompleted) {
+        this.searchers = searcher;
+        this.onError = onError;
+        this.onCompleted = onCompleted;
+    }
+
+    public Observable<Offer> startSearch(Query query) {
+        return Observable.from(searchers)
                 .flatMap(
                         searcher -> searcher.search(query)
+                                .doOnCompleted(() -> onCompleted.searcherCompleted(searcher.getName(), query))
                                 .onErrorResumeNext(t ->
-                                        handler.searcherError(SearcherException.wrap(t).searcher(searcher.getName()).query(query))
+                                        onError.searcherError(SearcherException.wrap(t).searcher(searcher.getName()).query(query))
                                 )
                 );
+    }
+
+    private static void completionNoop(String s, Query q) {
     }
 }
