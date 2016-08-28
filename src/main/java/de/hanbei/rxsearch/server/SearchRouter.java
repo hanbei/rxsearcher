@@ -26,6 +26,8 @@ class SearchRouter implements Handler<RoutingContext> {
         this.searchCoordinator = new SearchCoordinator(searcher, t -> {
             LOGGER.warn("Error in searcher", t);
             return Observable.empty();
+        }, (s, q) -> {
+            LOGGER.info("searcher {} got results for {}", s, q);
         });
         this.filterCoordinator = new OfferProcessorCoordinator(processors);
     }
