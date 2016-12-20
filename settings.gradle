@@ -1,3 +1,5 @@
+rootProject.name="rxsearcher"
+
 include 'search'
 include 'processing'
 include 'config'
