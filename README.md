@@ -22,7 +22,7 @@ according to different use cases.
 caching searcher results. This is not possible here but should be solved via caching the requests to the system.   
 * Keep it simple. Don't use fancy libraries to generate code for you (e.g. lombok et.al.). If there is a simple way 
 to do it that needs more work, still do it. Don't use reflection or anythings else like a DI-Container to keep 
-"configuration" simple but source code complex (to understand).
+"configuration" simple but source code complex to understand.
 * Keep your dependencies minimal. Learn one api before you assume that it's easier with another.
 * Use coverage and static analysis tools to check your code. Minimize the violations and maximize coverage. 
 
@@ -68,5 +68,4 @@ run the server from the commandline.
   
 * **Other guidelines**
 
-  Don't fuck it up, @see reviews.
-  
+  Don't fuck it up.
