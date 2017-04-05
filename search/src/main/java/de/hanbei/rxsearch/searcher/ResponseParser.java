@@ -2,7 +2,7 @@ package de.hanbei.rxsearch.searcher;
 
 import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.Offer;
-import rx.Observable;
+import io.reactivex.Observable;
 
 /**
  * Parses responses from a searcher.

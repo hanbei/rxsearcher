@@ -5,12 +5,15 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.Offer;
+import io.reactivex.Observable;
+import io.reactivex.observers.TestObserver;
+import io.reactivex.schedulers.TestScheduler;
+import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
 import org.junit.Test;
-import rx.Observable;
-import rx.observers.TestSubscriber;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.common.io.Resources.getResource;
 import static org.mockito.Matchers.anyString;
@@ -35,9 +38,11 @@ public class DuckDuckGoResponseParserTest {
     @Test
     public void correctResponseIsParseable() {
         Observable<Offer> observable = responseParser.toSearchResults(response);
-        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
+
+        TestObserver<Offer> subscriber = new TestObserver<>();
+
         observable.subscribe(subscriber);
-        subscriber.assertCompleted();
+        subscriber.assertComplete();
         subscriber.assertValueCount(8);
         subscriber.assertValues(
                 Offer.builder().url("https://duckduckgo.com/Google").title("Google An American multinational technology company specializing in Internet-related services and...").price(0.0, USD).searcher(DUCK_DUCK_GO_SEARCHER).image("https://duckduckgo.com/i/8f85c93f.png").build(),
@@ -57,7 +62,7 @@ public class DuckDuckGoResponseParserTest {
 
         Observable<Offer> observable = responseParser.toSearchResults(response);
 
-        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
+        TestObserver<Offer> subscriber = new TestObserver<>();
         observable.subscribe(subscriber);
         subscriber.assertError(JsonParseException.class);
     }
@@ -68,7 +73,7 @@ public class DuckDuckGoResponseParserTest {
 
         Observable<Offer> observable = responseParser.toSearchResults(response);
 
-        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
+        TestObserver<Offer> subscriber = new TestObserver<>();
         observable.subscribe(subscriber);
         subscriber.assertNoValues();
         subscriber.assertNoErrors();

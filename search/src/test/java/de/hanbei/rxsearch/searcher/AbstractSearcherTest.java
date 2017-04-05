@@ -6,13 +6,16 @@ import com.ning.http.client.Request;
 import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
+import io.reactivex.Observable;
+import io.reactivex.observers.TestObserver;
+import io.reactivex.schedulers.TestScheduler;
+import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
-import rx.Observable;
-import rx.observers.TestSubscriber;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
@@ -39,7 +42,7 @@ public class AbstractSearcherTest {
         when(urlBuilder.createRequest(any(Query.class))).thenReturn(mock(Request.class));
 
         responseParser = mock(ResponseParser.class);
-        when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.from(expectedOffers));
+        when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.fromArray(expectedOffers));
 
         httpClient = mock(AsyncHttpClient.class, RETURNS_DEEP_STUBS);
 
@@ -52,10 +55,10 @@ public class AbstractSearcherTest {
 
         Observable<Offer> observable = searcher.search(DUMMY_QUERY);
 
-        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
+        TestObserver<Offer> subscriber = new TestObserver<>();
         observable.subscribe(subscriber);
         subscriber.assertValueCount(expectedOffers.length);
-        subscriber.assertCompleted();
+        subscriber.assertComplete();
         subscriber.assertValues(expectedOffers);
     }
 
@@ -65,7 +68,7 @@ public class AbstractSearcherTest {
 
         Observable<Offer> observable = searcher.search(DUMMY_QUERY);
 
-        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
+        TestObserver<Offer> subscriber = new TestObserver<>();
         observable.subscribe(subscriber);
         subscriber.assertNoValues();
         subscriber.assertError(SearcherException.class);
@@ -77,7 +80,7 @@ public class AbstractSearcherTest {
         givenResponseParserSendsErrorObservable();
 
         Observable<Offer> observable = searcher.search(DUMMY_QUERY);
-        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
+        TestObserver<Offer> subscriber = new TestObserver<>();
         observable.subscribe(subscriber);
         subscriber.assertNoValues();
         subscriber.assertError(SearcherException.class);
@@ -89,7 +92,7 @@ public class AbstractSearcherTest {
         givenResponseParserSendsErrorObservable();
 
         Observable<Offer> observable = searcher.search(DUMMY_QUERY);
-        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
+        TestObserver<Offer> subscriber = new TestObserver<>();
         observable.subscribe(subscriber);
         subscriber.assertNoValues();
         subscriber.assertError(SearcherException.class);
