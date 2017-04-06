@@ -5,12 +5,15 @@ import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
 import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.Offer;
+import io.reactivex.Observable;
+import io.reactivex.observers.TestObserver;
+import io.reactivex.schedulers.TestScheduler;
+import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
 import org.junit.Test;
-import rx.Observable;
-import rx.observers.TestSubscriber;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 import static com.google.common.io.Resources.getResource;
 import static org.mockito.Matchers.anyString;
@@ -26,6 +29,7 @@ public class GithubResponseParserTest {
 
     @Before
     public void setUp() throws IOException {
+
         String stringResponse = Resources.toString(getResource("searcher/github/response_ok.json"), Charsets.UTF_8);
         response = mock(Response.class);
         when(response.getResponseBody(anyString())).thenReturn(stringResponse);
@@ -35,10 +39,10 @@ public class GithubResponseParserTest {
     @Test
     public void toSearchResultReturnsAllItems() {
         Observable<Offer> observable = responseParser.toSearchResults(response);
-        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
+        TestObserver<Offer> subscriber = new TestObserver<>();
         observable.subscribe(subscriber);
         subscriber.assertValueCount(4);
-        subscriber.assertCompleted();
+        subscriber.assertComplete();
         subscriber.assertValues(Offer.builder().url("https://github.com/jquery/jquery/blob/055cb7534e2dcf7ee8ad145be83cb2d74b5331c7/test/localfile.html").title("localfile.html").price(0.0, USD).searcher(GITHUB_SEARCHER).image("").build(),
                 Offer.builder().url("https://github.com/jquery/jquery/blob/055cb7534e2dcf7ee8ad145be83cb2d74b5331c7/src/attributes/classes.js").title("classes.js").price(0.0, USD).searcher(GITHUB_SEARCHER).image("").build(),
                 Offer.builder().url("https://github.com/jquery/jquery/blob/44cb97e0cfc8d3e62bef7c621bfeba6fe4f65d7c/test/unit/attributes.js").title("attributes.js").price(0.0, USD).searcher(GITHUB_SEARCHER).image("").build(),
@@ -51,7 +55,7 @@ public class GithubResponseParserTest {
 
         Observable<Offer> observable = responseParser.toSearchResults(response);
 
-        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
+        TestObserver<Offer> subscriber = new TestObserver<>();
         observable.subscribe(subscriber);
         subscriber.assertError(JsonParseException.class);
     }
@@ -62,7 +66,7 @@ public class GithubResponseParserTest {
 
         Observable<Offer> observable = responseParser.toSearchResults(response);
 
-        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
+        TestObserver<Offer> subscriber = new TestObserver<>();
         observable.subscribe(subscriber);
         subscriber.assertNoValues();
         subscriber.assertNoErrors();

@@ -4,7 +4,9 @@ import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.Searcher;
 import de.hanbei.rxsearch.searcher.SearcherException;
-import rx.Observable;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.functions.Function;
 
 import java.util.List;
 
@@ -29,12 +31,15 @@ public class SearchCoordinator {
     }
 
     public Observable<Offer> startSearch(Query query) {
-        return Observable.from(searchers)
+        return Observable.fromIterable(searchers)
                 .flatMap(
                         searcher -> searcher.search(query)
-                                .doOnCompleted(() -> onCompleted.searcherCompleted(searcher.getName(), query))
-                                .onErrorResumeNext(t ->
-                                        onError.searcherError(SearcherException.wrap(t).searcher(searcher.getName()).query(query))
+                                .doOnComplete(() -> onCompleted.searcherCompleted(searcher.getName(), query))
+                                .onErrorResumeNext(
+                                        (Function<? super Throwable, ? extends ObservableSource<? extends Offer>>) throwable ->
+                                                onError.searcherError(
+                                                        SearcherException.wrap(throwable).searcher(searcher.getName()).query(query)
+                                                )
                                 )
                 );
     }

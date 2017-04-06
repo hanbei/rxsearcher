@@ -2,7 +2,7 @@ package de.hanbei.rxsearch.filter;
 
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
-import rx.Observable;
+import io.reactivex.Observable;
 
 public interface OfferProcessor {
 

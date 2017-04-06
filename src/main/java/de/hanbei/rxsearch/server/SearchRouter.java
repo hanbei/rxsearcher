@@ -10,7 +10,7 @@ import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import rx.Observable;
+import io.reactivex.Observable;
 
 import java.util.List;
 import java.util.Optional;

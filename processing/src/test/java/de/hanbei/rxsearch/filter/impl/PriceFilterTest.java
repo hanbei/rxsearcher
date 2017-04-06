@@ -2,10 +2,10 @@ package de.hanbei.rxsearch.filter.impl;
 
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
+import io.reactivex.Observable;
+import io.reactivex.observers.TestObserver;
 import org.junit.Before;
 import org.junit.Test;
-import rx.Observable;
-import rx.observers.TestSubscriber;
 
 public class PriceFilterTest {
 
@@ -31,8 +31,8 @@ public class PriceFilterTest {
 
     @Test
     public void offersOutsideOfPriceRangeAreFiltered() {
-        Observable<Offer> filteredObservable = filter.process(query, Observable.from(offers));
-        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
+        Observable<Offer> filteredObservable = filter.process(query, Observable.fromArray(offers));
+        TestObserver<Offer> subscriber = new TestObserver<>();
         filteredObservable.subscribe(subscriber);
 
         subscriber.assertNoErrors();

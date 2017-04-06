@@ -3,18 +3,18 @@ package de.hanbei.rxsearch.server;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.Searcher;
+import io.reactivex.Observable;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.ext.web.RoutingContext;
 import org.junit.Before;
 import org.junit.Test;
-import rx.Observable;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.anyString;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -43,6 +43,7 @@ public class SearchRouterTest {
         when(request.getParam("q")).thenReturn(SEARCH_TERM);
         when(request.getParam("country")).thenReturn(DE);
         when(request.getHeader("X-Request-ID")).thenReturn(ID);
+
         response = mock(HttpServerResponse.class);
         when(response.putHeader(eq(HttpHeaders.CONTENT_TYPE), anyString())).thenReturn(response);
 

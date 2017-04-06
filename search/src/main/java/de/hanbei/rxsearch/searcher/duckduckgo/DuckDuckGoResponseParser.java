@@ -7,7 +7,7 @@ import com.google.common.base.Strings;
 import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.searcher.ResponseParser;
-import rx.Observable;
+import io.reactivex.Observable;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ public class DuckDuckGoResponseParser implements ResponseParser {
             JsonNode jsonNode = mapper.readTree(responseAsString);
             JsonNode relatedTopics = jsonNode.findValue("RelatedTopics");
             if (relatedTopics != null) {
-                return Observable.from(extractResultNodes(relatedTopics));
+                return Observable.fromIterable(extractResultNodes(relatedTopics));
             } else {
                 return Observable.empty();
             }

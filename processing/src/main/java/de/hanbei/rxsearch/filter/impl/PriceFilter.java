@@ -3,7 +3,7 @@ package de.hanbei.rxsearch.filter.impl;
 import de.hanbei.rxsearch.filter.OfferProcessor;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
-import rx.Observable;
+import io.reactivex.Observable;
 
 public class PriceFilter implements OfferProcessor {
 

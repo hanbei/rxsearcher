@@ -6,7 +6,7 @@ import com.ning.http.client.Request;
 import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
-import rx.Observable;
+import io.reactivex.Observable;
 
 import java.util.concurrent.TimeUnit;
 
@@ -42,7 +42,7 @@ public abstract class AbstractSearcher implements Searcher {
                         public Response onCompleted(Response response) throws Exception {
                             if (response.getStatusCode() < 300) {
                                 subscriber.onNext(response);
-                                subscriber.onCompleted();
+                                subscriber.onComplete();
                             } else {
                                 subscriber.onError(new SearcherException(response.getStatusCode() + " " + response.getStatusText()).searcher(getName()).query(query));
                             }

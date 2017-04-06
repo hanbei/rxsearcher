@@ -5,10 +5,12 @@ import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.Searcher;
 import de.hanbei.rxsearch.searcher.SearcherException;
+import io.reactivex.Observable;
+import io.reactivex.observers.TestObserver;
 import org.junit.Before;
 import org.junit.Test;
-import rx.Observable;
-import rx.observers.TestSubscriber;
+
+import java.util.Objects;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
@@ -43,9 +45,9 @@ public class SearchCoordinatorTest {
         Offer offer = Offer.builder().url("").title("").price(0.0, "EUR").searcher("test").build();
         when(searcher.search(any(Query.class))).thenReturn(Observable.just(offer));
 
-        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
+        TestObserver<Offer> subscriber = new TestObserver<>();
         coordinator.startSearch(QUERY).subscribe(subscriber);
-        subscriber.assertCompleted();
+        subscriber.assertComplete();
         subscriber.assertValue(offer);
     }
 
@@ -55,9 +57,9 @@ public class SearchCoordinatorTest {
 
         when(searcher.search(any(Query.class))).thenThrow(new SearcherException(MESSAGE).query(OTHER_QUERY));
 
-        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
+        TestObserver<Offer> subscriber = new TestObserver<>();
         coordinator.startSearch(QUERY).subscribe(subscriber);
-        subscriber.assertNotCompleted();
+        subscriber.assertNotComplete();
         subscriber.assertNoValues();
     }
 
@@ -67,9 +69,10 @@ public class SearchCoordinatorTest {
 
         when(searcher.search(any(Query.class))).thenReturn(Observable.error(new IllegalArgumentException(MESSAGE)));
 
-        TestSubscriber<Offer> subscriber = new TestSubscriber<>();
+        TestObserver<Offer> subscriber = new TestObserver<>();
         coordinator.startSearch(QUERY).subscribe(subscriber);
-        subscriber.assertCompleted();
+
+        subscriber.assertComplete();
         subscriber.assertNoValues();
     }
 

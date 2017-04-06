@@ -80,10 +80,13 @@ public class VertxServer extends AbstractVerticle {
     }
 
     private Integer port() {
-        String portAsString = System.getenv("PORT");
         Integer port = 8080;
+
+        String portAsString = System.getenv("PORT");
         if (!Strings.isNullOrEmpty(portAsString)) {
             port = Integer.parseInt(portAsString);
+        } else if (config().containsKey("http.port")) {
+            port = config().getInteger("http.port");
         }
         return port;
     }
