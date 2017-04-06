@@ -4,12 +4,8 @@ import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
-import io.reactivex.schedulers.TestScheduler;
-import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.concurrent.TimeUnit;
 
 public class PriceFilterTest {
 
@@ -17,14 +13,9 @@ public class PriceFilterTest {
     private PriceFilter filter;
     private Query query;
     private Offer[] offers;
-    private TestScheduler scheduler;
-    private PublishSubject<Offer> publishSubject;
 
     @Before
     public void setup() {
-        scheduler = new TestScheduler();
-        publishSubject = PublishSubject.create();
-
         filter = new PriceFilter();
         query = Query.builder().keywords("keywords").requestId("requestId").country("de").price(20.0, CURRENCY).build();
         offers = new Offer[]{
@@ -41,7 +32,7 @@ public class PriceFilterTest {
     @Test
     public void offersOutsideOfPriceRangeAreFiltered() {
         Observable<Offer> filteredObservable = filter.process(query, Observable.fromArray(offers));
-        TestObserver<Offer> subscriber = publishSubject.delay(100, TimeUnit.MILLISECONDS, scheduler).test();
+        TestObserver<Offer> subscriber = new TestObserver<>();
         filteredObservable.subscribe(subscriber);
 
         subscriber.assertNoErrors();
