@@ -18,10 +18,10 @@ public class WebhoseRequestBuilder implements RequestBuilder {
 
     @Override
     public Request createRequest(Query query) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(query.keywords()));
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(query.getKeywords()));
         return new com.ning.http.client.RequestBuilder("GET", true)
                 .setUrl("https://webhose.io/search")
-                .addQueryParam("q", query.keywords())
+                .addQueryParam("q", query.getKeywords())
                 .addQueryParam("token", key)
                 .addQueryParam("format", "json")
                 .addQueryParam("size", "10")
