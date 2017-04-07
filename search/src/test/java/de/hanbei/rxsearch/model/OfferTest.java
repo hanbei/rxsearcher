@@ -12,7 +12,7 @@ public class OfferTest extends EqualsHashcodeTest<Offer> {
             .url("url").title("title").price(0.0, "USD").searcher("searcher")
             .image("image").category("category").description("desc").manufacturer("manufacturer")
             .originalUrl("originalUrl").shippingCosts(new Money(1.0, "EUR"))
-            .merchant(new Merchant("ebay", "mimage", "1234", "mcategory"))
+            .merchant(new Merchant("1234", "ebay", "mimage", "mcategory"))
             .brand("brand").build();
 
 
@@ -32,7 +32,7 @@ public class OfferTest extends EqualsHashcodeTest<Offer> {
                 .url("url2").title("title2").price(0.0, "EUR").searcher("searcher")
                 .image("image").category("category").description("desc").manufacturer("manufacturer")
                 .originalUrl("originalUrl").shippingCosts(new Money(1.0, "EUR"))
-                .merchant(new Merchant("ebay", "mimage", "1234", "mcategory"))
+                .merchant(new Merchant("1234", "ebay", "mimage", "mcategory"))
                 .brand("brand").build();
     }
 

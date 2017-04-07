@@ -2,6 +2,7 @@ plugins {
     id "io.spring.dependency-management" version "0.6.0.RELEASE"
     id 'com.github.johnrengelman.shadow' version '1.2.3'
     id 'com.github.ben-manes.versions' version '0.13.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.1.1'
 }
 
 apply plugin: 'application'
@@ -31,6 +32,7 @@ allprojects {
     apply plugin: "io.spring.dependency-management"
     apply plugin: 'com.github.johnrengelman.shadow'
     apply plugin: 'com.github.ben-manes.versions'
+    apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'jacoco'
 
     version = '0.2.0'
@@ -44,6 +46,8 @@ allprojects {
         compile "com.fasterxml.jackson.core:jackson-databind"
         compile "com.google.guava:guava"
         compile "org.slf4j:slf4j-api"
+
+        compile "org.jetbrains.kotlin:kotlin-stdlib"
 
         testCompile "junit:junit"
         testCompile 'org.mockito:mockito-core'
@@ -77,6 +81,7 @@ allprojects {
             }
 
             dependency 'org.codehaus.groovy:groovy-all:2.4.7'
+            dependency "org.jetbrains.kotlin:kotlin-stdlib:1.1.1"
 
             // Test dependencies
             dependency("junit:junit:4.12") {

@@ -8,16 +8,13 @@ import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
-import io.reactivex.schedulers.TestScheduler;
-import io.reactivex.subjects.PublishSubject;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.stubbing.Answer;
 
 import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
-import static org.mockito.Matchers.any;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

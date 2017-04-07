@@ -31,7 +31,7 @@ public final class MerchantBuilder {
 
         @Override
         public Merchant build() {
-            return new Merchant(name, image, id, category);
+            return new Merchant(id, name, image, category);
         }
 
         @Override

@@ -10,8 +10,6 @@ import io.reactivex.observers.TestObserver;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Objects;
-
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.junit.Assert.assertEquals;
