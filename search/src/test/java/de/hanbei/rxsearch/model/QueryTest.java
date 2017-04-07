@@ -9,16 +9,16 @@ public class QueryTest extends EqualsHashcodeTest<Query> {
 
     @Override
     protected Query createEqual() {
-        return Query.builder().keywords(KEYWORDS).requestId(ID).country(COUNTRY).price(123.456, CURRENCY).build();
+        return Query.builder().keywords(KEYWORDS).requestId(ID).country(COUNTRY).user(User.getDefaultUser()).price(123.456, CURRENCY).build();
     }
 
     @Override
     protected Query createOther() {
-        return Query.builder().keywords("other_keywords").requestId("other_id").country("_other_country").price(123.456, "USD").build();
+        return Query.builder().keywords("other_keywords").requestId("other_id").country("_other_country").user(User.getDefaultUser()).price(123.456, "USD").build();
     }
 
     @Override
     protected Query createOtherEqual() {
-        return Query.builder().keywords(KEYWORDS).requestId(ID).country(COUNTRY).price(123.456, CURRENCY).build();
+        return Query.builder().keywords(KEYWORDS).requestId(ID).country(COUNTRY).user(User.getDefaultUser()).price(123.456, CURRENCY).build();
     }
 }

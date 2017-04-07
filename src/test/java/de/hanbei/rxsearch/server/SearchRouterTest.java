@@ -2,6 +2,7 @@ package de.hanbei.rxsearch.server;
 
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
+import de.hanbei.rxsearch.model.User;
 import de.hanbei.rxsearch.searcher.Searcher;
 import io.reactivex.Observable;
 import io.vertx.core.http.HttpHeaders;
@@ -25,7 +26,7 @@ public class SearchRouterTest {
     private static final String SEARCH_TERM = "search_term";
     private static final String ID = "id";
     private static final String DE = "de";
-    private static final Query QUERY = Query.builder().keywords(SEARCH_TERM).requestId(ID).country(DE).build();
+    private static final Query QUERY = Query.builder().keywords(SEARCH_TERM).requestId(ID).country(DE).user(User.getDefaultUser()).build();
     private SearchRouter router;
     private RoutingContext routingContext;
 
