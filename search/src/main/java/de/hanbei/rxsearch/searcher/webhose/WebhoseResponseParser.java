@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.Offer;
-import de.hanbei.rxsearch.model.OfferBuilder;
 import de.hanbei.rxsearch.searcher.ResponseParser;
 import io.reactivex.Observable;
 
@@ -46,12 +45,11 @@ public class WebhoseResponseParser implements ResponseParser {
     }
 
     private Offer toSearchResult(JsonNode relatedTopic) {
-        OfferBuilder.OtherStep offerBuilder = Offer.builder()
+        return Offer.builder()
                 .url(getFieldStringValue(relatedTopic, "url"))
                 .title(getFieldStringValue(relatedTopic, "title"))
                 .price(0.0, "USD")
-                .searcher(name);
-        return offerBuilder.build();
+                .searcher(name).build();
     }
 
     private String getFieldStringValue(JsonNode node, String fieldName) {
