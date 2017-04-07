@@ -63,8 +63,8 @@ public class SearchRouterTest {
         router.handle(routingContext);
 
         verify(response, times(1)).end("{\"results\":["
-                + "{\"url\":\"url\",\"title\":\"title\",\"price\":{\"amount\":0.0,\"currency\":\"USD\"},\"searcher\":\"searcher1\",\"availability\":\"NOT_AVAILABLE\"},"
-                + "{\"url\":\"url\",\"title\":\"title\",\"price\":{\"amount\":0.0,\"currency\":\"USD\"},\"searcher\":\"searcher2\",\"availability\":\"NOT_AVAILABLE\"}"
+                + "{\"url\":\"url\",\"title\":\"title\",\"searcher\":\"searcher1\",\"price\":{\"amount\":0.0,\"currency\":\"USD\"},\"requestId\":\"id\",\"availability\":\"NOT_AVAILABLE\"},"
+                + "{\"url\":\"url\",\"title\":\"title\",\"searcher\":\"searcher2\",\"price\":{\"amount\":0.0,\"currency\":\"USD\"},\"requestId\":\"id\",\"availability\":\"NOT_AVAILABLE\"}"
                 + "]}");
     }
 

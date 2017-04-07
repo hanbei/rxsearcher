@@ -45,9 +45,9 @@ public class OfferTest extends EqualsHashcodeTest<Offer> {
         assertThat(offer.getPrice(), is(new Money(0.0, "USD")));
         assertThat(offer.getSearcher(), is("searcher"));
 
-        assertThat(offer.getCategory(), is(""));
-        assertThat(offer.getDescription(), is(""));
-        assertThat(offer.getImage(), is(""));
+        assertThat(offer.getCategory(), is(nullValue()));
+        assertThat(offer.getDescription(), is(nullValue()));
+        assertThat(offer.getImage(), is(nullValue()));
         assertThat(offer.getManufacturer(), is(nullValue()));
         assertThat(offer.getMerchant(), is(nullValue()));
         assertThat(offer.getOriginalUrl(), is(nullValue()));

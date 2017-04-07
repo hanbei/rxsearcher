@@ -41,7 +41,7 @@ public class SearchCoordinatorTest {
     public void searchReturnSucessfulCallsSuccessHandler() {
         SearchCoordinator coordinator = given.givenCoordinatorNotExpectingError(searcher);
 
-        Offer offer = Offer.builder().url("").title("").price(0.0, "EUR").searcher("test").build();
+        Offer offer = Offer.builder().url("").title("").price(0.0, "EUR").searcher("test").requestId("id").build();
         when(searcher.search(any(Query.class))).thenReturn(Observable.just(offer));
 
         TestObserver<Offer> subscriber = new TestObserver<>();

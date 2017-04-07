@@ -41,7 +41,7 @@ public class SearchCoordinator {
                                                         SearcherException.wrap(throwable).searcher(searcher.getName()).query(query)
                                                 )
                                 )
-                );
+                ).map(offer -> Offer.from(offer).requestId(query.getRequestId()).build());
     }
 
     private static void completionNoop(String s, Query q) {

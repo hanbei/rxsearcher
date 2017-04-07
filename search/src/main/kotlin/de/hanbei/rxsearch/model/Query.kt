@@ -52,9 +52,9 @@ data class Query internal constructor(val keywords: String, val requestId: Strin
         interface OtherStep : BuildStep {
             fun price(price: Money): OtherStep
 
-            fun price(amount: Double?, currency: String): OtherStep
+            fun price(amount: Double, currency: String): OtherStep
 
-            fun price(amount: Double?, currency: Currency): OtherStep
+            fun price(amount: Double, currency: Currency): OtherStep
 
             fun manufacturer(manufacturer: String): OtherStep
 
@@ -116,11 +116,11 @@ data class Query internal constructor(val keywords: String, val requestId: Strin
                 return this
             }
 
-            override fun price(amount: Double?, currency: String): OtherStep {
+            override fun price(amount: Double, currency: String): OtherStep {
                 return price(Money(amount, currency))
             }
 
-            override fun price(amount: Double?, currency: Currency): OtherStep {
+            override fun price(amount: Double, currency: Currency): OtherStep {
                 return price(Money(amount, currency))
             }
 
