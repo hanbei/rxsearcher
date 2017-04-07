@@ -2,7 +2,6 @@ package de.hanbei.rxsearch.server;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.hanbei.rxsearch.coordination.SearcherErrorHandler;
 import de.hanbei.rxsearch.model.Offer;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerResponse;

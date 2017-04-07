@@ -1,7 +1,6 @@
 package de.hanbei.rxsearch.searcher.webhose;
 
 import com.ning.http.client.Request;
-import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.RequestUrlBuilderTest;
 import org.junit.Before;
 import org.junit.Test;
