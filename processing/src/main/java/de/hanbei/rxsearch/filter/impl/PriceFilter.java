@@ -9,11 +9,11 @@ public class PriceFilter implements OfferProcessor {
 
     @Override
     public Observable<Offer> process(Query query, Observable<Offer> observable) {
-        if (query.price() == null) {
+        if (query.getPrice() == null) {
             return observable;
         }
 
-        return observable.filter(offer -> query.price().getAmount() * 0.5 <= offer.getPrice().getAmount() &&
-                offer.getPrice().getAmount() <= query.price().getAmount() * 2);
+        return observable.filter(offer -> query.getPrice().getAmount() * 0.5 <= offer.getPrice().getAmount() &&
+                offer.getPrice().getAmount() <= query.getPrice().getAmount() * 2);
     }
 }

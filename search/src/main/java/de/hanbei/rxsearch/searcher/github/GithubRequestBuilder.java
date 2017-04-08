@@ -17,10 +17,10 @@ public class GithubRequestBuilder implements RequestBuilder {
 
     @Override
     public Request createRequest(Query query) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(query.keywords()));
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(query.getKeywords()));
         return new com.ning.http.client.RequestBuilder("GET", true)
                 .setUrl("https://api.github.com/search/code")
-                .addQueryParam("q", query.keywords() + "+repo:" + repo)
+                .addQueryParam("q", query.getKeywords() + "+repo:" + repo)
                 .build();
     }
 }

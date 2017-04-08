@@ -2,6 +2,7 @@ package de.hanbei.rxsearch.filter.impl;
 
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
+import de.hanbei.rxsearch.model.User;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
 import org.junit.Before;
@@ -17,7 +18,7 @@ public class PriceFilterTest {
     @Before
     public void setup() {
         filter = new PriceFilter();
-        query = Query.builder().keywords("keywords").requestId("requestId").country("de").price(20.0, CURRENCY).build();
+        query = Query.builder().keywords("keywords").requestId("requestId").country("de").user(User.getDefaultUser()).price(20.0, CURRENCY).build();
         offers = new Offer[]{
                 Offer.builder().url("").title("").price(35.0, CURRENCY).searcher("").build(),
                 Offer.builder().url("").title("").price(41.0, CURRENCY).searcher("").build(),

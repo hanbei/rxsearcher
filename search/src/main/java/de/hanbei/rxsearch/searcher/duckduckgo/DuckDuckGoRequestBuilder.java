@@ -10,12 +10,12 @@ public class DuckDuckGoRequestBuilder implements RequestBuilder {
 
     @Override
     public Request createRequest(Query query) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(query.keywords()));
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(query.getKeywords()));
         return new com.ning.http.client.RequestBuilder("GET")
                 .setUrl("http://api.duckduckgo.com")
                 .addQueryParam("format", "json")
                 .addQueryParam("t", "hanbeirxsearch")
-                .addQueryParam("q", query.keywords())
+                .addQueryParam("q", query.getKeywords())
                 .build();
     }
 

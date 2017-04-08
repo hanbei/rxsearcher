@@ -3,6 +3,7 @@ package de.hanbei.rxsearch.coordination;
 import com.google.common.collect.Lists;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
+import de.hanbei.rxsearch.model.User;
 import de.hanbei.rxsearch.searcher.Searcher;
 import de.hanbei.rxsearch.searcher.SearcherException;
 import io.reactivex.Observable;
@@ -22,8 +23,8 @@ import static org.mockito.Mockito.when;
 public class SearchCoordinatorTest {
 
     private static final String MESSAGE = "message";
-    private static final Query QUERY = Query.builder().keywords("query").requestId("id").country("de").build();
-    private static final Query OTHER_QUERY = Query.builder().keywords("q").requestId("i").country("de").build();
+    private static final Query QUERY = Query.builder().keywords("query").requestId("id").country("de").user(User.getDefaultUser()).build();
+    private static final Query OTHER_QUERY = Query.builder().keywords("q").requestId("i").country("de").user(User.getDefaultUser()).build();
     private static final String SEARCHER_NAME = "test_searcher";
 
     private Searcher searcher;
@@ -40,7 +41,7 @@ public class SearchCoordinatorTest {
     public void searchReturnSucessfulCallsSuccessHandler() {
         SearchCoordinator coordinator = given.givenCoordinatorNotExpectingError(searcher);
 
-        Offer offer = Offer.builder().url("").title("").price(0.0, "EUR").searcher("test").build();
+        Offer offer = Offer.builder().url("").title("").price(0.0, "EUR").searcher("test").requestId("id").build();
         when(searcher.search(any(Query.class))).thenReturn(Observable.just(offer));
 
         TestObserver<Offer> subscriber = new TestObserver<>();

@@ -5,6 +5,7 @@ import de.hanbei.rxsearch.filter.OfferProcessor;
 import de.hanbei.rxsearch.filter.OfferProcessorCoordinator;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
+import de.hanbei.rxsearch.model.User;
 import de.hanbei.rxsearch.searcher.Searcher;
 import io.vertx.core.Handler;
 import io.vertx.ext.web.RoutingContext;
@@ -38,7 +39,7 @@ class SearchRouter implements Handler<RoutingContext> {
         String country = Optional.ofNullable(routingContext.request().getParam("country")).orElse("de");
         String requestId = Optional.ofNullable(routingContext.request().getHeader("X-Request-ID")).orElse("some_id");
 
-        Query query = Query.builder().keywords(keyword).requestId(requestId).country(country).build();
+        Query query = Query.builder().keywords(keyword).requestId(requestId).country(country).user(User.getDefaultUser()).build();
 
         ResponseHandler responseHandler = new VertxResponseHandler(routingContext);
 
