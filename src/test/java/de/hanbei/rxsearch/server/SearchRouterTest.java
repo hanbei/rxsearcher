@@ -8,6 +8,7 @@ import io.reactivex.Observable;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +27,7 @@ public class SearchRouterTest {
     private static final String SEARCH_TERM = "search_term";
     private static final String ID = "id";
     private static final String DE = "de";
-    private static final Query QUERY = Query.builder().keywords(SEARCH_TERM).requestId(ID).country(DE).user(User.getDefaultUser()).build();
+    private static final Query QUERY = Query.builder().keywords(SEARCH_TERM).requestId(ID).country(DE).user(new User("user_id","partner_id","partner_sub_id")).build();
     private SearchRouter router;
     private RoutingContext routingContext;
 
@@ -41,8 +42,8 @@ public class SearchRouterTest {
         searcher2 = mock(Searcher.class);
 
         HttpServerRequest request = mock(HttpServerRequest.class);
-        when(request.getParam("q")).thenReturn(SEARCH_TERM);
-        when(request.getParam("country")).thenReturn(DE);
+        //when(request.getParam("q")).thenReturn(SEARCH_TERM);
+        //when(request.getParam("country")).thenReturn(DE);
         when(request.getHeader("X-Request-ID")).thenReturn(ID);
 
         response = mock(HttpServerResponse.class);
@@ -51,6 +52,16 @@ public class SearchRouterTest {
         routingContext = mock(RoutingContext.class);
         when(routingContext.request()).thenReturn(request);
         when(routingContext.response()).thenReturn(response);
+        when(routingContext.getBodyAsJson()).thenReturn(new JsonObject(
+                "{\"query\":{\n" +
+                        "  \"keywords\":\"" + SEARCH_TERM + "\",\n" +
+                        "  \"country\":\""+DE+"\"," +
+                        "  \"user\":{" +
+                        "     \"id\":\"user_id\","+
+                        "     \"partnerId\":\"partner_id\","+
+                        "     \"partnerSubId\":\"partner_sub_id\""+
+                        "  }"+
+                        "}}"));
 
         router = new SearchRouter(newArrayList(searcher1, searcher2), newArrayList());
     }

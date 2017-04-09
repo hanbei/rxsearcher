@@ -13,6 +13,7 @@ import io.vertx.core.VertxOptions;
 import io.vertx.core.http.HttpServer;
 import io.vertx.ext.dropwizard.DropwizardMetricsOptions;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.LoggerHandler;
 import io.vertx.ext.web.handler.ResponseTimeHandler;
 import io.vertx.ext.web.handler.StaticHandler;
@@ -29,13 +30,12 @@ public class VertxServer extends AbstractVerticle {
 
     private final AsyncHttpClient asyncHttpClient;
     private final SearchRouter searchRouter;
-    private final SearcherConfiguration searcherConfiguration;
 
     private HttpServer httpServer;
 
     public VertxServer() {
         asyncHttpClient = new AsyncHttpClient();
-        searcherConfiguration = new SearcherConfiguration(asyncHttpClient);
+        SearcherConfiguration searcherConfiguration = new SearcherConfiguration(asyncHttpClient);
 
         List<Searcher> searchers = searcherConfiguration.loadConfiguration("rxsearch", "testing", "de");
         List<OfferProcessor> processors = Lists.newArrayList();
@@ -51,8 +51,10 @@ public class VertxServer extends AbstractVerticle {
         router.route().handler(LoggerHandler.create());
         router.route().handler(ResponseTimeHandler.create());
 
+
+        router.route("/search/offers").handler(BodyHandler.create());
         router.route("/search/offers").handler(TimeoutHandler.create());
-        router.route("/search/offers").handler(searchRouter);
+        router.post("/search/offers").handler(searchRouter);
 
         router.route().handler(StaticHandler.create()
                 .setWebRoot("apidocs")
