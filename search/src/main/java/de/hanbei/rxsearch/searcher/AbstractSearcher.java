@@ -1,5 +1,7 @@
 package de.hanbei.rxsearch.searcher;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Request;
@@ -37,6 +39,8 @@ public abstract class AbstractSearcher implements Searcher {
     private Observable<Response> asyncGet(Query query) {
         return Observable.create(subscriber -> {
                     final Request request = urlBuilder.createRequest(query);
+                    MetricRegistry searcherMetrics = getMetricRegistry();
+                    Timer.Context timer = searcherMetrics.timer(query.getCountry() + "." + name).time();
                     asyncHttpClient.executeRequest(request, new AsyncCompletionHandler<Response>() {
                         @Override
                         public Response onCompleted(Response response) throws Exception {
@@ -46,12 +50,14 @@ public abstract class AbstractSearcher implements Searcher {
                             } else {
                                 subscriber.onError(new SearcherException(response.getStatusCode() + " " + response.getStatusText()).searcher(getName()).query(query));
                             }
+                            timer.stop();
                             return response;
                         }
 
                         @Override
                         public void onThrowable(Throwable t) {
                             subscriber.onError(new SearcherException(t).searcher(getName()).query(query));
+                            timer.stop();
                         }
                     });
                 }
