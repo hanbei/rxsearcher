@@ -2,4 +2,5 @@ dependencies {
     compile 'io.reactivex.rxjava2:rxjava'
     compile 'com.ning:async-http-client'
     compile "org.jooq:joox"
+    compile "io.dropwizard.metrics:metrics-core"
 }

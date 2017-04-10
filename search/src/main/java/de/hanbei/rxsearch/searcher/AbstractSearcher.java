@@ -1,5 +1,7 @@
 package de.hanbei.rxsearch.searcher;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.Request;
@@ -11,6 +13,9 @@ import io.reactivex.Observable;
 import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractSearcher implements Searcher {
+
+    private static final String SUCCESS = "success";
+    private static final String ERROR = "error";
 
     private final String name;
     private final RequestBuilder urlBuilder;
@@ -37,21 +42,32 @@ public abstract class AbstractSearcher implements Searcher {
     private Observable<Response> asyncGet(Query query) {
         return Observable.create(subscriber -> {
                     final Request request = urlBuilder.createRequest(query);
+                    final String country = query.getCountry();
+
+                    MetricRegistry searcherMetrics = getMetricRegistry();
+                    Timer.Context timer = searcherMetrics.timer(metricName(country, name)).time();
+
                     asyncHttpClient.executeRequest(request, new AsyncCompletionHandler<Response>() {
                         @Override
                         public Response onCompleted(Response response) throws Exception {
-                            if (response.getStatusCode() < 300) {
+                            int statusCode = response.getStatusCode();
+                            if (statusCode < 300) {
+                                searcherMetrics.counter(metricName(country, name, SUCCESS)).inc();
                                 subscriber.onNext(response);
                                 subscriber.onComplete();
                             } else {
-                                subscriber.onError(new SearcherException(response.getStatusCode() + " " + response.getStatusText()).searcher(getName()).query(query));
+                                searcherMetrics.counter(metricName(country, name, ERROR, statusCode)).inc();
+                                subscriber.onError(new SearcherException(statusCode + " " + response.getStatusText()).searcher(getName()).query(query));
                             }
+                            timer.stop();
                             return response;
                         }
 
                         @Override
                         public void onThrowable(Throwable t) {
+                            searcherMetrics.counter(metricName(country, "general", "error")).inc();
                             subscriber.onError(new SearcherException(t).searcher(getName()).query(query));
+                            timer.stop();
                         }
                     });
                 }

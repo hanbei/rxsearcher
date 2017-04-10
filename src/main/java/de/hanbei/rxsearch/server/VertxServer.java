@@ -1,10 +1,13 @@
 package de.hanbei.rxsearch.server;
 
+import com.codahale.metrics.ConsoleReporter;
+import com.codahale.metrics.SharedMetricRegistries;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.ning.http.client.AsyncHttpClient;
 import de.hanbei.rxsearch.config.SearcherConfiguration;
 import de.hanbei.rxsearch.filter.OfferProcessor;
+import de.hanbei.rxsearch.metrics.Measured;
 import de.hanbei.rxsearch.searcher.Searcher;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
@@ -23,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class VertxServer extends AbstractVerticle {
 
@@ -41,6 +45,10 @@ public class VertxServer extends AbstractVerticle {
         List<OfferProcessor> processors = Lists.newArrayList();
 
         searchRouter = new SearchRouter(searchers, processors);
+
+        ConsoleReporter reporter = ConsoleReporter.forRegistry(SharedMetricRegistries.getOrCreate(Measured.SEARCHER_METRICS))
+                .shutdownExecutorOnStop(true).build();
+        reporter.start(5, TimeUnit.SECONDS);
     }
 
     @Override
