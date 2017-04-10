@@ -7,11 +7,13 @@ import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.model.User;
 import de.hanbei.rxsearch.searcher.Searcher;
+import io.reactivex.Observable;
 import io.vertx.core.Handler;
+import io.vertx.core.http.HttpServerRequest;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import io.reactivex.Observable;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,21 +37,38 @@ class SearchRouter implements Handler<RoutingContext> {
 
     @Override
     public void handle(RoutingContext routingContext) {
-        String keyword = routingContext.request().getParam("q");
-        String country = Optional.ofNullable(routingContext.request().getParam("country")).orElse("de");
-        String requestId = Optional.ofNullable(routingContext.request().getHeader("X-Request-ID")).orElse("some_id");
-
-        Query query = Query.builder().keywords(keyword).requestId(requestId).country(country).user(User.getDefaultUser()).build();
+        HttpServerRequest request = routingContext.request();
+        String requestId = Optional.ofNullable(request.getHeader("X-Request-ID")).orElse("some_id");
 
         ResponseHandler responseHandler = new VertxResponseHandler(routingContext);
 
-        Observable<Offer> offerObservable = searchCoordinator.startSearch(query);
+        Query q = extractQuery(routingContext, requestId);
 
-        filterCoordinator.filter(query, offerObservable).toList().subscribe(
+        Observable<Offer> offerObservable = searchCoordinator.startSearch(q);
+
+        filterCoordinator.filter(q, offerObservable).toList().subscribe(
                 responseHandler::handleSuccess,
                 responseHandler::handleError
         );
+    }
 
+    private Query extractQuery(RoutingContext routingContext, String requestId) {
+        JsonObject queryAsJson = routingContext.getBodyAsJson();
+
+        JsonObject query = queryAsJson.getJsonObject("query");
+
+        User user = extractUser(query);
+
+        Query.Companion.OtherStep builder = Query.builder().keywords(query.getString("keywords"))
+                .requestId(requestId).country(query.getString("country")).user(user);
+
+        return builder.build();
+    }
+
+    private User extractUser(JsonObject query) {
+        JsonObject userJson = query.getJsonObject("user");
+        return new User(userJson.getString("id"), userJson.getString("partnerId"), userJson.getString("partnerSubId"));
     }
 
 }
+

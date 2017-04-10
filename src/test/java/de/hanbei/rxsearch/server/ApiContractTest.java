@@ -15,6 +15,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -67,6 +68,7 @@ public class ApiContractTest {
         client.close();
     }
 
+    @Ignore
     @Test
     public void testSearchOffers() throws IOException {
         CheckingWebTarget checking = ramlDefinition.createWebTarget(client.target(getServerUrl()));
