@@ -6,6 +6,7 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.ning.http.client.AsyncHttpClient;
 import de.hanbei.rxsearch.config.SearcherConfiguration;
+import de.hanbei.rxsearch.events.VertxEventVerticle;
 import de.hanbei.rxsearch.filter.OfferProcessor;
 import de.hanbei.rxsearch.metrics.Measured;
 import de.hanbei.rxsearch.searcher.Searcher;
@@ -33,26 +34,30 @@ public class VertxServer extends AbstractVerticle {
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxServer.class);
 
     private final AsyncHttpClient asyncHttpClient;
-    private final SearchRouter searchRouter;
+    private final List<Searcher> searchers;
+    private final List<OfferProcessor> processors;
 
+    private SearchRouter searchRouter;
     private HttpServer httpServer;
+
 
     public VertxServer() {
         asyncHttpClient = new AsyncHttpClient();
         SearcherConfiguration searcherConfiguration = new SearcherConfiguration(asyncHttpClient);
 
-        List<Searcher> searchers = searcherConfiguration.loadConfiguration("rxsearch", "testing", "de");
-        List<OfferProcessor> processors = Lists.newArrayList();
+        searchers = searcherConfiguration.loadConfiguration("rxsearch", "testing", "de");
+        processors = Lists.newArrayList();
 
-        searchRouter = new SearchRouter(searchers, processors);
 
         ConsoleReporter reporter = ConsoleReporter.forRegistry(SharedMetricRegistries.getOrCreate(Measured.SEARCHER_METRICS))
                 .shutdownExecutorOnStop(true).build();
-        reporter.start(5, TimeUnit.SECONDS);
+        //reporter.start(5, TimeUnit.SECONDS);
     }
 
     @Override
     public void start(Future<Void> fut) {
+        searchRouter = new SearchRouter(searchers, processors, vertx.eventBus());
+
         httpServer = vertx.createHttpServer();
         Router router = Router.router(vertx);
 
@@ -104,6 +109,11 @@ public class VertxServer extends AbstractVerticle {
     public static void main(String[] args) throws IOException {
         Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new DropwizardMetricsOptions().setEnabled(true).setJmxEnabled(true)));
 
+        vertx.deployVerticle(VertxEventVerticle.class.getName(), result -> {
+            if (result.succeeded()) {
+                System.out.println("vertx event vertice deployed");
+            }
+        });
         vertx.deployVerticle(VertxServer.class.getName());
 
         Runtime.getRuntime().addShutdownHook(new Thread(vertx::close));

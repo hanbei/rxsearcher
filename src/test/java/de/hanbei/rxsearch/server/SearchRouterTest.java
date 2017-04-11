@@ -5,6 +5,7 @@ import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.model.User;
 import de.hanbei.rxsearch.searcher.Searcher;
 import io.reactivex.Observable;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
@@ -42,8 +43,6 @@ public class SearchRouterTest {
         searcher2 = mock(Searcher.class);
 
         HttpServerRequest request = mock(HttpServerRequest.class);
-        //when(request.getParam("q")).thenReturn(SEARCH_TERM);
-        //when(request.getParam("country")).thenReturn(DE);
         when(request.getHeader("X-Request-ID")).thenReturn(ID);
 
         response = mock(HttpServerResponse.class);
@@ -63,7 +62,7 @@ public class SearchRouterTest {
                         "  }"+
                         "}}"));
 
-        router = new SearchRouter(newArrayList(searcher1, searcher2), newArrayList());
+        router = new SearchRouter(newArrayList(searcher1, searcher2), newArrayList(), mock(EventBus.class));
     }
 
     @Test

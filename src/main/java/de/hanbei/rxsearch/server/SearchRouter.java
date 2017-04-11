@@ -1,6 +1,7 @@
 package de.hanbei.rxsearch.server;
 
 import de.hanbei.rxsearch.coordination.SearchCoordinator;
+import de.hanbei.rxsearch.events.SearchEventHandler;
 import de.hanbei.rxsearch.filter.OfferProcessor;
 import de.hanbei.rxsearch.filter.OfferProcessorCoordinator;
 import de.hanbei.rxsearch.model.Offer;
@@ -9,28 +10,22 @@ import de.hanbei.rxsearch.model.User;
 import de.hanbei.rxsearch.searcher.Searcher;
 import io.reactivex.Observable;
 import io.vertx.core.Handler;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
 
 class SearchRouter implements Handler<RoutingContext> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SearchRouter.class);
-
     private final SearchCoordinator searchCoordinator;
     private final OfferProcessorCoordinator filterCoordinator;
 
-    public SearchRouter(List<Searcher> searcher, List<OfferProcessor> processors) {
-        this.searchCoordinator = new SearchCoordinator(searcher,
-                (s, t) -> LOGGER.warn("Error in searcher {}", s, t),
-                (s, q) -> LOGGER.info("searcher {} completed for {}", s, q),
-                (s, o) -> LOGGER.info("searcher {} got result for {}", s, o)
-        );
+    public SearchRouter(List<Searcher> searcher, List<OfferProcessor> processors, EventBus eventBus) {
+        SearchEventHandler eventHandler = new SearchEventHandler(eventBus);
+        this.searchCoordinator = new SearchCoordinator(searcher, eventHandler, eventHandler, eventHandler);
         this.filterCoordinator = new OfferProcessorCoordinator(processors);
     }
 
