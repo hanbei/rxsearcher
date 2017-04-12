@@ -40,7 +40,9 @@ public class SearchRouterTest {
     @Before
     public void setUp() {
         searcher1 = mock(Searcher.class);
+        when(searcher1.getName()).thenReturn("searcher1");
         searcher2 = mock(Searcher.class);
+        when(searcher2.getName()).thenReturn("searcher2");
 
         HttpServerRequest request = mock(HttpServerRequest.class);
         when(request.getHeader("X-Request-ID")).thenReturn(ID);
