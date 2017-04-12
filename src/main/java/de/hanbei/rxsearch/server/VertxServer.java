@@ -2,6 +2,9 @@ package de.hanbei.rxsearch.server;
 
 import com.codahale.metrics.ConsoleReporter;
 import com.codahale.metrics.SharedMetricRegistries;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.fasterxml.jackson.module.kotlin.KotlinModule;
+import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.ning.http.client.AsyncHttpClient;
@@ -15,6 +18,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.http.HttpServer;
+import io.vertx.core.json.Json;
 import io.vertx.ext.dropwizard.DropwizardMetricsOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -109,12 +113,23 @@ public class VertxServer extends AbstractVerticle {
     public static void main(String[] args) throws IOException {
         Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new DropwizardMetricsOptions().setEnabled(true).setJmxEnabled(true)));
 
-        vertx.deployVerticle(VertxEventVerticle.class.getName(), result -> {
-            if (result.succeeded()) {
-                System.out.println("vertx event vertice deployed");
+        Json.mapper.registerModule(new GuavaModule());
+        Json.mapper.registerModule(new KotlinModule());
+        Json.prettyMapper.registerModule(new GuavaModule());
+        Json.prettyMapper.registerModule(new KotlinModule());
+
+        Stopwatch stopwatch = Stopwatch.createStarted();
+        vertx.deployVerticle(VertxEventVerticle.class.getName(), r1 -> {
+            if (r1.succeeded()) {
+                vertx.deployVerticle(VertxServer.class.getName(), r2 -> {
+                    if (r2.succeeded()) {
+                        stopwatch.stop();
+                        LOGGER.info("Startup time {}ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+                    }
+                });
             }
         });
-        vertx.deployVerticle(VertxServer.class.getName());
+
 
         Runtime.getRuntime().addShutdownHook(new Thread(vertx::close));
     }

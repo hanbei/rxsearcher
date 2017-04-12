@@ -21,18 +21,18 @@ public class SearchEventHandler implements SearcherCompletionHandler, SearcherEr
     }
 
     @Override
-    public void searcherCompleted(String searcher, Query query) {
-        eventBus.publish("de.hanbei.searcher.finished", new SearcherFinishedEvent(searcher, query));
+    public void searcherCompleted(String requestId, String searcher, Query query) {
+        eventBus.publish(Topics.searcherCompleted(), new SearcherCompletedEvent(requestId, searcher, query));
     }
 
     @Override
-    public void searcherError(String searcher, SearcherException t) {
+    public void searcherError(String requestId, String searcher, SearcherException t) {
         LOGGER.warn(searcher, t);
-        eventBus.publish("de.hanbei.searcher.error", new SearcherErrorEvent(searcher, t));
+        eventBus.publish(Topics.searcherError(), new SearcherErrorEvent(requestId, searcher, t));
     }
 
     @Override
-    public void searcherResult(String searcher, Offer offer) {
-        eventBus.publish("de.hanbei.searcher.result", new SearcherResultEvent(searcher, offer));
+    public void searcherResult(String requestId, String searcher, Offer offer) {
+        eventBus.publish(Topics.searcherResult(), new SearcherResultEvent(requestId, searcher, offer));
     }
 }

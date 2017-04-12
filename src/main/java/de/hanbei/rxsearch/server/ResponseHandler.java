@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface ResponseHandler {
 
-    public void handleSuccess(List<Offer> results);
+    void handleSuccess(String requestId, List<Offer> results);
 
-    public void handleError(Throwable t);
+    void handleError(String requestId, Throwable t);
 }

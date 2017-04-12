@@ -17,6 +17,7 @@ import io.vertx.ext.web.RoutingContext;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 class SearchRouter implements Handler<RoutingContext> {
 
@@ -32,7 +33,7 @@ class SearchRouter implements Handler<RoutingContext> {
     @Override
     public void handle(RoutingContext routingContext) {
         HttpServerRequest request = routingContext.request();
-        String requestId = Optional.ofNullable(request.getHeader("X-Request-ID")).orElse("some_id");
+        String requestId = Optional.ofNullable(request.getHeader("X-Request-ID")).orElse(UUID.randomUUID().toString());
 
         ResponseHandler responseHandler = new VertxResponseHandler(routingContext);
 
@@ -41,8 +42,8 @@ class SearchRouter implements Handler<RoutingContext> {
         Observable<Offer> offerObservable = searchCoordinator.startSearch(q);
 
         filterCoordinator.filter(q, offerObservable).toList().subscribe(
-                responseHandler::handleSuccess,
-                responseHandler::handleError
+                o -> responseHandler.handleSuccess(requestId, o),
+                t -> responseHandler.handleError(requestId, t)
         );
     }
 

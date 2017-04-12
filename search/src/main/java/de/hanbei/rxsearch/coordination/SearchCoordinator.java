@@ -38,13 +38,13 @@ public class SearchCoordinator {
         return Observable.fromIterable(searchers)
                 .flatMap(
                         searcher -> searcher.search(query)
-                                .doOnNext(offer -> onNext.searcherResult(searcher.getName(), offer))
-                                .doOnComplete(() -> onCompleted.searcherCompleted(searcher.getName(), query))
-                                .doOnError(t -> onError.searcherError(searcher.getName(), SearcherException.wrap(t).searcher(searcher.getName()).query(query)))
+                                .doOnNext(offer -> onNext.searcherResult(query.getRequestId(), searcher.getName(), offer))
+                                .doOnComplete(() -> onCompleted.searcherCompleted(query.getRequestId(), searcher.getName(), query))
+                                .doOnError(t -> onError.searcherError(query.getRequestId(), searcher.getName(), SearcherException.wrap(t).searcher(searcher.getName()).query(query)))
                                 .onErrorResumeNext(Observable.empty())
                 ).map(offer -> Offer.from(offer).requestId(query.getRequestId()).build());
     }
 
-    private static <T> void noop(String s, T t) {
+    private static <T> void noop(String r, String s, T t) {
     }
 }

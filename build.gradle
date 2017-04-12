@@ -44,6 +44,9 @@ allprojects {
 
     dependencies {
         compile "com.fasterxml.jackson.core:jackson-databind"
+        compile "com.fasterxml.jackson.datatype:jackson-datatype-guava"
+        compile "com.fasterxml.jackson.module:jackson-module-kotlin"
+
         compile "com.google.guava:guava"
         compile "org.slf4j:slf4j-api"
 
@@ -57,6 +60,8 @@ allprojects {
     dependencyManagement {
         dependencies {
             dependency "com.fasterxml.jackson.core:jackson-databind:2.8.8"
+            dependency "com.fasterxml.jackson.datatype:jackson-datatype-guava:2.8.8"
+            dependency "com.fasterxml.jackson.module:jackson-module-kotlin:2.8.8"
             dependency "org.jooq:joox:1.4.0"
 
             dependency "com.google.guava:guava:21.0"

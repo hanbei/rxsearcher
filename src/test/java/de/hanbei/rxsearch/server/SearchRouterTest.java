@@ -18,6 +18,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -50,7 +51,7 @@ public class SearchRouterTest {
         response = mock(HttpServerResponse.class);
         when(response.putHeader(eq(HttpHeaders.CONTENT_TYPE), anyString())).thenReturn(response);
 
-        routingContext = mock(RoutingContext.class);
+        routingContext = mock(RoutingContext.class, RETURNS_DEEP_STUBS);
         when(routingContext.request()).thenReturn(request);
         when(routingContext.response()).thenReturn(response);
         when(routingContext.getBodyAsJson()).thenReturn(new JsonObject(

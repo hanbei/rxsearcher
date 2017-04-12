@@ -4,8 +4,32 @@ import de.hanbei.rxsearch.model.Offer
 import de.hanbei.rxsearch.model.Query
 import de.hanbei.rxsearch.searcher.SearcherException
 
-data class SearcherFinishedEvent(val searcher : String, val query : Query)
+class Topics {
+    companion object {
+        @JvmStatic
+        fun searcherError(): String = "de.hanbei.searcher.error"
 
-data class SearcherErrorEvent(val searcher : String, val exception : SearcherException)
+        @JvmStatic
+        fun searcherCompleted(): String = "de.hanbei.searcher.completed"
 
-data class SearcherResultEvent(val searcher : String, val offer : Offer)
+        @JvmStatic
+        fun searcherResult(): String = "de.hanbei.searcher.result"
+
+        @JvmStatic
+        fun searchFinished(): String = "de.hanbei.search.finished"
+
+        @JvmStatic
+        fun searchFailed(): String = "de.hanbei.search.failed"
+    }
+}
+
+data class SearcherCompletedEvent(val requestId: String, val searcher: String, val query: Query)
+
+data class SearcherErrorEvent(val requestId: String, val searcher: String, val exception: SearcherException)
+
+data class SearcherResultEvent(val requestId: String, val searcher: String, val offer: Offer)
+
+data class SearchFinishedEvent(val requestId: String, val numberOfOffers: Int)
+
+data class SearchFailedEvent(val requestId: String, val error: Throwable)
+
