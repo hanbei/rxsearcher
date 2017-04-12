@@ -1,6 +1,6 @@
 package de.hanbei.rxsearch.config
 
-import com.ning.http.client.AsyncHttpClient
+import org.asynchttpclient.AsyncHttpClient
 import de.hanbei.rxsearch.searcher.Searcher
 import de.hanbei.rxsearch.searcher.duckduckgo.DuckDuckGoSearcher
 import de.hanbei.rxsearch.searcher.fred.FredSearcher

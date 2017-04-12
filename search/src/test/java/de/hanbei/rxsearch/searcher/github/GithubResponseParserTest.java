@@ -3,7 +3,7 @@ package de.hanbei.rxsearch.searcher.github;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import com.ning.http.client.Response;
+import org.asynchttpclient.Response;
 import de.hanbei.rxsearch.model.Offer;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
@@ -29,7 +29,7 @@ public class GithubResponseParserTest {
 
         String stringResponse = Resources.toString(getResource("searcher/github/response_ok.json"), Charsets.UTF_8);
         response = mock(Response.class);
-        when(response.getResponseBody(anyString())).thenReturn(stringResponse);
+        when(response.getResponseBody(Charsets.UTF_8)).thenReturn(stringResponse);
         responseParser = new GithubResponseParser(GITHUB_SEARCHER);
     }
 
@@ -48,7 +48,7 @@ public class GithubResponseParserTest {
 
     @Test
     public void brokenJsonReturnsErrorObservable() throws IOException {
-        when(response.getResponseBody(anyString())).thenReturn("{");
+        when(response.getResponseBody(Charsets.UTF_8)).thenReturn("{");
 
         Observable<Offer> observable = responseParser.toSearchResults(response);
 
@@ -59,7 +59,7 @@ public class GithubResponseParserTest {
 
     @Test
     public void correctButEmptyJsonReturnsEmptyObservable() throws IOException {
-        when(response.getResponseBody(anyString())).thenReturn("{}");
+        when(response.getResponseBody(Charsets.UTF_8)).thenReturn("{}");
 
         Observable<Offer> observable = responseParser.toSearchResults(response);
 

@@ -1,6 +1,6 @@
 package de.hanbei.rxsearch.searcher.duckduckgo;
 
-import com.ning.http.client.Request;
+import org.asynchttpclient.Request;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.model.User;
 import de.hanbei.rxsearch.searcher.RequestUrlBuilderTest;

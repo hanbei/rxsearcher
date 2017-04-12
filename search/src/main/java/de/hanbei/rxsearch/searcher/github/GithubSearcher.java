@@ -1,6 +1,6 @@
 package de.hanbei.rxsearch.searcher.github;
 
-import com.ning.http.client.AsyncHttpClient;
+import org.asynchttpclient.AsyncHttpClient;
 import de.hanbei.rxsearch.searcher.AbstractSearcher;
 
 public class GithubSearcher extends AbstractSearcher {

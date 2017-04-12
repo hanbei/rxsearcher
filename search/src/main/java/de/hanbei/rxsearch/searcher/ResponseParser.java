@@ -1,6 +1,6 @@
 package de.hanbei.rxsearch.searcher;
 
-import com.ning.http.client.Response;
+import org.asynchttpclient.Response;
 import de.hanbei.rxsearch.model.Offer;
 import io.reactivex.Observable;
 

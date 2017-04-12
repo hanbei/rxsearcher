@@ -2,11 +2,11 @@ package de.hanbei.rxsearch.searcher;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.ning.http.client.AsyncCompletionHandler;
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.HttpResponseStatus;
-import com.ning.http.client.Request;
-import com.ning.http.client.Response;
+import org.asynchttpclient.AsyncCompletionHandler;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.Request;
+import org.asynchttpclient.Response;
+import org.asynchttpclient.HttpResponseStatus;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import io.reactivex.Observable;

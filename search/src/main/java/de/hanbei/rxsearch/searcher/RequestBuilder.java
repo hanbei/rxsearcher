@@ -1,8 +1,8 @@
 package de.hanbei.rxsearch.searcher;
 
-import com.ning.http.client.Request;
-import com.ning.http.util.Base64;
 import de.hanbei.rxsearch.model.Query;
+import org.asynchttpclient.Request;
+import org.asynchttpclient.util.Base64;
 
 public interface RequestBuilder {
 

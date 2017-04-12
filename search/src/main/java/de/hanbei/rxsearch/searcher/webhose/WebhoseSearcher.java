@@ -1,6 +1,6 @@
 package de.hanbei.rxsearch.searcher.webhose;
 
-import com.ning.http.client.AsyncHttpClient;
+import org.asynchttpclient.AsyncHttpClient;
 import de.hanbei.rxsearch.searcher.AbstractSearcher;
 
 public class WebhoseSearcher extends AbstractSearcher {

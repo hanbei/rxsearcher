@@ -3,7 +3,7 @@ package de.hanbei.rxsearch.searcher.webhose;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
-import com.ning.http.client.Response;
+import org.asynchttpclient.Response;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.searcher.ResponseParser;
 import io.reactivex.Observable;
@@ -28,7 +28,7 @@ public class WebhoseResponseParser implements ResponseParser {
 
         List<Offer> results = new ArrayList<>();
         try {
-            String responseAsString = response.getResponseBody(Charsets.UTF_8.name());
+            String responseAsString = response.getResponseBody(Charsets.UTF_8);
 
             JsonNode jsonNode = mapper.readTree(responseAsString);
             JsonNode posts = jsonNode.findValue("posts");
