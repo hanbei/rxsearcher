@@ -12,8 +12,6 @@ import org.slf4j.LoggerFactory;
 
 public class SearchEventHandler implements SearcherCompletionHandler, SearcherErrorHandler, SearcherResult {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SearchEventHandler.class);
-
     private final EventBus eventBus;
 
     public SearchEventHandler(EventBus eventBus) {
@@ -27,7 +25,6 @@ public class SearchEventHandler implements SearcherCompletionHandler, SearcherEr
 
     @Override
     public void searcherError(String requestId, String searcher, SearcherException t) {
-        LOGGER.warn(searcher, t);
         eventBus.publish(Topics.searcherError(), new SearcherErrorEvent(requestId, searcher, t));
     }
 

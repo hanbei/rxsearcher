@@ -9,7 +9,11 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.ning.http.client.AsyncHttpClient;
 import de.hanbei.rxsearch.config.SearcherConfiguration;
-import de.hanbei.rxsearch.events.VertxEventVerticle;
+import de.hanbei.rxsearch.events.LogSearchVerticle;
+import de.hanbei.rxsearch.events.SearchFinishedEvent;
+import de.hanbei.rxsearch.events.SearcherCompletedEvent;
+import de.hanbei.rxsearch.events.SearcherErrorEvent;
+import de.hanbei.rxsearch.events.SearcherResultEvent;
 import de.hanbei.rxsearch.filter.OfferProcessor;
 import de.hanbei.rxsearch.metrics.Measured;
 import de.hanbei.rxsearch.searcher.Searcher;
@@ -32,6 +36,8 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+
+import static java.lang.System.exit;
 
 public class VertxServer extends AbstractVerticle {
 
@@ -118,15 +124,26 @@ public class VertxServer extends AbstractVerticle {
         Json.prettyMapper.registerModule(new GuavaModule());
         Json.prettyMapper.registerModule(new KotlinModule());
 
+        vertx.eventBus().registerDefaultCodec(SearcherCompletedEvent.class, SearcherCompletedEvent.Codec());
+        vertx.eventBus().registerDefaultCodec(SearcherErrorEvent.class, SearcherErrorEvent.Codec());
+        vertx.eventBus().registerDefaultCodec(SearcherResultEvent.class, SearcherResultEvent.Codec());
+        vertx.eventBus().registerDefaultCodec(SearchFinishedEvent.class, SearchFinishedEvent.Codec());
+
         Stopwatch stopwatch = Stopwatch.createStarted();
-        vertx.deployVerticle(VertxEventVerticle.class.getName(), r1 -> {
+        vertx.deployVerticle(LogSearchVerticle.class.getName(), r1 -> {
             if (r1.succeeded()) {
                 vertx.deployVerticle(VertxServer.class.getName(), r2 -> {
                     if (r2.succeeded()) {
                         stopwatch.stop();
                         LOGGER.info("Startup time {}ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+                    } else {
+                        LOGGER.warn("Failed to start VertxServer", r1.cause());
+                        exit(-1);
                     }
                 });
+            } else {
+                LOGGER.warn("Failed to start LogSearchVerticle", r1.cause());
+                exit(-1);
             }
         });
 
