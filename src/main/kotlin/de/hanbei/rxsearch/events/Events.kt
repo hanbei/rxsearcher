@@ -10,19 +10,39 @@ import io.vertx.core.json.JsonObject
 class Topics {
     companion object {
         @JvmStatic
+        fun searcherStarted(): String = "de.hanbei.searcher.started"
+
+        @JvmStatic
+        fun searcherResult(): String = "de.hanbei.searcher.result"
+
+        @JvmStatic
         fun searcherError(): String = "de.hanbei.searcher.error"
 
         @JvmStatic
         fun searcherCompleted(): String = "de.hanbei.searcher.completed"
 
         @JvmStatic
-        fun searcherResult(): String = "de.hanbei.searcher.result"
+        fun searchStarted(): String = "de.hanbei.search.started"
 
         @JvmStatic
         fun searchFinished(): String = "de.hanbei.search.finished"
 
         @JvmStatic
         fun searchFailed(): String = "de.hanbei.search.failed"
+    }
+}
+
+data class SearcherStartedEvent(val requestId: String, val searcher: String) {
+    companion object {
+        @JvmStatic
+        fun Codec(): MessageCodec<SearcherStartedEvent, SearcherStartedEvent> = object : PojoToJsonCodec<SearcherStartedEvent>(SearcherStartedEvent::class.java) {}
+    }
+}
+
+data class SearcherResultEvent(val requestId: String, val searcher: String, val offer: Offer) {
+    companion object {
+        @JvmStatic
+        fun Codec(): MessageCodec<SearcherResultEvent, SearcherResultEvent> = object : PojoToJsonCodec<SearcherResultEvent>(SearcherResultEvent::class.java) {}
     }
 }
 
@@ -40,12 +60,13 @@ data class SearcherErrorEvent(val requestId: String, val searcher: String, val e
     }
 }
 
-data class SearcherResultEvent(val requestId: String, val searcher: String, val offer: Offer) {
+data class SearchStartedEvent(val requestId: String) {
     companion object {
         @JvmStatic
-        fun Codec(): MessageCodec<SearcherResultEvent, SearcherResultEvent> = object : PojoToJsonCodec<SearcherResultEvent>(SearcherResultEvent::class.java) {}
+        fun Codec(): MessageCodec<SearchStartedEvent, SearchStartedEvent> = object : PojoToJsonCodec<SearchStartedEvent>(SearchStartedEvent::class.java) {}
     }
 }
+
 
 data class SearchFinishedEvent(val requestId: String, val numberOfOffers: Int) {
     companion object {
@@ -59,13 +80,7 @@ data class SearchFailedEvent(val requestId: String, val error: Throwable) {
         @JvmStatic
         fun Codec(): MessageCodec<SearchFailedEvent, SearchFailedEvent> = object : PojoToJsonCodec<SearchFailedEvent>(SearchFailedEvent::class.java) {}
     }
-}
 
-data class SearcherStartedEvent(val requestId: String, val searcher: String) {
-    companion object {
-        @JvmStatic
-        fun Codec(): MessageCodec<SearcherStartedEvent, SearcherStartedEvent> = object : PojoToJsonCodec<SearcherStartedEvent>(SearcherStartedEvent::class.java) {}
-    }
 }
 
 open class PojoToJsonCodec<T>(val clasz: Class<T>) : MessageCodec<T, T> {

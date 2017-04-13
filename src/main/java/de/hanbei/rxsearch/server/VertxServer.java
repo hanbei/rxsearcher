@@ -10,7 +10,9 @@ import com.google.common.collect.Lists;
 import com.ning.http.client.AsyncHttpClient;
 import de.hanbei.rxsearch.config.SearcherConfiguration;
 import de.hanbei.rxsearch.events.LogSearchVerticle;
+import de.hanbei.rxsearch.events.SearchFailedEvent;
 import de.hanbei.rxsearch.events.SearchFinishedEvent;
+import de.hanbei.rxsearch.events.SearchStartedEvent;
 import de.hanbei.rxsearch.events.SearcherCompletedEvent;
 import de.hanbei.rxsearch.events.SearcherErrorEvent;
 import de.hanbei.rxsearch.events.SearcherResultEvent;
@@ -128,6 +130,8 @@ public class VertxServer extends AbstractVerticle {
         vertx.eventBus().registerDefaultCodec(SearcherErrorEvent.class, SearcherErrorEvent.Codec());
         vertx.eventBus().registerDefaultCodec(SearcherResultEvent.class, SearcherResultEvent.Codec());
         vertx.eventBus().registerDefaultCodec(SearchFinishedEvent.class, SearchFinishedEvent.Codec());
+        vertx.eventBus().registerDefaultCodec(SearchFailedEvent.class, SearchFailedEvent.Codec());
+        vertx.eventBus().registerDefaultCodec(SearchStartedEvent.class, SearchStartedEvent.Codec());
 
         Stopwatch stopwatch = Stopwatch.createStarted();
         vertx.deployVerticle(LogSearchVerticle.class.getName(), r1 -> {

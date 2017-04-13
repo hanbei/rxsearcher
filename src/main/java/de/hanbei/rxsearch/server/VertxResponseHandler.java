@@ -26,17 +26,17 @@ class VertxResponseHandler implements ResponseHandler {
 
     VertxResponseHandler(RoutingContext routingContext) {
         this.routingContext = routingContext;
-        eventBus = routingContext.vertx().eventBus();
+        this.eventBus = routingContext.vertx().eventBus();
     }
 
     @Override
     public void handleSuccess(String requestId, List<Offer> results) {
+        eventBus.publish(Topics.searchFinished(), new SearchFinishedEvent(requestId, results.size()));
+
         if (results.isEmpty()) {
             sendNoContent(routingContext);
             return;
         }
-
-        eventBus.publish(Topics.searchFinished(), new SearchFinishedEvent(requestId, results.size()));
 
         Map<String, Object> wrapper = new HashMap<>();
         wrapper.put("results", results);

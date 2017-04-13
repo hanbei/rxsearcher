@@ -15,8 +15,10 @@ public class LogSearchVerticle extends AbstractVerticle {
     private MessageConsumer<SearcherCompletedEvent> finishedConsumer;
     private MessageConsumer<SearcherErrorEvent> errorConsumer;
     private MessageConsumer<SearcherResultEvent> resultConsumer;
+
     private MessageConsumer<SearchFinishedEvent> searchFinishedConsumer;
     private MessageConsumer<SearchFailedEvent> searchFailedConsumer;
+    private MessageConsumer<SearchStartedEvent> searchStartedConsumer;
 
     @Override
     public void start(Future<Void> startFuture) {
@@ -25,11 +27,11 @@ public class LogSearchVerticle extends AbstractVerticle {
         resultConsumer = vertx.eventBus().consumer(Topics.searcherResult(), this::searcherResult);
         searchFinishedConsumer = vertx.eventBus().consumer(Topics.searchFinished(), this::searchFinished);
         searchFailedConsumer = vertx.eventBus().consumer(Topics.searchFailed(), this::searchFailed);
+        searchStartedConsumer = vertx.eventBus().consumer(Topics.searchStarted(), this::searchStarted);
 
         LOGGER.info("Started VertxEventVerticle");
         startFuture.complete();
     }
-
 
     @Override
     public void stop(Future<Void> stopFuture) throws Exception {
@@ -38,8 +40,10 @@ public class LogSearchVerticle extends AbstractVerticle {
         resultConsumer.unregister();
         searchFinishedConsumer.unregister();
         searchFailedConsumer.unregister();
+        searchStartedConsumer.unregister();
         stopFuture.complete();
     }
+
 
     private void searcherCompleted(Message<SearcherCompletedEvent> message) {
         SearcherCompletedEvent event = message.body();
@@ -56,6 +60,11 @@ public class LogSearchVerticle extends AbstractVerticle {
         LOGGER.info("{}: searcher {} got result for {}", event.getRequestId(), event.getSearcher(), event.getOffer());
     }
 
+    private void searchStarted(Message<SearchStartedEvent> message) {
+        SearchStartedEvent event = message.body();
+        LOGGER.info("{}: search started", event.getRequestId());
+    }
+
     private void searchFailed(Message<SearchFailedEvent> message) {
         SearchFailedEvent event = message.body();
         LOGGER.error("{}: failed search {}", event.getRequestId(), event.getError());
@@ -63,7 +72,7 @@ public class LogSearchVerticle extends AbstractVerticle {
 
     private void searchFinished(Message<SearchFinishedEvent> message) {
         SearchFinishedEvent event = message.body();
-        LOGGER.info("{}: finished search {} got #{} result", event.getRequestId(), event.getNumberOfOffers());
+        LOGGER.info("{}: finished search got #{} result", event.getRequestId(), event.getNumberOfOffers());
     }
 
 }

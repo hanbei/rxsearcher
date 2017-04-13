@@ -2,6 +2,8 @@ package de.hanbei.rxsearch.server;
 
 import de.hanbei.rxsearch.coordination.SearchCoordinator;
 import de.hanbei.rxsearch.events.SearchEventHandler;
+import de.hanbei.rxsearch.events.SearchStartedEvent;
+import de.hanbei.rxsearch.events.Topics;
 import de.hanbei.rxsearch.filter.OfferProcessor;
 import de.hanbei.rxsearch.filter.OfferProcessorCoordinator;
 import de.hanbei.rxsearch.model.Offer;
@@ -23,8 +25,10 @@ class SearchRouter implements Handler<RoutingContext> {
 
     private final SearchCoordinator searchCoordinator;
     private final OfferProcessorCoordinator filterCoordinator;
+    private final EventBus eventBus;
 
     public SearchRouter(List<Searcher> searcher, List<OfferProcessor> processors, EventBus eventBus) {
+        this.eventBus = eventBus;
         SearchEventHandler eventHandler = new SearchEventHandler(eventBus);
         this.searchCoordinator = new SearchCoordinator(searcher, eventHandler, eventHandler, eventHandler);
         this.filterCoordinator = new OfferProcessorCoordinator(processors);
@@ -32,11 +36,11 @@ class SearchRouter implements Handler<RoutingContext> {
 
     @Override
     public void handle(RoutingContext routingContext) {
-        HttpServerRequest request = routingContext.request();
-        String requestId = Optional.ofNullable(request.getHeader("X-Request-ID")).orElse(UUID.randomUUID().toString());
-
         ResponseHandler responseHandler = new VertxResponseHandler(routingContext);
 
+        HttpServerRequest request = routingContext.request();
+        String requestId = Optional.ofNullable(request.getHeader("X-Request-ID")).orElse(UUID.randomUUID().toString());
+        eventBus.publish(Topics.searchStarted(), new SearchStartedEvent(requestId));
         Query q = extractQuery(routingContext, requestId);
 
         Observable<Offer> offerObservable = searchCoordinator.startSearch(q);
