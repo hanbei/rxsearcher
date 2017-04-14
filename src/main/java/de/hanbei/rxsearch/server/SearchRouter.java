@@ -40,8 +40,11 @@ class SearchRouter implements Handler<RoutingContext> {
 
         HttpServerRequest request = routingContext.request();
         String requestId = Optional.ofNullable(request.getHeader("X-Request-ID")).orElse(UUID.randomUUID().toString());
-        eventBus.publish(Topics.searchStarted(), new SearchStartedEvent(requestId));
+        boolean logSearch = Optional.ofNullable(Boolean.valueOf(request.getParam("logSearch"))).orElse(false);
         Query q = extractQuery(routingContext, requestId);
+
+        eventBus.publish(Topics.searchStarted(), new SearchStartedEvent(requestId,
+                new SearchRequestConfiguration(requestId, logSearch)));
 
         Observable<Offer> offerObservable = searchCoordinator.startSearch(q);
 

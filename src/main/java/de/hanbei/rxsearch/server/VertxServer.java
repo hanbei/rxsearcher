@@ -10,6 +10,7 @@ import com.google.common.collect.Lists;
 import com.ning.http.client.AsyncHttpClient;
 import de.hanbei.rxsearch.config.SearcherConfiguration;
 import de.hanbei.rxsearch.events.LogSearchVerticle;
+import de.hanbei.rxsearch.events.LoggingVerticle;
 import de.hanbei.rxsearch.events.SearchFailedEvent;
 import de.hanbei.rxsearch.events.SearchFinishedEvent;
 import de.hanbei.rxsearch.events.SearchStartedEvent;
@@ -38,8 +39,6 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
-import static java.lang.System.exit;
 
 public class VertxServer extends AbstractVerticle {
 
@@ -119,6 +118,8 @@ public class VertxServer extends AbstractVerticle {
     }
 
     public static void main(String[] args) throws IOException {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+
         Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new DropwizardMetricsOptions().setEnabled(true).setJmxEnabled(true)));
 
         Json.mapper.registerModule(new GuavaModule());
@@ -133,24 +134,12 @@ public class VertxServer extends AbstractVerticle {
         vertx.eventBus().registerDefaultCodec(SearchFailedEvent.class, SearchFailedEvent.Codec());
         vertx.eventBus().registerDefaultCodec(SearchStartedEvent.class, SearchStartedEvent.Codec());
 
-        Stopwatch stopwatch = Stopwatch.createStarted();
-        vertx.deployVerticle(LogSearchVerticle.class.getName(), r1 -> {
-            if (r1.succeeded()) {
-                vertx.deployVerticle(VertxServer.class.getName(), r2 -> {
-                    if (r2.succeeded()) {
-                        stopwatch.stop();
-                        LOGGER.info("Startup time {}ms", stopwatch.elapsed(TimeUnit.MILLISECONDS));
-                    } else {
-                        LOGGER.warn("Failed to start VertxServer", r1.cause());
-                        exit(-1);
-                    }
-                });
-            } else {
-                LOGGER.warn("Failed to start LogSearchVerticle", r1.cause());
-                exit(-1);
-            }
-        });
+        vertx.deployVerticle(LogSearchVerticle.class.getName());
+        vertx.deployVerticle(LoggingVerticle.class.getName());
+        vertx.deployVerticle(VertxServer.class.getName());
 
+        stopwatch.stop();
+        LOGGER.info("Startup in {}", stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
         Runtime.getRuntime().addShutdownHook(new Thread(vertx::close));
     }

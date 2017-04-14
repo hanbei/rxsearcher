@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 
 public class VertxResponseHandlerTest {
 
-    public static final String REQUEST_ID = "requestId";
+    private static final String REQUEST_ID = "requestId";
     private VertxResponseHandler vertxResponseHandler;
     private RoutingContext routingContext;
     private HttpServerResponse response;

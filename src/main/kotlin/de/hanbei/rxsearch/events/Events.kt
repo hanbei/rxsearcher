@@ -3,6 +3,7 @@ package de.hanbei.rxsearch.events
 import de.hanbei.rxsearch.model.Offer
 import de.hanbei.rxsearch.model.Query
 import de.hanbei.rxsearch.searcher.SearcherException
+import de.hanbei.rxsearch.server.SearchRequestConfiguration
 import io.vertx.core.buffer.Buffer
 import io.vertx.core.eventbus.MessageCodec
 import io.vertx.core.json.JsonObject
@@ -60,7 +61,7 @@ data class SearcherErrorEvent(val requestId: String, val searcher: String, val e
     }
 }
 
-data class SearchStartedEvent(val requestId: String) {
+data class SearchStartedEvent(val requestId: String, val searchConfiguraton : SearchRequestConfiguration) {
     companion object {
         @JvmStatic
         fun Codec(): MessageCodec<SearchStartedEvent, SearchStartedEvent> = object : PojoToJsonCodec<SearchStartedEvent>(SearchStartedEvent::class.java) {}

@@ -4,38 +4,47 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.eventbus.MessageConsumer;
+import io.vertx.core.json.Json;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 public class LogSearchVerticle extends AbstractVerticle {
 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LogSearchVerticle.class);
 
-    private MessageConsumer<SearcherCompletedEvent> finishedConsumer;
     private MessageConsumer<SearcherErrorEvent> errorConsumer;
     private MessageConsumer<SearcherResultEvent> resultConsumer;
-
     private MessageConsumer<SearchFinishedEvent> searchFinishedConsumer;
     private MessageConsumer<SearchFailedEvent> searchFailedConsumer;
     private MessageConsumer<SearchStartedEvent> searchStartedConsumer;
 
+    private final Map<String, LoggedSearchContainer> loggedSearchesContainer;
+
+    public LogSearchVerticle() {
+        this.loggedSearchesContainer = new HashMap<>();
+    }
+
     @Override
     public void start(Future<Void> startFuture) {
-        finishedConsumer = vertx.eventBus().consumer(Topics.searcherCompleted(), this::searcherCompleted);
-        errorConsumer = vertx.eventBus().consumer(Topics.searcherError(), this::searcherError);
-        resultConsumer = vertx.eventBus().consumer(Topics.searcherResult(), this::searcherResult);
+        LOGGER.info("Started LogSearchVerticle");
+
+        errorConsumer = vertx.eventBus().consumer(Topics.searcherError(), this::searcherGotError);
+        resultConsumer = vertx.eventBus().consumer(Topics.searcherResult(), this::searcherGotResult);
+
         searchFinishedConsumer = vertx.eventBus().consumer(Topics.searchFinished(), this::searchFinished);
         searchFailedConsumer = vertx.eventBus().consumer(Topics.searchFailed(), this::searchFailed);
         searchStartedConsumer = vertx.eventBus().consumer(Topics.searchStarted(), this::searchStarted);
 
-        LOGGER.info("Started VertxEventVerticle");
         startFuture.complete();
     }
 
     @Override
     public void stop(Future<Void> stopFuture) throws Exception {
-        finishedConsumer.unregister();
         errorConsumer.unregister();
         resultConsumer.unregister();
         searchFinishedConsumer.unregister();
@@ -44,35 +53,52 @@ public class LogSearchVerticle extends AbstractVerticle {
         stopFuture.complete();
     }
 
-
-    private void searcherCompleted(Message<SearcherCompletedEvent> message) {
-        SearcherCompletedEvent event = message.body();
-        LOGGER.info("{}: searcher {} completed for {}", event.getRequestId(), event.getSearcher(), event.getQuery());
-    }
-
-    private void searcherError(Message<SearcherErrorEvent> message) {
-        SearcherErrorEvent event = message.body();
-        LOGGER.warn("{}: Error in searcher {}", event.getRequestId(), event.getSearcher(), event.getException());
-    }
-
-    private void searcherResult(Message<SearcherResultEvent> message) {
-        SearcherResultEvent event = message.body();
-        LOGGER.info("{}: searcher {} got result for {}", event.getRequestId(), event.getSearcher(), event.getOffer());
-    }
-
     private void searchStarted(Message<SearchStartedEvent> message) {
         SearchStartedEvent event = message.body();
-        LOGGER.info("{}: search started", event.getRequestId());
+        LoggedSearchContainer loggedSearch = loggedSearchesContainer.getOrDefault(event.getRequestId(),
+                new LoggedSearchContainer(event.getRequestId(), event.getSearchConfiguraton()));
+        loggedSearchesContainer.put(event.getRequestId(), loggedSearch);
+
     }
 
     private void searchFailed(Message<SearchFailedEvent> message) {
         SearchFailedEvent event = message.body();
-        LOGGER.error("{}: failed search {}", event.getRequestId(), event.getError());
+        Optional<LoggedSearchContainer> loggedSearchContainer = getLoggedSearchContainer(event.getRequestId());
+        loggedSearchContainer.map(lsc -> {
+            lsc.failed(event.getError());
+            return lsc;
+        }).ifPresent(lsc -> LOGGER.info("{}", Json.encodePrettily(lsc)));
     }
 
     private void searchFinished(Message<SearchFinishedEvent> message) {
         SearchFinishedEvent event = message.body();
-        LOGGER.info("{}: finished search got #{} result", event.getRequestId(), event.getNumberOfOffers());
+        Optional<LoggedSearchContainer> lsc = getLoggedSearchContainer(event.getRequestId());
+        if (lsc.isPresent()) {
+            lsc.get().success(event.getNumberOfOffers());
+            LOGGER.info("{}", Json.encode(lsc.get()));
+            loggedSearchesContainer.remove(event.getRequestId());
+        }
+    }
+
+    private void searcherGotResult(Message<SearcherResultEvent> message) {
+        SearcherResultEvent event = message.body();
+        Optional<LoggedSearchContainer> loggedSearchContainer = getLoggedSearchContainer(event.getRequestId());
+        if (loggedSearchContainer.isPresent()) {
+            loggedSearchContainer.get().addOffer(event.getSearcher(), event.getOffer());
+            loggedSearchesContainer.put(event.getRequestId(), loggedSearchContainer.get());
+        }
+    }
+
+    private Optional<LoggedSearchContainer> getLoggedSearchContainer(String requestId) {
+        LoggedSearchContainer loggedSearchContainer = loggedSearchesContainer.get(requestId);
+        if (loggedSearchContainer == null || !loggedSearchContainer.getSearchConfiguraton().getLogSearch()) {
+            return Optional.empty();
+        }
+        return Optional.of(loggedSearchContainer);
+    }
+
+    private void searcherGotError(Message<SearcherErrorEvent> message) {
+        // log error
     }
 
 }
