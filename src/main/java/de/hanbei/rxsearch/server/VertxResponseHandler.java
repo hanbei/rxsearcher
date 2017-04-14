@@ -1,10 +1,13 @@
 package de.hanbei.rxsearch.server;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import de.hanbei.rxsearch.events.SearchFailedEvent;
+import de.hanbei.rxsearch.events.SearchFinishedEvent;
+import de.hanbei.rxsearch.events.Topics;
 import de.hanbei.rxsearch.model.Offer;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerResponse;
+import io.vertx.core.json.Json;
 import io.vertx.ext.web.RoutingContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,31 +22,26 @@ class VertxResponseHandler implements ResponseHandler {
     private static final String MEDIATYPE_JSON = "application/json";
 
     private final RoutingContext routingContext;
-    private final ObjectMapper objectMapper;
-
+    private final EventBus eventBus;
 
     VertxResponseHandler(RoutingContext routingContext) {
         this.routingContext = routingContext;
-
-        this.objectMapper = new ObjectMapper();
+        this.eventBus = routingContext.vertx().eventBus();
     }
 
     @Override
-    public void handleSuccess(List<Offer> results) {
+    public void handleSuccess(String requestId, List<Offer> results) {
+        eventBus.publish(Topics.searchFinished(), new SearchFinishedEvent(requestId, results.size()));
+
         if (results.isEmpty()) {
             sendNoContent(routingContext);
             return;
         }
 
-        try {
-            Map<String, Object> wrapper = new HashMap<>();
-            wrapper.put("results", results);
-            String s = objectMapper.writeValueAsString(wrapper);
-            sendResponse(routingContext, s);
-        } catch (JsonProcessingException e) {
-            handleError(e);
-        }
-
+        Map<String, Object> wrapper = new HashMap<>();
+        wrapper.put("results", results);
+        String s = Json.encode(wrapper);
+        sendResponse(routingContext, s);
     }
 
     private void sendNoContent(RoutingContext routingContext) {
@@ -57,8 +55,9 @@ class VertxResponseHandler implements ResponseHandler {
     }
 
     @Override
-    public void handleError(Throwable t) {
+    public void handleError(String requestId, Throwable t) {
         LOGGER.warn(t.getMessage());
+        eventBus.publish(Topics.searchFailed(), new SearchFailedEvent(requestId, t));
         routingContext.fail(t);
     }
 

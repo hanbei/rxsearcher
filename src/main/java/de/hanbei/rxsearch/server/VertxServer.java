@@ -2,10 +2,21 @@ package de.hanbei.rxsearch.server;
 
 import com.codahale.metrics.ConsoleReporter;
 import com.codahale.metrics.SharedMetricRegistries;
+import com.fasterxml.jackson.datatype.guava.GuavaModule;
+import com.fasterxml.jackson.module.kotlin.KotlinModule;
+import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.ning.http.client.AsyncHttpClient;
 import de.hanbei.rxsearch.config.SearcherConfiguration;
+import de.hanbei.rxsearch.events.LogSearchVerticle;
+import de.hanbei.rxsearch.events.LoggingVerticle;
+import de.hanbei.rxsearch.events.SearchFailedEvent;
+import de.hanbei.rxsearch.events.SearchFinishedEvent;
+import de.hanbei.rxsearch.events.SearchStartedEvent;
+import de.hanbei.rxsearch.events.SearcherCompletedEvent;
+import de.hanbei.rxsearch.events.SearcherErrorEvent;
+import de.hanbei.rxsearch.events.SearcherResultEvent;
 import de.hanbei.rxsearch.filter.OfferProcessor;
 import de.hanbei.rxsearch.metrics.Measured;
 import de.hanbei.rxsearch.searcher.Searcher;
@@ -14,6 +25,7 @@ import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
 import io.vertx.core.http.HttpServer;
+import io.vertx.core.json.Json;
 import io.vertx.ext.dropwizard.DropwizardMetricsOptions;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
@@ -33,26 +45,30 @@ public class VertxServer extends AbstractVerticle {
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxServer.class);
 
     private final AsyncHttpClient asyncHttpClient;
-    private final SearchRouter searchRouter;
+    private final List<Searcher> searchers;
+    private final List<OfferProcessor> processors;
 
+    private SearchRouter searchRouter;
     private HttpServer httpServer;
+
 
     public VertxServer() {
         asyncHttpClient = new AsyncHttpClient();
         SearcherConfiguration searcherConfiguration = new SearcherConfiguration(asyncHttpClient);
 
-        List<Searcher> searchers = searcherConfiguration.loadConfiguration("rxsearch", "testing", "de");
-        List<OfferProcessor> processors = Lists.newArrayList();
+        searchers = searcherConfiguration.loadConfiguration("rxsearch", "testing", "de");
+        processors = Lists.newArrayList();
 
-        searchRouter = new SearchRouter(searchers, processors);
 
         ConsoleReporter reporter = ConsoleReporter.forRegistry(SharedMetricRegistries.getOrCreate(Measured.SEARCHER_METRICS))
                 .shutdownExecutorOnStop(true).build();
-        reporter.start(5, TimeUnit.SECONDS);
+        //reporter.start(5, TimeUnit.SECONDS);
     }
 
     @Override
     public void start(Future<Void> fut) {
+        searchRouter = new SearchRouter(searchers, processors, vertx.eventBus());
+
         httpServer = vertx.createHttpServer();
         Router router = Router.router(vertx);
 
@@ -102,9 +118,28 @@ public class VertxServer extends AbstractVerticle {
     }
 
     public static void main(String[] args) throws IOException {
+        Stopwatch stopwatch = Stopwatch.createStarted();
+
         Vertx vertx = Vertx.vertx(new VertxOptions().setMetricsOptions(new DropwizardMetricsOptions().setEnabled(true).setJmxEnabled(true)));
 
+        Json.mapper.registerModule(new GuavaModule());
+        Json.mapper.registerModule(new KotlinModule());
+        Json.prettyMapper.registerModule(new GuavaModule());
+        Json.prettyMapper.registerModule(new KotlinModule());
+
+        vertx.eventBus().registerDefaultCodec(SearcherCompletedEvent.class, SearcherCompletedEvent.Codec());
+        vertx.eventBus().registerDefaultCodec(SearcherErrorEvent.class, SearcherErrorEvent.Codec());
+        vertx.eventBus().registerDefaultCodec(SearcherResultEvent.class, SearcherResultEvent.Codec());
+        vertx.eventBus().registerDefaultCodec(SearchFinishedEvent.class, SearchFinishedEvent.Codec());
+        vertx.eventBus().registerDefaultCodec(SearchFailedEvent.class, SearchFailedEvent.Codec());
+        vertx.eventBus().registerDefaultCodec(SearchStartedEvent.class, SearchStartedEvent.Codec());
+
+        vertx.deployVerticle(LogSearchVerticle.class.getName());
+        vertx.deployVerticle(LoggingVerticle.class.getName());
         vertx.deployVerticle(VertxServer.class.getName());
+
+        stopwatch.stop();
+        LOGGER.info("Startup in {}", stopwatch.elapsed(TimeUnit.MILLISECONDS));
 
         Runtime.getRuntime().addShutdownHook(new Thread(vertx::close));
     }

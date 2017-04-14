@@ -13,6 +13,7 @@ import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.instanceOf;
+import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.fail;
@@ -86,25 +87,29 @@ public class SearchCoordinatorTest {
 
     private static class Given {
         SearchCoordinator givenCoordinatorExpectingError(Searcher searcher, Query query) {
-            return new SearchCoordinator(Lists.newArrayList(searcher), t -> {
-                assertThat(t, instanceOf(SearcherException.class));
-                assertThat(t.getMessage(), containsString(MESSAGE));
-                assertEquals(query, t.getQuery());
-                assertThat(t.getCause(), instanceOf(IllegalArgumentException.class));
-                return Observable.empty();
-            }, (s, q) -> {
-                fail("Completion called but not expected");
-            });
+            return new SearchCoordinator(Lists.newArrayList(searcher),
+                    (r, s, t) -> {
+                        assertThat(r, is("id"));
+                        assertThat(t, instanceOf(SearcherException.class));
+                        assertThat(t.getMessage(), containsString(MESSAGE));
+                        assertEquals(query, t.getQuery());
+                        assertThat(t.getCause(), instanceOf(IllegalArgumentException.class));
+                    },
+                    (r, s, q) -> {
+                        fail("Completion called but not expected");
+                    }
+            );
         }
 
         SearchCoordinator givenCoordinatorNotExpectingError(Searcher searcher) {
-            return new SearchCoordinator(Lists.newArrayList(searcher), t -> {
-                fail("Should not throw error");
-                return Observable.empty();
-            }, (s, q) -> {
-                assertEquals(SEARCHER_NAME, s);
-                assertEquals(QUERY, q);
-            });
+            return new SearchCoordinator(Lists.newArrayList(searcher),
+                    (r, s, t) -> fail("Should not throw error"),
+                    (r, s, q) -> {
+                        assertThat(r, is("id"));
+                        assertEquals(SEARCHER_NAME, s);
+                        assertEquals(QUERY, q);
+                    }
+            );
         }
     }
 }

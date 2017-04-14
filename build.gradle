@@ -18,6 +18,9 @@ dependencies {
     compile "io.vertx:vertx-web"
     compile "io.vertx:vertx-dropwizard-metrics"
 
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-guava"
+    compile "com.fasterxml.jackson.module:jackson-module-kotlin"
+
     compile "ch.qos.logback:logback-classic"
     compile "org.slf4j:jul-to-slf4j"
 
@@ -43,20 +46,23 @@ allprojects {
     }
 
     dependencies {
-        compile "com.fasterxml.jackson.core:jackson-databind"
         compile "com.google.guava:guava"
         compile "org.slf4j:slf4j-api"
 
         compile "org.jetbrains.kotlin:kotlin-stdlib"
+        compile "com.fasterxml.jackson.core:jackson-databind"
 
         testCompile "junit:junit"
         testCompile 'org.mockito:mockito-core'
         testCompile 'org.hamcrest:hamcrest-all'
+        testCompile 'io.kotlintest:kotlintest'
     }
 
     dependencyManagement {
         dependencies {
             dependency "com.fasterxml.jackson.core:jackson-databind:2.8.8"
+            dependency "com.fasterxml.jackson.datatype:jackson-datatype-guava:2.8.8"
+            dependency "com.fasterxml.jackson.module:jackson-module-kotlin:2.8.8"
             dependency "org.jooq:joox:1.4.0"
 
             dependency "com.google.guava:guava:21.0"
@@ -95,6 +101,9 @@ allprojects {
             dependency "org.glassfish.jersey.core:jersey-client:2.23.2"
             dependency "org.spockframework:spock-core:1.0-groovy-2.4"
             dependency "cglib:cglib-nodep:3.2.4"
+
+            // Kotlin test dependencies
+            dependency "io.kotlintest:kotlintest:2.0.0"
         }
     }
 

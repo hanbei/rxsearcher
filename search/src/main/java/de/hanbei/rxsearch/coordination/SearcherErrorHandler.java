@@ -7,6 +7,6 @@ import io.reactivex.Observable;
 @FunctionalInterface
 public interface SearcherErrorHandler {
 
-    Observable<Offer> searcherError(SearcherException t);
+    void searcherError(String requestId, String searcher, SearcherException t);
 
 }

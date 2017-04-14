@@ -5,6 +5,7 @@ import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.model.User;
 import de.hanbei.rxsearch.searcher.Searcher;
 import io.reactivex.Observable;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.http.HttpServerResponse;
@@ -17,6 +18,7 @@ import static com.google.common.collect.Lists.newArrayList;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -39,17 +41,17 @@ public class SearchRouterTest {
     @Before
     public void setUp() {
         searcher1 = mock(Searcher.class);
+        when(searcher1.getName()).thenReturn("searcher1");
         searcher2 = mock(Searcher.class);
+        when(searcher2.getName()).thenReturn("searcher2");
 
         HttpServerRequest request = mock(HttpServerRequest.class);
-        //when(request.getParam("q")).thenReturn(SEARCH_TERM);
-        //when(request.getParam("country")).thenReturn(DE);
         when(request.getHeader("X-Request-ID")).thenReturn(ID);
 
         response = mock(HttpServerResponse.class);
         when(response.putHeader(eq(HttpHeaders.CONTENT_TYPE), anyString())).thenReturn(response);
 
-        routingContext = mock(RoutingContext.class);
+        routingContext = mock(RoutingContext.class, RETURNS_DEEP_STUBS);
         when(routingContext.request()).thenReturn(request);
         when(routingContext.response()).thenReturn(response);
         when(routingContext.getBodyAsJson()).thenReturn(new JsonObject(
@@ -63,7 +65,7 @@ public class SearchRouterTest {
                         "  }"+
                         "}}"));
 
-        router = new SearchRouter(newArrayList(searcher1, searcher2), newArrayList());
+        router = new SearchRouter(newArrayList(searcher1, searcher2), newArrayList(), mock(EventBus.class));
     }
 
     @Test
