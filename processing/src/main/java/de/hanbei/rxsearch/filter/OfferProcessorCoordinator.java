@@ -4,20 +4,60 @@ import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import io.reactivex.Observable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class OfferProcessorCoordinator {
 
     private final List<OfferProcessor> offerProcessors;
+    private final ProcessedHandler processedHandler;
 
     public OfferProcessorCoordinator(List<OfferProcessor> offerProcessors) {
+        this(offerProcessors, (n, f, l) -> {
+        });
+    }
+
+    public OfferProcessorCoordinator(List<OfferProcessor> offerProcessors, ProcessedHandler processedHandler) {
         this.offerProcessors = offerProcessors;
+        this.processedHandler = processedHandler;
     }
 
     public Observable<Offer> filter(Query query, Observable<Offer> offerObservable) {
         for (OfferProcessor processor : offerProcessors) {
-            offerObservable = processor.process(query, offerObservable);
+            FilterLogger filterLogger = new FilterLogger(processor);
+            offerObservable = processor.process(query,
+                    offerObservable.doOnNext(filterLogger::record)
+            ).doOnNext(filterLogger::remove).doOnComplete(filterLogger::onComplete);
         }
         return offerObservable;
+    }
+
+    private class FilterLogger {
+
+        private final List<Offer> filteredOffers;
+        private final OfferProcessor processor;
+        private final boolean isFilter;
+
+        FilterLogger(OfferProcessor processor) {
+            this.processor = processor;
+            isFilter = processor instanceof OfferFilter;
+            filteredOffers = new ArrayList<>();
+        }
+
+        void record(Offer offer) {
+            filteredOffers.add(offer);
+        }
+
+        void remove(Offer offer) {
+            if (isFilter) {
+                filteredOffers.remove(offer);
+            }
+        }
+
+        void onComplete() {
+            String name = processor.getClass().getSimpleName();
+            processedHandler.offersFiltered(name, isFilter, filteredOffers);
+        }
+
     }
 }
