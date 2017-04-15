@@ -30,6 +30,9 @@ class Topics {
 
         @JvmStatic
         fun searchFailed(): String = "de.hanbei.search.failed"
+
+        @JvmStatic
+        fun offerProcessed(): String = "de.hanbei.search.offerProcessed"
     }
 }
 
@@ -61,7 +64,7 @@ data class SearcherErrorEvent(val requestId: String, val searcher: String, val e
     }
 }
 
-data class SearchStartedEvent(val requestId: String, val searchConfiguraton : SearchRequestConfiguration) {
+data class SearchStartedEvent(val requestId: String, val searchConfiguraton: SearchRequestConfiguration) {
     companion object {
         @JvmStatic
         fun Codec(): MessageCodec<SearchStartedEvent, SearchStartedEvent> = object : PojoToJsonCodec<SearchStartedEvent>(SearchStartedEvent::class.java) {}
@@ -83,6 +86,15 @@ data class SearchFailedEvent(val requestId: String, val error: Throwable) {
     }
 
 }
+
+data class OfferProcessedEvent(val requestId: String, val processor: String, val isFilter: Boolean, val offers: List<Offer>) {
+    companion object {
+        @JvmStatic
+        fun Codec(): MessageCodec<OfferProcessedEvent, OfferProcessedEvent> = object : PojoToJsonCodec<OfferProcessedEvent>(OfferProcessedEvent::class.java) {}
+    }
+
+}
+
 
 open class PojoToJsonCodec<T>(val clasz: Class<T>) : MessageCodec<T, T> {
 

@@ -13,7 +13,7 @@ public class OfferProcessorCoordinator {
     private final ProcessedHandler processedHandler;
 
     public OfferProcessorCoordinator(List<OfferProcessor> offerProcessors) {
-        this(offerProcessors, (n, f, l) -> {
+        this(offerProcessors, (r, n, f, l) -> {
         });
     }
 
@@ -24,7 +24,7 @@ public class OfferProcessorCoordinator {
 
     public Observable<Offer> filter(Query query, Observable<Offer> offerObservable) {
         for (OfferProcessor processor : offerProcessors) {
-            FilterLogger filterLogger = new FilterLogger(processor);
+            FilterLogger filterLogger = new FilterLogger(query.getRequestId(), processor);
             offerObservable = processor.process(query,
                     offerObservable.doOnNext(filterLogger::record)
             ).doOnNext(filterLogger::remove).doOnComplete(filterLogger::onComplete);
@@ -35,10 +35,12 @@ public class OfferProcessorCoordinator {
     private class FilterLogger {
 
         private final List<Offer> filteredOffers;
+        private String requestId;
         private final OfferProcessor processor;
         private final boolean isFilter;
 
-        FilterLogger(OfferProcessor processor) {
+        FilterLogger(String requestId, OfferProcessor processor) {
+            this.requestId = requestId;
             this.processor = processor;
             isFilter = processor instanceof OfferFilter;
             filteredOffers = new ArrayList<>();
@@ -56,7 +58,7 @@ public class OfferProcessorCoordinator {
 
         void onComplete() {
             String name = processor.getClass().getSimpleName();
-            processedHandler.offersFiltered(name, isFilter, filteredOffers);
+            processedHandler.offersFiltered(requestId, name, isFilter, filteredOffers);
         }
 
     }

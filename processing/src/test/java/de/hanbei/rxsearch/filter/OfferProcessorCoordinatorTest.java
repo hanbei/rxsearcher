@@ -47,8 +47,8 @@ public class OfferProcessorCoordinatorTest {
         coordinator.filter(query, Observable.fromIterable(offers)).subscribe(observer);
         observer.assertComplete();
         observer.assertResult(offers.get(2));
-        verify(processedHandler, times(1)).offersFiltered(offerFilter1.getClass().getSimpleName(), true, singletonList(offers.get(0)));
-        verify(processedHandler, times(1)).offersFiltered(offerFilter2.getClass().getSimpleName(), true, singletonList(offers.get(1)));
+        verify(processedHandler, times(1)).offersFiltered("requestId", offerFilter1.getClass().getSimpleName(), true, singletonList(offers.get(0)));
+        verify(processedHandler, times(1)).offersFiltered("requestId", offerFilter2.getClass().getSimpleName(), true, singletonList(offers.get(1)));
     }
 
     @Test
@@ -64,7 +64,7 @@ public class OfferProcessorCoordinatorTest {
         coordinator.filter(query, Observable.fromIterable(offers)).subscribe(observer);
         observer.assertComplete();
         observer.assertResult(offers.get(0), offers.get(1), offers.get(2));
-        verify(processedHandler, times(1)).offersFiltered(offerProcessor.getClass().getSimpleName(), false, offers);
+        verify(processedHandler, times(1)).offersFiltered("requestId", offerProcessor.getClass().getSimpleName(), false, offers);
     }
 
 
@@ -84,8 +84,8 @@ public class OfferProcessorCoordinatorTest {
         coordinator.filter(query, Observable.fromIterable(offers)).subscribe(observer);
         observer.assertComplete();
         observer.assertResult(offers.get(1), offers.get(2));
-        verify(processedHandler, times(1)).offersFiltered(filter.getClass().getSimpleName(), true, singletonList(offers.get(0)));
-        verify(processedHandler, times(1)).offersFiltered(processor.getClass().getSimpleName(), false, newArrayList(offers.get(1), offers.get(2)));
+        verify(processedHandler, times(1)).offersFiltered("requestId", filter.getClass().getSimpleName(), true, singletonList(offers.get(0)));
+        verify(processedHandler, times(1)).offersFiltered("requestId", processor.getClass().getSimpleName(), false, newArrayList(offers.get(1), offers.get(2)));
     }
 
 }

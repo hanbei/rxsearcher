@@ -9,10 +9,15 @@ class LoggedSearchContainer(val requestId: String, val searchConfiguraton: Searc
     var numOffers: Int = 0
     var error: Throwable? = null
     var searcherMap = mutableMapOf<String, List<Offer>>()
+    var processorMap = mutableMapOf<String, List<Offer>>()
 
     fun addOffer(searcher: String, offer: Offer): Unit {
         val offerList = searcherMap.getOrDefault(searcher, mutableListOf())
         searcherMap.put(searcher, offerList + offer)
+    }
+
+    fun addProcessor(processor: String, isFilter: Boolean, offers: List<Offer>): Unit {
+        processorMap.put(processor, offers);
     }
 
     fun failed(error: Throwable): Unit {

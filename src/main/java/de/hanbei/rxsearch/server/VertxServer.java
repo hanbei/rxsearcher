@@ -11,15 +11,20 @@ import com.ning.http.client.AsyncHttpClient;
 import de.hanbei.rxsearch.config.SearcherConfiguration;
 import de.hanbei.rxsearch.events.LogSearchVerticle;
 import de.hanbei.rxsearch.events.LoggingVerticle;
+import de.hanbei.rxsearch.events.OfferProcessedEvent;
 import de.hanbei.rxsearch.events.SearchFailedEvent;
 import de.hanbei.rxsearch.events.SearchFinishedEvent;
 import de.hanbei.rxsearch.events.SearchStartedEvent;
 import de.hanbei.rxsearch.events.SearcherCompletedEvent;
 import de.hanbei.rxsearch.events.SearcherErrorEvent;
 import de.hanbei.rxsearch.events.SearcherResultEvent;
+import de.hanbei.rxsearch.filter.OfferFilter;
 import de.hanbei.rxsearch.filter.OfferProcessor;
 import de.hanbei.rxsearch.metrics.Measured;
+import de.hanbei.rxsearch.model.Offer;
+import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.Searcher;
+import io.reactivex.Observable;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
@@ -57,7 +62,7 @@ public class VertxServer extends AbstractVerticle {
         SearcherConfiguration searcherConfiguration = new SearcherConfiguration(asyncHttpClient);
 
         searchers = searcherConfiguration.loadConfiguration("rxsearch", "testing", "de");
-        processors = Lists.newArrayList();
+        processors = Lists.newArrayList((OfferFilter) (Query q, Observable<Offer> o) -> o.filter(offer -> offer.getPrice().getAmount() > 2500));
 
 
         ConsoleReporter reporter = ConsoleReporter.forRegistry(SharedMetricRegistries.getOrCreate(Measured.SEARCHER_METRICS))
@@ -133,6 +138,7 @@ public class VertxServer extends AbstractVerticle {
         vertx.eventBus().registerDefaultCodec(SearchFinishedEvent.class, SearchFinishedEvent.Codec());
         vertx.eventBus().registerDefaultCodec(SearchFailedEvent.class, SearchFailedEvent.Codec());
         vertx.eventBus().registerDefaultCodec(SearchStartedEvent.class, SearchStartedEvent.Codec());
+        vertx.eventBus().registerDefaultCodec(OfferProcessedEvent.class, OfferProcessedEvent.Codec());
 
         vertx.deployVerticle(LogSearchVerticle.class.getName());
         vertx.deployVerticle(LoggingVerticle.class.getName());

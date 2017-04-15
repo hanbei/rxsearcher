@@ -1,6 +1,7 @@
 package de.hanbei.rxsearch.server;
 
 import de.hanbei.rxsearch.coordination.SearchCoordinator;
+import de.hanbei.rxsearch.events.ProcessedOfferEventHandler;
 import de.hanbei.rxsearch.events.SearchEventHandler;
 import de.hanbei.rxsearch.events.SearchStartedEvent;
 import de.hanbei.rxsearch.events.Topics;
@@ -30,8 +31,9 @@ class SearchRouter implements Handler<RoutingContext> {
     public SearchRouter(List<Searcher> searcher, List<OfferProcessor> processors, EventBus eventBus) {
         this.eventBus = eventBus;
         SearchEventHandler eventHandler = new SearchEventHandler(eventBus);
+
         this.searchCoordinator = new SearchCoordinator(searcher, eventHandler, eventHandler, eventHandler);
-        this.filterCoordinator = new OfferProcessorCoordinator(processors);
+        this.filterCoordinator = new OfferProcessorCoordinator(processors, new ProcessedOfferEventHandler(eventBus));
     }
 
     @Override
