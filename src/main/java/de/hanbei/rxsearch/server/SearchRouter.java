@@ -37,7 +37,7 @@ class SearchRouter implements Handler<RoutingContext> {
 
     @Override
     public void handle(RoutingContext routingContext) {
-        ResponseHandler responseHandler = new VertxResponseHandler(routingContext);
+        ResponseHandler responseHandler = new ResponseHandler(routingContext);
 
         HttpServerRequest request = routingContext.request();
         String requestId = Optional.ofNullable(request.getHeader("X-Request-ID")).orElse(UUID.randomUUID().toString());

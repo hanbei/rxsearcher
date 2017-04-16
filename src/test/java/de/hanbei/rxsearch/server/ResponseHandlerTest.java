@@ -17,10 +17,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class VertxResponseHandlerTest {
+public class ResponseHandlerTest {
 
     private static final String REQUEST_ID = "requestId";
-    private VertxResponseHandler vertxResponseHandler;
+    private ResponseHandler responseHandler;
     private RoutingContext routingContext;
     private HttpServerResponse response;
     private EventBus eventBus;
@@ -34,12 +34,12 @@ public class VertxResponseHandlerTest {
         when(routingContext.vertx().eventBus()).thenReturn(eventBus);
         when(routingContext.response()).thenReturn(response);
 
-        vertxResponseHandler = new VertxResponseHandler(routingContext);
+        responseHandler = new ResponseHandler(routingContext);
     }
 
     @Test
     public void emptyOffersSendsNoContent() throws Exception {
-        vertxResponseHandler.handleSuccess(REQUEST_ID, Lists.newArrayList());
+        responseHandler.handleSuccess(REQUEST_ID, Lists.newArrayList());
 
         verify(eventBus).publish(SearchFinishedEvent.topic(), new SearchFinishedEvent(REQUEST_ID, 0));
         verify(response).putHeader(HttpHeaders.CONTENT_TYPE, "application/json");
@@ -49,7 +49,7 @@ public class VertxResponseHandlerTest {
     @Test
     public void handleError() throws Exception {
         RuntimeException error = new RuntimeException("Error");
-        vertxResponseHandler.handleError(REQUEST_ID, error);
+        responseHandler.handleError(REQUEST_ID, error);
 
         verify(eventBus).publish(SearchFailedEvent.topic(), new SearchFailedEvent(REQUEST_ID, error));
         verify(routingContext).fail(error);
@@ -57,7 +57,7 @@ public class VertxResponseHandlerTest {
 
     @Test
     public void someOffersSendContent() throws Exception {
-        vertxResponseHandler.handleSuccess(REQUEST_ID, Lists.newArrayList(
+        responseHandler.handleSuccess(REQUEST_ID, Lists.newArrayList(
                 Offer.builder().url("").title("").price(0.0, "EUR").searcher("test").requestId(REQUEST_ID).build()
         ));
 
