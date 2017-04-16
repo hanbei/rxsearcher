@@ -2,7 +2,6 @@ package de.hanbei.rxsearch.server;
 
 import de.hanbei.rxsearch.events.SearchFailedEvent;
 import de.hanbei.rxsearch.events.SearchFinishedEvent;
-import de.hanbei.rxsearch.events.Topics;
 import de.hanbei.rxsearch.model.Offer;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpHeaders;
@@ -31,7 +30,7 @@ class VertxResponseHandler implements ResponseHandler {
 
     @Override
     public void handleSuccess(String requestId, List<Offer> results) {
-        eventBus.publish(Topics.searchFinished(), new SearchFinishedEvent(requestId, results.size()));
+        eventBus.publish(SearchFinishedEvent.topic(), new SearchFinishedEvent(requestId, results.size()));
 
         if (results.isEmpty()) {
             sendNoContent(routingContext);
@@ -57,7 +56,7 @@ class VertxResponseHandler implements ResponseHandler {
     @Override
     public void handleError(String requestId, Throwable t) {
         LOGGER.warn(t.getMessage());
-        eventBus.publish(Topics.searchFailed(), new SearchFailedEvent(requestId, t));
+        eventBus.publish(SearchFailedEvent.topic(), new SearchFailedEvent(requestId, t));
         routingContext.fail(t);
     }
 

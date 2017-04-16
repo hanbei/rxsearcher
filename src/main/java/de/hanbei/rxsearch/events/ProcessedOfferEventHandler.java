@@ -16,6 +16,6 @@ public class ProcessedOfferEventHandler implements ProcessedHandler {
 
     @Override
     public void offersFiltered(String requestId, String processorName, boolean filter, List<Offer> remainingOffers) {
-        eventBus.publish(Topics.offerProcessed(), new OfferProcessedEvent(requestId, processorName, filter, remainingOffers));
+        eventBus.publish(OfferProcessedEvent.topic(), new OfferProcessedEvent(requestId, processorName, filter, remainingOffers));
     }
 }

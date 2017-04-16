@@ -27,7 +27,7 @@ public class SearchEventHandlerTest {
         Query query = Query.builder().keywords("term").requestId("requestId").country("de").user(new User("user_id", "partner_id", "partner_sub_id")).build();
         searchEventHandler.searcherCompleted("requestId", "searcher", query);
 
-        verify(eventBus).publish(Topics.searcherCompleted(), new SearcherCompletedEvent("requestId", "searcher", query));
+        verify(eventBus).publish(SearcherCompletedEvent.topic(), new SearcherCompletedEvent("requestId", "searcher", query));
     }
 
     @Test
@@ -35,7 +35,7 @@ public class SearchEventHandlerTest {
         SearcherException exception = new SearcherException("message");
         searchEventHandler.searcherError("requestId", "searcher", exception);
 
-        verify(eventBus).publish(Topics.searcherError(), new SearcherErrorEvent("requestId", "searcher", exception));
+        verify(eventBus).publish(SearcherErrorEvent.topic(), new SearcherErrorEvent("requestId", "searcher", exception));
     }
 
     @Test
@@ -43,7 +43,7 @@ public class SearchEventHandlerTest {
         Offer offer = Offer.builder().url("url").title("title").price(0.0, "USD").searcher("searcher1").build();
         searchEventHandler.searcherResult("requestId", "searcher", offer);
 
-        verify(eventBus).publish(Topics.searcherResult(), new SearcherResultEvent("requestId", "searcher", offer));
+        verify(eventBus).publish(SearcherResultEvent.topic(), new SearcherResultEvent("requestId", "searcher", offer));
     }
 
 }

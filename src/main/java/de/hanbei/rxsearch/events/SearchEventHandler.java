@@ -7,8 +7,6 @@ import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.SearcherException;
 import io.vertx.core.eventbus.EventBus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class SearchEventHandler implements SearcherCompletionHandler, SearcherErrorHandler, SearcherResult {
 
@@ -20,16 +18,16 @@ public class SearchEventHandler implements SearcherCompletionHandler, SearcherEr
 
     @Override
     public void searcherCompleted(String requestId, String searcher, Query query) {
-        eventBus.publish(Topics.searcherCompleted(), new SearcherCompletedEvent(requestId, searcher, query));
+        eventBus.publish(SearcherCompletedEvent.topic(), new SearcherCompletedEvent(requestId, searcher, query));
     }
 
     @Override
     public void searcherError(String requestId, String searcher, SearcherException t) {
-        eventBus.publish(Topics.searcherError(), new SearcherErrorEvent(requestId, searcher, t));
+        eventBus.publish(SearcherErrorEvent.topic(), new SearcherErrorEvent(requestId, searcher, t));
     }
 
     @Override
     public void searcherResult(String requestId, String searcher, Offer offer) {
-        eventBus.publish(Topics.searcherResult(), new SearcherResultEvent(requestId, searcher, offer));
+        eventBus.publish(SearcherResultEvent.topic(), new SearcherResultEvent(requestId, searcher, offer));
     }
 }

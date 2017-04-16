@@ -3,7 +3,6 @@ package de.hanbei.rxsearch.server;
 import com.google.common.collect.Lists;
 import de.hanbei.rxsearch.events.SearchFailedEvent;
 import de.hanbei.rxsearch.events.SearchFinishedEvent;
-import de.hanbei.rxsearch.events.Topics;
 import de.hanbei.rxsearch.model.Offer;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpHeaders;
@@ -42,7 +41,7 @@ public class VertxResponseHandlerTest {
     public void emptyOffersSendsNoContent() throws Exception {
         vertxResponseHandler.handleSuccess(REQUEST_ID, Lists.newArrayList());
 
-        verify(eventBus).publish(Topics.searchFinished(), new SearchFinishedEvent(REQUEST_ID, 0));
+        verify(eventBus).publish(SearchFinishedEvent.topic(), new SearchFinishedEvent(REQUEST_ID, 0));
         verify(response).putHeader(HttpHeaders.CONTENT_TYPE, "application/json");
         verify(response).setStatusCode(204);
     }
@@ -52,7 +51,7 @@ public class VertxResponseHandlerTest {
         RuntimeException error = new RuntimeException("Error");
         vertxResponseHandler.handleError(REQUEST_ID, error);
 
-        verify(eventBus).publish(Topics.searchFailed(), new SearchFailedEvent(REQUEST_ID, error));
+        verify(eventBus).publish(SearchFailedEvent.topic(), new SearchFailedEvent(REQUEST_ID, error));
         verify(routingContext).fail(error);
     }
 
@@ -62,7 +61,7 @@ public class VertxResponseHandlerTest {
                 Offer.builder().url("").title("").price(0.0, "EUR").searcher("test").requestId(REQUEST_ID).build()
         ));
 
-        verify(eventBus).publish(Topics.searchFinished(), new SearchFinishedEvent(REQUEST_ID, 1));
+        verify(eventBus).publish(SearchFinishedEvent.topic(), new SearchFinishedEvent(REQUEST_ID, 1));
         verify(response).putHeader(HttpHeaders.CONTENT_TYPE, "application/json");
         verify(response).end("{\"results\":[{\"searcher\":\"test\",\"price\":{\"amount\":0.0,\"currency\":\"EUR\"},\"requestId\":\"requestId\",\"type\":\"RELATED\",\"eec\":\"UNKNOWN\",\"availability\":\"NOT_AVAILABLE\"}]}");
     }

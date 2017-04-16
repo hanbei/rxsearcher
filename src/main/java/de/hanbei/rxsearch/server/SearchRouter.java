@@ -4,7 +4,6 @@ import de.hanbei.rxsearch.coordination.SearchCoordinator;
 import de.hanbei.rxsearch.events.ProcessedOfferEventHandler;
 import de.hanbei.rxsearch.events.SearchEventHandler;
 import de.hanbei.rxsearch.events.SearchStartedEvent;
-import de.hanbei.rxsearch.events.Topics;
 import de.hanbei.rxsearch.filter.OfferProcessor;
 import de.hanbei.rxsearch.filter.OfferProcessorCoordinator;
 import de.hanbei.rxsearch.model.Offer;
@@ -45,8 +44,7 @@ class SearchRouter implements Handler<RoutingContext> {
         boolean logSearch = Optional.ofNullable(Boolean.valueOf(request.getParam("logSearch"))).orElse(false);
         Query q = extractQuery(routingContext, requestId);
 
-        eventBus.publish(Topics.searchStarted(), new SearchStartedEvent(requestId,
-                new SearchRequestConfiguration(requestId, logSearch)));
+        eventBus.publish(SearchStartedEvent.topic(), new SearchStartedEvent(requestId, new SearchRequestConfiguration(requestId, logSearch)));
 
         Observable<Offer> offerObservable = searchCoordinator.startSearch(q);
 
