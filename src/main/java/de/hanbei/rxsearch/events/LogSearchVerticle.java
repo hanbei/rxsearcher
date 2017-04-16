@@ -22,6 +22,7 @@ public class LogSearchVerticle extends AbstractVerticle {
     private MessageConsumer<SearchFinishedEvent> searchFinishedConsumer;
     private MessageConsumer<SearchFailedEvent> searchFailedConsumer;
     private MessageConsumer<SearchStartedEvent> searchStartedConsumer;
+    private MessageConsumer<OfferProcessedEvent> processedConsumer;
 
     private final Map<String, LoggedSearchContainer> loggedSearchesContainer;
 
@@ -40,7 +41,15 @@ public class LogSearchVerticle extends AbstractVerticle {
         searchFailedConsumer = vertx.eventBus().consumer(Topics.searchFailed(), this::searchFailed);
         searchStartedConsumer = vertx.eventBus().consumer(Topics.searchStarted(), this::searchStarted);
 
+        processedConsumer = vertx.eventBus().consumer(Topics.offerProcessed(), this::offerProcessed);
+
         startFuture.complete();
+    }
+
+    private void offerProcessed(Message<OfferProcessedEvent> message) {
+        OfferProcessedEvent event = message.body();
+        Optional<LoggedSearchContainer> loggedSearchContainer = getLoggedSearchContainer(event.getRequestId());
+        loggedSearchContainer.ifPresent(loggedSearchContainer1 -> loggedSearchContainer1.addProcessor(event.getProcessor(), event.isFilter(), event.getOffers()));
     }
 
     @Override
@@ -50,6 +59,7 @@ public class LogSearchVerticle extends AbstractVerticle {
         searchFinishedConsumer.unregister();
         searchFailedConsumer.unregister();
         searchStartedConsumer.unregister();
+        processedConsumer.unregister();
         stopFuture.complete();
     }
 
@@ -58,7 +68,6 @@ public class LogSearchVerticle extends AbstractVerticle {
         LoggedSearchContainer loggedSearch = loggedSearchesContainer.getOrDefault(event.getRequestId(),
                 new LoggedSearchContainer(event.getRequestId(), event.getSearchConfiguraton()));
         loggedSearchesContainer.put(event.getRequestId(), loggedSearch);
-
     }
 
     private void searchFailed(Message<SearchFailedEvent> message) {
