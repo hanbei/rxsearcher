@@ -4,6 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import com.ning.http.client.AsyncCompletionHandler;
 import com.ning.http.client.AsyncHttpClient;
+import com.ning.http.client.HttpResponseStatus;
 import com.ning.http.client.Request;
 import com.ning.http.client.Response;
 import de.hanbei.rxsearch.model.Offer;
@@ -49,16 +50,20 @@ public abstract class AbstractSearcher implements Searcher {
 
                     asyncHttpClient.executeRequest(request, new AsyncCompletionHandler<Response>() {
                         @Override
-                        public Response onCompleted(Response response) throws Exception {
-                            int statusCode = response.getStatusCode();
-                            if (statusCode < 300) {
-                                searcherMetrics.counter(metricName(country, name, SUCCESS)).inc();
-                                subscriber.onNext(response);
-                                subscriber.onComplete();
-                            } else {
+                        public STATE onStatusReceived(HttpResponseStatus status) throws Exception {
+                            int statusCode = status.getStatusCode();
+                            if (statusCode >= 300) {
                                 searcherMetrics.counter(metricName(country, name, ERROR, statusCode)).inc();
-                                subscriber.onError(new SearcherException(statusCode + " " + response.getStatusText()).searcher(getName()).query(query));
+                                subscriber.onError(new SearcherException(statusCode + " " + status.getStatusText()).searcher(getName()).query(query));
                             }
+                            return STATE.CONTINUE;
+                        }
+
+                        @Override
+                        public Response onCompleted(Response response) throws Exception {
+                            searcherMetrics.counter(metricName(country, name, SUCCESS)).inc();
+                            subscriber.onNext(response);
+                            subscriber.onComplete();
                             timer.stop();
                             return response;
                         }
