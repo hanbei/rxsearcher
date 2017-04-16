@@ -1,9 +1,11 @@
 package de.hanbei.rxsearch.server;
 
 import de.hanbei.rxsearch.coordination.SearchCoordinator;
-import de.hanbei.rxsearch.events.ProcessedOfferEventHandler;
-import de.hanbei.rxsearch.events.SearchEventHandler;
+import de.hanbei.rxsearch.events.OfferProcessedEvent;
 import de.hanbei.rxsearch.events.SearchStartedEvent;
+import de.hanbei.rxsearch.events.SearcherCompletedEvent;
+import de.hanbei.rxsearch.events.SearcherErrorEvent;
+import de.hanbei.rxsearch.events.SearcherResultEvent;
 import de.hanbei.rxsearch.filter.OfferProcessor;
 import de.hanbei.rxsearch.filter.OfferProcessorCoordinator;
 import de.hanbei.rxsearch.model.Offer;
@@ -29,10 +31,20 @@ class SearchRouter implements Handler<RoutingContext> {
 
     public SearchRouter(List<Searcher> searcher, List<OfferProcessor> processors, EventBus eventBus) {
         this.eventBus = eventBus;
-        SearchEventHandler eventHandler = new SearchEventHandler(eventBus);
 
-        this.searchCoordinator = new SearchCoordinator(searcher, eventHandler, eventHandler, eventHandler);
-        this.filterCoordinator = new OfferProcessorCoordinator(processors, new ProcessedOfferEventHandler(eventBus));
+        this.searchCoordinator = new SearchCoordinator(searcher,
+                (requestId, s, t) -> {
+                    eventBus.publish(SearcherErrorEvent.topic(), new SearcherErrorEvent(requestId, s, t));
+                },
+                (requestId, s, query) -> {
+                    eventBus.publish(SearcherCompletedEvent.topic(), new SearcherCompletedEvent(requestId, s, query));
+                },
+                (requestId, s, offer) -> {
+                    eventBus.publish(SearcherResultEvent.topic(), new SearcherResultEvent(requestId, s, offer));
+                });
+        this.filterCoordinator = new OfferProcessorCoordinator(processors,
+                (requestId, processorName, filter, remainingOffers) -> eventBus.publish(OfferProcessedEvent.topic(), new OfferProcessedEvent(requestId, processorName, filter, remainingOffers))
+        );
     }
 
     @Override
