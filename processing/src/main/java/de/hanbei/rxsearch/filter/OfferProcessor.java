@@ -8,4 +8,8 @@ public interface OfferProcessor {
 
     Observable<Offer> process(Query query, Observable<Offer> observable);
 
+    default boolean filters() {
+        return false;
+    }
+
 }

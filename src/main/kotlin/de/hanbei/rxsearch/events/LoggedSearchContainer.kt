@@ -29,8 +29,10 @@ class LoggedSearchContainer(val requestId: String, val searchConfiguraton: Searc
         this.result = Result.OK
         this.numOffers = numberOfOffers
     }
+
+    enum class Result {
+        FAILED, OK
+    }
+
 }
 
-enum class Result {
-    FAILED, OK
-}

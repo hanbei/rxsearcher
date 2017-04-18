@@ -11,6 +11,11 @@ public interface OfferFilter extends OfferProcessor {
         return filter(query, observable);
     }
 
+    @Override
+    default boolean filters() {
+        return true;
+    }
+
     Observable<Offer> filter(Query query, Observable<Offer> observable);
 
 }

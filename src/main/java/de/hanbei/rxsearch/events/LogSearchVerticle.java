@@ -34,14 +34,14 @@ public class LogSearchVerticle extends AbstractVerticle {
     public void start(Future<Void> startFuture) {
         LOGGER.info("Started LogSearchVerticle");
 
-        errorConsumer = vertx.eventBus().consumer(Topics.searcherError(), this::searcherGotError);
-        resultConsumer = vertx.eventBus().consumer(Topics.searcherResult(), this::searcherGotResult);
+        errorConsumer = vertx.eventBus().consumer(SearcherErrorEvent.topic(), this::searcherGotError);
+        resultConsumer = vertx.eventBus().consumer(SearcherResultEvent.topic(), this::searcherGotResult);
 
-        searchFinishedConsumer = vertx.eventBus().consumer(Topics.searchFinished(), this::searchFinished);
-        searchFailedConsumer = vertx.eventBus().consumer(Topics.searchFailed(), this::searchFailed);
-        searchStartedConsumer = vertx.eventBus().consumer(Topics.searchStarted(), this::searchStarted);
+        searchFinishedConsumer = vertx.eventBus().consumer(SearchFinishedEvent.topic(), this::searchFinished);
+        searchFailedConsumer = vertx.eventBus().consumer(SearchFailedEvent.topic(), this::searchFailed);
+        searchStartedConsumer = vertx.eventBus().consumer(SearchStartedEvent.topic(), this::searchStarted);
 
-        processedConsumer = vertx.eventBus().consumer(Topics.offerProcessed(), this::offerProcessed);
+        processedConsumer = vertx.eventBus().consumer(OfferProcessedEvent.topic(), this::offerProcessed);
 
         startFuture.complete();
     }

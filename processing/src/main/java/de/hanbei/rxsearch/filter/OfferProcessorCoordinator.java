@@ -35,14 +35,12 @@ public class OfferProcessorCoordinator {
     private class FilterLogger {
 
         private final List<Offer> filteredOffers;
-        private String requestId;
+        private final String requestId;
         private final OfferProcessor processor;
-        private final boolean isFilter;
 
         FilterLogger(String requestId, OfferProcessor processor) {
             this.requestId = requestId;
             this.processor = processor;
-            isFilter = processor instanceof OfferFilter;
             filteredOffers = new ArrayList<>();
         }
 
@@ -51,14 +49,14 @@ public class OfferProcessorCoordinator {
         }
 
         void remove(Offer offer) {
-            if (isFilter) {
+            if (processor.filters()) {
                 filteredOffers.remove(offer);
             }
         }
 
         void onComplete() {
             String name = processor.getClass().getSimpleName();
-            processedHandler.offersFiltered(requestId, name, isFilter, filteredOffers);
+            processedHandler.offersFiltered(requestId, name, processor.filters(), filteredOffers);
         }
 
     }
