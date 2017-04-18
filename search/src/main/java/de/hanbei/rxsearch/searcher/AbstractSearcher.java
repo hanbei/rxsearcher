@@ -50,13 +50,14 @@ public abstract class AbstractSearcher implements Searcher {
 
                     asyncHttpClient.executeRequest(request, new AsyncCompletionHandler<Response>() {
                         @Override
-                        public STATE onStatusReceived(HttpResponseStatus status) throws Exception {
+                        public State onStatusReceived(HttpResponseStatus status) throws Exception {
                             int statusCode = status.getStatusCode();
                             if (statusCode >= 300) {
                                 searcherMetrics.counter(metricName(country, name, ERROR, statusCode)).inc();
                                 subscriber.onError(new SearcherException(statusCode + " " + status.getStatusText()).searcher(getName()).query(query));
+                                timer.stop();
                             }
-                            return STATE.CONTINUE;
+                            return State.CONTINUE;
                         }
 
                         @Override
