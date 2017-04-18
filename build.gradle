@@ -66,6 +66,7 @@ allprojects {
             dependency "org.jooq:joox:1.4.0"
 
             dependency "com.google.guava:guava:21.0"
+            dependency "commons-codec:commons-codec:1.9"
 
             dependencySet(group: "org.slf4j", version: "1.7.25") {
                 entry "slf4j-api"
@@ -75,7 +76,7 @@ allprojects {
             dependency "ch.qos.logback:logback-classic:1.2.2"
 
             dependency 'io.reactivex.rxjava2:rxjava:2.0.8'
-            dependency 'com.ning:async-http-client:1.9.40'
+            dependency 'org.asynchttpclient:async-http-client:2.0.31'
             dependency 'io.dropwizard.metrics:metrics-core:3.2.2'
 
             dependencySet(group: 'io.vertx', version: '3.4.1') {

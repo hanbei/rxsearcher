@@ -7,7 +7,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.ning.http.client.AsyncHttpClient;
+import org.asynchttpclient.AsyncHttpClient;
 import de.hanbei.rxsearch.config.SearcherConfiguration;
 import de.hanbei.rxsearch.events.LogSearchVerticle;
 import de.hanbei.rxsearch.events.LoggingVerticle;
@@ -38,6 +38,7 @@ import io.vertx.ext.web.handler.LoggerHandler;
 import io.vertx.ext.web.handler.ResponseTimeHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.handler.TimeoutHandler;
+import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +59,7 @@ public class VertxServer extends AbstractVerticle {
 
 
     public VertxServer() {
-        asyncHttpClient = new AsyncHttpClient();
+        asyncHttpClient = new DefaultAsyncHttpClient();
         SearcherConfiguration searcherConfiguration = new SearcherConfiguration(asyncHttpClient);
 
         searchers = searcherConfiguration.loadConfiguration("rxsearch", "testing", "de");

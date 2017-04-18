@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
-import com.ning.http.client.Response;
+import org.asynchttpclient.Response;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.searcher.ResponseParser;
 import io.reactivex.Observable;
@@ -29,7 +29,7 @@ public class DuckDuckGoResponseParser implements ResponseParser {
         checkNotNull(response);
 
         try {
-            String responseAsString = response.getResponseBody(Charsets.UTF_8.name());
+            String responseAsString = response.getResponseBody(Charsets.UTF_8);
             if (Strings.isNullOrEmpty(responseAsString)) {
                 return Observable.empty();
             }

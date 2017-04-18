@@ -1,6 +1,6 @@
 package de.hanbei.rxsearch.searcher.github;
 
-import com.ning.http.client.Request;
+import org.asynchttpclient.Request;
 import de.hanbei.rxsearch.searcher.RequestUrlBuilderTest;
 import org.junit.Before;
 import org.junit.Test;

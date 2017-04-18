@@ -2,11 +2,11 @@ package de.hanbei.rxsearch.searcher;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.ning.http.client.AsyncCompletionHandler;
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.HttpResponseStatus;
-import com.ning.http.client.Request;
-import com.ning.http.client.Response;
+import org.asynchttpclient.AsyncCompletionHandler;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.Request;
+import org.asynchttpclient.Response;
+import org.asynchttpclient.HttpResponseStatus;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import io.reactivex.Observable;
@@ -50,13 +50,14 @@ public abstract class AbstractSearcher implements Searcher {
 
                     asyncHttpClient.executeRequest(request, new AsyncCompletionHandler<Response>() {
                         @Override
-                        public STATE onStatusReceived(HttpResponseStatus status) throws Exception {
+                        public State onStatusReceived(HttpResponseStatus status) throws Exception {
                             int statusCode = status.getStatusCode();
                             if (statusCode >= 300) {
                                 searcherMetrics.counter(metricName(country, name, ERROR, statusCode)).inc();
                                 subscriber.onError(new SearcherException(statusCode + " " + status.getStatusText()).searcher(getName()).query(query));
+                                timer.stop();
                             }
-                            return STATE.CONTINUE;
+                            return State.CONTINUE;
                         }
 
                         @Override

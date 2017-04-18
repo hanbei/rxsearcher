@@ -3,7 +3,7 @@ package de.hanbei.rxsearch.searcher.duckduckgo;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import com.ning.http.client.Response;
+import org.asynchttpclient.Response;
 import de.hanbei.rxsearch.model.Offer;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
@@ -28,7 +28,7 @@ public class DuckDuckGoResponseParserTest {
     public void setUp() throws IOException {
         response = mock(Response.class);
         String stringResponse = Resources.toString(getResource("searcher/duckduckgo/response_ok.json"), Charsets.UTF_8);
-        when(response.getResponseBody(anyString())).thenReturn(stringResponse);
+        when(response.getResponseBody(Charsets.UTF_8)).thenReturn(stringResponse);
         responseParser = new DuckDuckGoResponseParser(DUCK_DUCK_GO_SEARCHER);
     }
 
@@ -55,7 +55,7 @@ public class DuckDuckGoResponseParserTest {
 
     @Test
     public void brokenJsonReturnsErrorObservable() throws IOException {
-        when(response.getResponseBody(anyString())).thenReturn("{");
+        when(response.getResponseBody(Charsets.UTF_8)).thenReturn("{");
 
         Observable<Offer> observable = responseParser.toSearchResults(response);
 
@@ -66,7 +66,7 @@ public class DuckDuckGoResponseParserTest {
 
     @Test
     public void correctButEmptyJsonReturnsEmptyObservable() throws IOException {
-        when(response.getResponseBody(anyString())).thenReturn("{}");
+        when(response.getResponseBody(Charsets.UTF_8)).thenReturn("{}");
 
         Observable<Offer> observable = responseParser.toSearchResults(response);
 

@@ -1,9 +1,9 @@
 package de.hanbei.rxsearch.searcher;
 
-import com.ning.http.client.AsyncCompletionHandler;
-import com.ning.http.client.AsyncHttpClient;
-import com.ning.http.client.Request;
-import com.ning.http.client.Response;
+import org.asynchttpclient.AsyncCompletionHandler;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.Request;
+import org.asynchttpclient.Response;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.model.User;
