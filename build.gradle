@@ -11,6 +11,7 @@ mainClassName = "de.hanbei.rxsearch.server.VertxServer"
 
 dependencies {
     compile project(":search")
+    compile project(":searcher")
     compile project(":processing")
     compile project(":config")
 
