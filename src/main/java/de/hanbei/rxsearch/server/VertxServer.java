@@ -7,7 +7,6 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import org.asynchttpclient.AsyncHttpClient;
 import de.hanbei.rxsearch.config.SearcherConfiguration;
 import de.hanbei.rxsearch.events.LogSearchVerticle;
 import de.hanbei.rxsearch.events.LoggingVerticle;
@@ -26,6 +25,7 @@ import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.Searcher;
 import io.reactivex.Observable;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.VertxOptions;
@@ -38,6 +38,7 @@ import io.vertx.ext.web.handler.LoggerHandler;
 import io.vertx.ext.web.handler.ResponseTimeHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.handler.TimeoutHandler;
+import org.asynchttpclient.AsyncHttpClient;
 import org.asynchttpclient.DefaultAsyncHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,7 +98,7 @@ public class VertxServer extends AbstractVerticle {
                 fut.complete();
                 LOGGER.info("Started server on {}", port);
             } else {
-                LOGGER.info("Failed starting server: {}", result.cause());
+                LOGGER.info("Failed starting server: ", result.cause());
                 fut.fail(result.cause());
             }
         });
@@ -141,12 +142,26 @@ public class VertxServer extends AbstractVerticle {
         vertx.eventBus().registerDefaultCodec(SearchStartedEvent.class, SearchStartedEvent.Codec());
         vertx.eventBus().registerDefaultCodec(OfferProcessedEvent.class, OfferProcessedEvent.Codec());
 
-        vertx.deployVerticle(LogSearchVerticle.class.getName());
-        vertx.deployVerticle(LoggingVerticle.class.getName());
-        vertx.deployVerticle(VertxServer.class.getName());
 
-        stopwatch.stop();
-        LOGGER.info("Startup in {}", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+        Future<String> logSearchFuture = Future.future();
+        Future<String> loggingFuture = Future.future();
+        Future<String> httpFuture = Future.future();
+
+        vertx.deployVerticle(LogSearchVerticle.class.getName(), logSearchFuture.completer());
+        vertx.deployVerticle(LoggingVerticle.class.getName(), loggingFuture.completer());
+        vertx.deployVerticle(VertxServer.class.getName(), httpFuture.completer());
+
+        CompositeFuture.all(loggingFuture, logSearchFuture, httpFuture).setHandler(ar -> {
+            if (ar.succeeded()) {
+                stopwatch.stop();
+                LOGGER.info("Startup in {}", stopwatch.elapsed(TimeUnit.MILLISECONDS));
+            } else {
+                stopwatch.stop();
+                LOGGER.error("Failed startup ", ar.cause());
+                System.exit(-1);
+            }
+        });
+
 
         Runtime.getRuntime().addShutdownHook(new Thread(vertx::close));
     }
