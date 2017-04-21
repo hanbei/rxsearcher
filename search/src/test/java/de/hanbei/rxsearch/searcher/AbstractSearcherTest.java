@@ -127,13 +127,10 @@ public class AbstractSearcherTest {
 
     @SuppressWarnings("unchecked")
     private void givenHttpClientThrows() {
-        Call call = mock(Call.class);
-        when(httpClient.newCall(any(Request.class))).thenReturn(call);
-
         doAnswer(invocation -> {
             ((Callback) invocation.getArguments()[1]).onFailure(null, new IOException("client error"));
             return null;
-        }).when(call).enqueue(any(Callback.class));
+        }).when(httpClient.newCall(any(Request.class))).enqueue(any(Callback.class));
     }
 
     private static class TestSearcher extends AbstractSearcher {

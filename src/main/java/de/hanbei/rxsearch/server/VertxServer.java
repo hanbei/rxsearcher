@@ -85,6 +85,7 @@ public class VertxServer extends AbstractVerticle {
         router.route("/search/offers").handler(BodyHandler.create());
         router.route("/search/offers").handler(TimeoutHandler.create());
         router.post("/search/offers").handler(searchRouter);
+        router.get("/loaderio-527965f7c4480c76ed72d38029e876c1").handler(rc -> rc.response().end("loaderio-527965f7c4480c76ed72d38029e876c1"));
 
         router.route().handler(StaticHandler.create()
                 .setWebRoot("apidocs")
