@@ -1,6 +1,6 @@
 package de.hanbei.rxsearch.config
 
-import org.asynchttpclient.AsyncHttpClient
+import okhttp3.OkHttpClient
 import de.hanbei.rxsearch.searcher.Searcher
 
 class SearcherConfiguration {
@@ -8,7 +8,7 @@ class SearcherConfiguration {
     def configurationLoader
     def searchConfigBuilder
 
-    SearcherConfiguration(AsyncHttpClient asynHttpClient) {
+    SearcherConfiguration(OkHttpClient asynHttpClient) {
         this.configurationLoader = new ConfigurationLoader()
         this.searchConfigBuilder = new SearchConfigBuilder(asynHttpClient)
     }

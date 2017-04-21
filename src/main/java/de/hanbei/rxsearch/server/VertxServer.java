@@ -38,8 +38,7 @@ import io.vertx.ext.web.handler.LoggerHandler;
 import io.vertx.ext.web.handler.ResponseTimeHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.handler.TimeoutHandler;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.DefaultAsyncHttpClient;
+import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,7 +50,7 @@ public class VertxServer extends AbstractVerticle {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(VertxServer.class);
 
-    private final AsyncHttpClient asyncHttpClient;
+    private final OkHttpClient asyncHttpClient;
     private final List<Searcher> searchers;
     private final List<OfferProcessor> processors;
 
@@ -60,7 +59,7 @@ public class VertxServer extends AbstractVerticle {
 
 
     public VertxServer() {
-        asyncHttpClient = new DefaultAsyncHttpClient();
+        asyncHttpClient = new OkHttpClient();
         SearcherConfiguration searcherConfiguration = new SearcherConfiguration(asyncHttpClient);
 
         searchers = searcherConfiguration.loadConfiguration("rxsearch", "testing", "de");
@@ -107,7 +106,6 @@ public class VertxServer extends AbstractVerticle {
     @Override
     public void stop(Future<Void> stopFuture) throws Exception {
         LOGGER.info("Stopping server");
-        asyncHttpClient.close();
         httpServer.close();
         super.stop(stopFuture);
     }

@@ -2,15 +2,16 @@ package de.hanbei.rxsearch.searcher;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import org.asynchttpclient.AsyncCompletionHandler;
-import org.asynchttpclient.AsyncHttpClient;
-import org.asynchttpclient.Request;
-import org.asynchttpclient.Response;
-import org.asynchttpclient.HttpResponseStatus;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import io.reactivex.Observable;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
+import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractSearcher implements Searcher {
@@ -21,9 +22,9 @@ public abstract class AbstractSearcher implements Searcher {
     private final String name;
     private final RequestBuilder urlBuilder;
     private final ResponseParser responseParser;
-    private final AsyncHttpClient asyncHttpClient;
+    private final OkHttpClient asyncHttpClient;
 
-    public AbstractSearcher(String name, RequestBuilder urlBuilder, ResponseParser responseParser, AsyncHttpClient asyncHttpClient) {
+    public AbstractSearcher(String name, RequestBuilder urlBuilder, ResponseParser responseParser, OkHttpClient asyncHttpClient) {
         this.name = name;
         this.urlBuilder = urlBuilder;
         this.responseParser = responseParser;
@@ -48,29 +49,24 @@ public abstract class AbstractSearcher implements Searcher {
                     MetricRegistry searcherMetrics = getMetricRegistry();
                     Timer.Context timer = searcherMetrics.timer(metricName(country, name)).time();
 
-                    asyncHttpClient.executeRequest(request, new AsyncCompletionHandler<Response>() {
+                    asyncHttpClient.newCall(request).enqueue(new Callback() {
                         @Override
-                        public State onStatusReceived(HttpResponseStatus status) throws Exception {
-                            int statusCode = status.getStatusCode();
+                        public void onResponse(Call call, Response response) {
+                            int statusCode = response.code();
                             if (statusCode >= 300) {
                                 searcherMetrics.counter(metricName(country, name, ERROR, statusCode)).inc();
-                                subscriber.onError(new SearcherException(statusCode + " " + status.getStatusText()).searcher(getName()).query(query));
+                                subscriber.onError(new SearcherException(statusCode + " " + response.message()).searcher(getName()).query(query));
+                                timer.stop();
+                            } else {
+                                searcherMetrics.counter(metricName(country, name, SUCCESS)).inc();
+                                subscriber.onNext(response);
+                                subscriber.onComplete();
                                 timer.stop();
                             }
-                            return State.CONTINUE;
                         }
 
                         @Override
-                        public Response onCompleted(Response response) throws Exception {
-                            searcherMetrics.counter(metricName(country, name, SUCCESS)).inc();
-                            subscriber.onNext(response);
-                            subscriber.onComplete();
-                            timer.stop();
-                            return response;
-                        }
-
-                        @Override
-                        public void onThrowable(Throwable t) {
+                        public void onFailure(Call request, IOException t) {
                             searcherMetrics.counter(metricName(country, "general", "error")).inc();
                             subscriber.onError(new SearcherException(t).searcher(getName()).query(query));
                             timer.stop();

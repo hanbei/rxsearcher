@@ -2,9 +2,10 @@ package de.hanbei.rxsearch.searcher.github;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import org.asynchttpclient.Request;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.RequestBuilder;
+import okhttp3.HttpUrl;
+import okhttp3.Request;
 
 public class GithubRequestBuilder implements RequestBuilder {
 
@@ -18,9 +19,7 @@ public class GithubRequestBuilder implements RequestBuilder {
     @Override
     public Request createRequest(Query query) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(query.getKeywords()));
-        return new org.asynchttpclient.RequestBuilder("GET", true)
-                .setUrl("https://api.github.com/search/code")
-                .addQueryParam("q", query.getKeywords() + "+repo:" + repo)
-                .build();
+        return new Request.Builder().get()
+                .url(HttpUrl.parse("https://api.github.com/search/code").newBuilder().addQueryParameter("q", query.getKeywords() + "+repo:" + repo).build()).build();
     }
 }

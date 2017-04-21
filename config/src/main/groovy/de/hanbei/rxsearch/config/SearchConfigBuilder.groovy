@@ -1,6 +1,6 @@
 package de.hanbei.rxsearch.config
 
-import org.asynchttpclient.AsyncHttpClient
+import okhttp3.OkHttpClient
 import de.hanbei.rxsearch.searcher.Searcher
 import de.hanbei.rxsearch.searcher.duckduckgo.DuckDuckGoSearcher
 import de.hanbei.rxsearch.searcher.fred.FredSearcher
@@ -22,9 +22,9 @@ class SearchConfigBuilder extends BuilderSupport {
     private static final String ZOOM = "zoom"
     private static final String SEARCHERS = "searchers"
 
-    private AsyncHttpClient asyncHttpClient
+    private OkHttpClient asyncHttpClient
 
-    SearchConfigBuilder(AsyncHttpClient asyncHttpClient) {
+    SearchConfigBuilder(OkHttpClient asyncHttpClient) {
         this.asyncHttpClient = asyncHttpClient
     }
 
