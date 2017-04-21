@@ -46,7 +46,7 @@ class ResponseHandler {
         HttpServerResponse response = routingContext.response();
 
         if (!response.ended()) {
-            response.putHeader(HttpHeaders.CONTENT_TYPE, MEDIATYPE_JSON).setStatusCode(204).end();
+            response.putHeader(HttpHeaders.CONTENT_TYPE, MEDIATYPE_JSON).setStatusCode(504).end();
         } else {
             logResponseAlreadyEnded();
         }
