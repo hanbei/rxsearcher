@@ -1,8 +1,9 @@
 package de.hanbei.rxsearch.searcher;
 
 import de.hanbei.rxsearch.model.Query;
-import org.asynchttpclient.Request;
-import org.asynchttpclient.util.Base64;
+import okhttp3.Request;
+
+import java.util.Base64;
 
 public interface RequestBuilder {
 
@@ -16,6 +17,6 @@ public interface RequestBuilder {
     Request createRequest(Query query);
 
     static String createBasicAuthHeader(String username, String password) {
-        return "Basic " + Base64.encode((username + ":" + password).getBytes());
+        return "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());
     }
 }

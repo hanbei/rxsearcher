@@ -3,16 +3,17 @@ package de.hanbei.rxsearch.searcher.duckduckgo;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import org.asynchttpclient.Response;
 import de.hanbei.rxsearch.model.Offer;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
+import okhttp3.Response;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.IOException;
 
 import static com.google.common.io.Resources.getResource;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -25,9 +26,9 @@ public class DuckDuckGoResponseParserTest {
 
     @Before
     public void setUp() throws IOException {
-        response = mock(Response.class);
+        response = mock(Response.class, RETURNS_DEEP_STUBS);
         String stringResponse = Resources.toString(getResource("searcher/duckduckgo/response_ok.json"), Charsets.UTF_8);
-        when(response.getResponseBody(Charsets.UTF_8)).thenReturn(stringResponse);
+        when(response.body().string()).thenReturn(stringResponse);
         responseParser = new DuckDuckGoResponseParser(DUCK_DUCK_GO_SEARCHER);
     }
 
@@ -54,7 +55,7 @@ public class DuckDuckGoResponseParserTest {
 
     @Test
     public void brokenJsonReturnsErrorObservable() throws IOException {
-        when(response.getResponseBody(Charsets.UTF_8)).thenReturn("{");
+        when(response.body().string()).thenReturn("{");
 
         Observable<Offer> observable = responseParser.toSearchResults(response);
 
@@ -65,7 +66,7 @@ public class DuckDuckGoResponseParserTest {
 
     @Test
     public void correctButEmptyJsonReturnsEmptyObservable() throws IOException {
-        when(response.getResponseBody(Charsets.UTF_8)).thenReturn("{}");
+        when(response.body().string()).thenReturn("{}");
 
         Observable<Offer> observable = responseParser.toSearchResults(response);
 

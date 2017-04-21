@@ -2,12 +2,11 @@ package de.hanbei.rxsearch.searcher.duckduckgo;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
 import com.google.common.base.Strings;
-import org.asynchttpclient.Response;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.searcher.ResponseParser;
 import io.reactivex.Observable;
+import okhttp3.Response;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,7 +28,7 @@ public class DuckDuckGoResponseParser implements ResponseParser {
         checkNotNull(response);
 
         try {
-            String responseAsString = response.getResponseBody(Charsets.UTF_8);
+            String responseAsString = response.body().string();
             if (Strings.isNullOrEmpty(responseAsString)) {
                 return Observable.empty();
             }

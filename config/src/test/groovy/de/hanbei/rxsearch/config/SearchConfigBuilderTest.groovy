@@ -1,16 +1,16 @@
 package de.hanbei.rxsearch.config
 
-import org.asynchttpclient.AsyncHttpClient
 import de.hanbei.rxsearch.searcher.duckduckgo.DuckDuckGoSearcher
 import de.hanbei.rxsearch.searcher.fred.FredSearcher
 import de.hanbei.rxsearch.searcher.github.GithubSearcher
 import de.hanbei.rxsearch.searcher.webhose.WebhoseSearcher
 import de.hanbei.rxsearch.searcher.zoom.ZoomSearcher
+import okhttp3.OkHttpClient
 import spock.lang.Specification
 
 class SearchConfigBuilderTest extends Specification {
 
-    def searchConfigBuilder = new SearchConfigBuilder(Mock(AsyncHttpClient))
+    def searchConfigBuilder = new SearchConfigBuilder(Mock(OkHttpClient))
 
     def "create searcher list from dsl"() {
         when: "searcher de builder builds searcher list"

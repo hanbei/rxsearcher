@@ -3,7 +3,7 @@ package de.hanbei.rxsearch.searcher.duckduckgo;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.model.User;
 import de.hanbei.rxsearch.searcher.RequestUrlBuilderTest;
-import org.asynchttpclient.Request;
+import okhttp3.Request;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,7 +20,7 @@ public class DuckDuckGoRequestBuilderTest extends RequestUrlBuilderTest {
     @Test
     public void correctRequestUrlIsBuilt() {
         Request input = urlBuilder.createRequest(Query.builder().keywords("input").requestId("id").country("de").user(User.getDefaultUser()).build());
-        assertThat(input.getUrl(), is("http://api.duckduckgo.com?format=json&t=hanbeirxsearch&q=input"));
+        assertThat(input.url().toString(), is("http://api.duckduckgo.com/?format=json&t=hanbeirxsearch&q=input"));
     }
 
 }
