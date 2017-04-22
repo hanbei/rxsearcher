@@ -22,13 +22,13 @@ public abstract class AbstractSearcher implements Searcher {
     private final String name;
     private final RequestBuilder requestBuilder;
     private final ResponseParser responseParser;
-    private final OkHttpClient asyncHttpClient;
+    private final OkHttpClient httpClient;
 
     public AbstractSearcher(String name, RequestBuilder urlBuilder, ResponseParser responseParser, OkHttpClient httpClient) {
         this.name = name;
         this.requestBuilder = urlBuilder;
         this.responseParser = responseParser;
-        this.asyncHttpClient = httpClient;
+        this.httpClient = httpClient;
     }
 
     public String getName() {
@@ -49,7 +49,7 @@ public abstract class AbstractSearcher implements Searcher {
                     MetricRegistry searcherMetrics = getMetricRegistry();
                     Timer.Context timer = searcherMetrics.timer(metricName(country, name)).time();
 
-                    asyncHttpClient.newCall(request).enqueue(new Callback() {
+                    httpClient.newCall(request).enqueue(new Callback() {
                         @Override
                         public void onResponse(Call call, Response response) {
                             int statusCode = response.code();

@@ -132,7 +132,7 @@ public class SearchRouterTest {
 
         router.handle(routingContext);
 
-        verify(response, times(1)).setStatusCode(204);
+        verify(response, times(1)).setStatusCode(504);
 
         verify(eventBus).publish(SearchStartedEvent.topic(), new SearchStartedEvent(ID, new SearchRequestConfiguration(ID, false)));
         verify(eventBus).publish(SearchFinishedEvent.topic(), new SearchFinishedEvent(ID, 0));
