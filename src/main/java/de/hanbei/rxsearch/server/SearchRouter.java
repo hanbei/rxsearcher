@@ -28,6 +28,7 @@ class SearchRouter implements Handler<RoutingContext> {
     private final SearchCoordinator searchCoordinator;
     private final OfferProcessorCoordinator filterCoordinator;
     private final EventBus eventBus;
+    private ResponseHandler responseHandler;
 
     public SearchRouter(List<Searcher> searcher, List<OfferProcessor> processors, EventBus eventBus) {
         this.eventBus = eventBus;
@@ -45,12 +46,11 @@ class SearchRouter implements Handler<RoutingContext> {
         this.filterCoordinator = new OfferProcessorCoordinator(processors,
                 (requestId, processorName, filter, remainingOffers) -> eventBus.publish(OfferProcessedEvent.topic(), new OfferProcessedEvent(requestId, processorName, filter, remainingOffers))
         );
+        responseHandler = new ResponseHandler();
     }
 
     @Override
     public void handle(RoutingContext routingContext) {
-        ResponseHandler responseHandler = new ResponseHandler(routingContext);
-
         HttpServerRequest request = routingContext.request();
         String requestId = Optional.ofNullable(request.getHeader("X-Request-ID")).orElse(UUID.randomUUID().toString());
         boolean logSearch = Optional.ofNullable(Boolean.valueOf(request.getParam("logSearch"))).orElse(false);
@@ -61,8 +61,8 @@ class SearchRouter implements Handler<RoutingContext> {
         Observable<Offer> offerObservable = searchCoordinator.startSearch(q);
 
         filterCoordinator.filter(q, offerObservable).toList().subscribe(
-                o -> responseHandler.handleSuccess(requestId, o),
-                t -> responseHandler.handleError(requestId, t)
+                o -> responseHandler.handleSuccess(routingContext, requestId, o),
+                t -> responseHandler.handleError(routingContext, requestId, t)
         );
     }
 

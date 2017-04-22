@@ -20,16 +20,8 @@ class ResponseHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResponseHandler.class);
     private static final String MEDIATYPE_JSON = "application/json";
 
-    private final RoutingContext routingContext;
-    private final EventBus eventBus;
-
-    ResponseHandler(RoutingContext routingContext) {
-        this.routingContext = routingContext;
-        this.eventBus = routingContext.vertx().eventBus();
-    }
-
-    public void handleSuccess(String requestId, List<Offer> results) {
-        eventBus.publish(SearchFinishedEvent.topic(), new SearchFinishedEvent(requestId, results.size()));
+    public void handleSuccess(RoutingContext routingContext, String requestId, List<Offer> results) {
+        routingContext.vertx().eventBus().publish(SearchFinishedEvent.topic(), new SearchFinishedEvent(requestId, results.size()));
 
         if (results.isEmpty()) {
             sendNoContent(routingContext);
@@ -52,9 +44,9 @@ class ResponseHandler {
         }
     }
 
-    public void handleError(String requestId, Throwable t) {
+    public void handleError(RoutingContext routingContext, String requestId, Throwable t) {
         LOGGER.warn(t.getMessage());
-        eventBus.publish(SearchFailedEvent.topic(), new SearchFailedEvent(requestId, t));
+        routingContext.vertx().eventBus().publish(SearchFailedEvent.topic(), new SearchFailedEvent(requestId, t));
         routingContext.fail(t);
     }
 
