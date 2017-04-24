@@ -51,12 +51,13 @@ public abstract class AbstractSearcher implements Searcher {
 
                     httpClient.newCall(request).enqueue(new Callback() {
                         @Override
-                        public void onResponse(Call call, Response response) {
+                        public void onResponse(Call request, Response response) {
                             int statusCode = response.code();
                             if (statusCode >= 300) {
                                 searcherMetrics.counter(metricName(country, name, ERROR, statusCode)).inc();
                                 subscriber.onError(new SearcherException(statusCode + " " + response.message()).searcher(getName()).query(query));
                                 timer.stop();
+                                response.close();
                             } else {
                                 searcherMetrics.counter(metricName(country, name, SUCCESS)).inc();
                                 subscriber.onNext(response);
