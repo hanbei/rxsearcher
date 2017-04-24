@@ -1,6 +1,5 @@
 package de.hanbei.rxsearch.server;
 
-import com.codahale.metrics.ConsoleReporter;
 import com.codahale.metrics.SharedMetricRegistries;
 import com.fasterxml.jackson.datatype.guava.GuavaModule;
 import com.fasterxml.jackson.module.kotlin.KotlinModule;
@@ -32,6 +31,7 @@ import io.vertx.core.VertxOptions;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.json.Json;
 import io.vertx.ext.dropwizard.DropwizardMetricsOptions;
+import io.vertx.ext.dropwizard.reporters.JmxReporter;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.LoggerHandler;
@@ -66,9 +66,9 @@ public class VertxServer extends AbstractVerticle {
         processors = Lists.newArrayList((OfferFilter) (Query q, Observable<Offer> o) -> o.filter(offer -> offer.getPrice().getAmount() > 2500));
 
 
-        ConsoleReporter reporter = ConsoleReporter.forRegistry(SharedMetricRegistries.getOrCreate(Measured.SEARCHER_METRICS))
-                .shutdownExecutorOnStop(true).build();
-        //reporter.start(5, TimeUnit.SECONDS);
+        JmxReporter reporter = JmxReporter.forRegistry(SharedMetricRegistries.getOrCreate(Measured.SEARCHER_METRICS))
+                .build();
+        reporter.start();
     }
 
     @Override
