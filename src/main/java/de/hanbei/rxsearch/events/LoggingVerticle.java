@@ -7,6 +7,8 @@ import io.vertx.core.eventbus.MessageConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.TimeoutException;
+
 public class LoggingVerticle extends AbstractVerticle {
 
 
@@ -47,13 +49,19 @@ public class LoggingVerticle extends AbstractVerticle {
 
     private void searcherCompleted(Message<SearcherCompletedEvent> message) {
         SearcherCompletedEvent event = message.body();
-        LOGGER.info("{}: searcher {} completed for {}", event.getRequestId(), event.getSearcher(), event.getQuery());
+        LOGGER.trace("{}: searcher {} completed for {}", event.getRequestId(), event.getSearcher(), event.getQuery());
     }
 
     private void searcherError(Message<SearcherErrorEvent> message) {
         SearcherErrorEvent event = message.body();
         //LOGGER.warn("{}: Error in searcher {}", event.getRequestId(), event.getSearcher(), event.getException());
-        LOGGER.warn("{}: Error in searcher {}", event.getRequestId(), event.getSearcher(), event.getException().getMessage());
+
+        Throwable cause = event.getException().getCause();
+        if(cause instanceof TimeoutException) {
+            LOGGER.warn("{}: Timeout in searcher {}: {}", event.getRequestId(), event.getSearcher(), event.getException().getMessage());
+        } else {
+            LOGGER.warn("{}: Error in searcher {}", event.getRequestId(), event.getSearcher(), event.getException());
+        }
     }
 
     private void searcherResult(Message<SearcherResultEvent> message) {
@@ -63,17 +71,17 @@ public class LoggingVerticle extends AbstractVerticle {
 
     private void searchStarted(Message<SearchStartedEvent> message) {
         SearchStartedEvent event = message.body();
-        LOGGER.info("{}: search started with {}", event.getRequestId(), event.getSearchConfiguraton());
+        LOGGER.trace("{}: search started with {}", event.getRequestId(), event.getSearchConfiguraton());
     }
 
     private void searchFailed(Message<SearchFailedEvent> message) {
         SearchFailedEvent event = message.body();
-        LOGGER.error("{}: failed search {}", event.getRequestId(), event.getError());
+        LOGGER.warn("{}: failed search {}", event.getRequestId(), event.getError());
     }
 
     private void searchFinished(Message<SearchFinishedEvent> message) {
         SearchFinishedEvent event = message.body();
-        LOGGER.info("{}: finished search got #{} result", event.getRequestId(), event.getNumberOfOffers());
+        LOGGER.trace("{}: finished search got #{} result", event.getRequestId(), event.getNumberOfOffers());
     }
 
 }
