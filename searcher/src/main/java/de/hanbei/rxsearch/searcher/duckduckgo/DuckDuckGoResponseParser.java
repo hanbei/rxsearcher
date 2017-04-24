@@ -7,6 +7,7 @@ import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.searcher.ResponseParser;
 import io.reactivex.Observable;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -27,8 +28,8 @@ public class DuckDuckGoResponseParser implements ResponseParser {
     public Observable<Offer> toSearchResults(Response response) {
         checkNotNull(response);
 
-        try {
-            String responseAsString = response.body().string();
+        try (ResponseBody body = response.body()) {
+            String responseAsString = body.string();
             if (Strings.isNullOrEmpty(responseAsString)) {
                 return Observable.empty();
             }
@@ -40,7 +41,6 @@ public class DuckDuckGoResponseParser implements ResponseParser {
             } else {
                 return Observable.empty();
             }
-
         } catch (IOException e) {
             return Observable.error(e);
         }

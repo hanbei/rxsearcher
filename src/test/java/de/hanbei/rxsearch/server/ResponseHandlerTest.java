@@ -34,22 +34,22 @@ public class ResponseHandlerTest {
         when(routingContext.vertx().eventBus()).thenReturn(eventBus);
         when(routingContext.response()).thenReturn(response);
 
-        responseHandler = new ResponseHandler(routingContext);
+        responseHandler = new ResponseHandler();
     }
 
     @Test
     public void emptyOffersSendsNoContent() throws Exception {
-        responseHandler.handleSuccess(REQUEST_ID, Lists.newArrayList());
+        responseHandler.handleSuccess(routingContext, REQUEST_ID, Lists.newArrayList());
 
         verify(eventBus).publish(SearchFinishedEvent.topic(), new SearchFinishedEvent(REQUEST_ID, 0));
         verify(response).putHeader(HttpHeaders.CONTENT_TYPE, "application/json");
-        verify(response).setStatusCode(204);
+        verify(response).setStatusCode(504);
     }
 
     @Test
     public void handleError() throws Exception {
         RuntimeException error = new RuntimeException("Error");
-        responseHandler.handleError(REQUEST_ID, error);
+        responseHandler.handleError(routingContext, REQUEST_ID, error);
 
         verify(eventBus).publish(SearchFailedEvent.topic(), new SearchFailedEvent(REQUEST_ID, error));
         verify(routingContext).fail(error);
@@ -57,7 +57,7 @@ public class ResponseHandlerTest {
 
     @Test
     public void someOffersSendContent() throws Exception {
-        responseHandler.handleSuccess(REQUEST_ID, Lists.newArrayList(
+        responseHandler.handleSuccess(routingContext, REQUEST_ID, Lists.newArrayList(
                 Offer.builder().url("").title("").price(0.0, "EUR").searcher("test").requestId(REQUEST_ID).build()
         ));
 

@@ -20,15 +20,15 @@ public abstract class AbstractSearcher implements Searcher {
     private static final String ERROR = "error";
 
     private final String name;
-    private final RequestBuilder urlBuilder;
+    private final RequestBuilder requestBuilder;
     private final ResponseParser responseParser;
-    private final OkHttpClient asyncHttpClient;
+    private final OkHttpClient httpClient;
 
-    public AbstractSearcher(String name, RequestBuilder urlBuilder, ResponseParser responseParser, OkHttpClient asyncHttpClient) {
+    public AbstractSearcher(String name, RequestBuilder urlBuilder, ResponseParser responseParser, OkHttpClient httpClient) {
         this.name = name;
-        this.urlBuilder = urlBuilder;
+        this.requestBuilder = urlBuilder;
         this.responseParser = responseParser;
-        this.asyncHttpClient = asyncHttpClient;
+        this.httpClient = httpClient;
     }
 
     public String getName() {
@@ -43,20 +43,21 @@ public abstract class AbstractSearcher implements Searcher {
 
     private Observable<Response> asyncGet(Query query) {
         return Observable.create(subscriber -> {
-                    final Request request = urlBuilder.createRequest(query);
+                    final Request request = requestBuilder.createRequest(query);
                     final String country = query.getCountry();
 
                     MetricRegistry searcherMetrics = getMetricRegistry();
                     Timer.Context timer = searcherMetrics.timer(metricName(country, name)).time();
 
-                    asyncHttpClient.newCall(request).enqueue(new Callback() {
+                    httpClient.newCall(request).enqueue(new Callback() {
                         @Override
-                        public void onResponse(Call call, Response response) {
+                        public void onResponse(Call request, Response response) {
                             int statusCode = response.code();
                             if (statusCode >= 300) {
                                 searcherMetrics.counter(metricName(country, name, ERROR, statusCode)).inc();
                                 subscriber.onError(new SearcherException(statusCode + " " + response.message()).searcher(getName()).query(query));
                                 timer.stop();
+                                response.close();
                             } else {
                                 searcherMetrics.counter(metricName(country, name, SUCCESS)).inc();
                                 subscriber.onNext(response);

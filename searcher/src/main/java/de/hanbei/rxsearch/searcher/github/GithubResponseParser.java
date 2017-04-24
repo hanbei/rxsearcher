@@ -6,6 +6,7 @@ import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.searcher.ResponseParser;
 import io.reactivex.Observable;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,8 +29,8 @@ public class GithubResponseParser implements ResponseParser {
 
         List<Offer> results = new ArrayList<>();
 
-        try {
-            String responseAsString = response.body().string();
+        try (ResponseBody body = response.body()) {
+            String responseAsString = body.string();
 
             JsonNode jsonNode = mapper.readTree(responseAsString);
             JsonNode items = jsonNode.findValue("items");
