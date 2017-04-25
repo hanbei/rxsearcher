@@ -10,6 +10,7 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import okhttp3.ResponseBody;
 
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
@@ -38,6 +39,10 @@ public abstract class AbstractSearcher implements Searcher {
     public Observable<Offer> search(Query query) {
         return asyncGet(query)
                 .timeout(2, TimeUnit.SECONDS)
+                .doOnError(t -> {
+                    MetricRegistry searcherMetrics = getMetricRegistry();
+                    searcherMetrics.counter(metricName(query.getCountry(), name, ERROR)).inc();
+                })
                 .flatMap(responseParser::toSearchResults);
     }
 
@@ -49,28 +54,31 @@ public abstract class AbstractSearcher implements Searcher {
                     MetricRegistry searcherMetrics = getMetricRegistry();
                     Timer.Context timer = searcherMetrics.timer(metricName(country, name)).time();
 
-                    httpClient.newCall(request).enqueue(new Callback() {
+                    Call httpCall = httpClient.newCall(request);
+                    httpCall.enqueue(new Callback() {
                         @Override
                         public void onResponse(Call request, Response response) {
-                            int statusCode = response.code();
-                            if (statusCode >= 300) {
-                                searcherMetrics.counter(metricName(country, name, ERROR, statusCode)).inc();
-                                subscriber.onError(new SearcherException(statusCode + " " + response.message()).searcher(getName()).query(query));
+                            try (ResponseBody body = response.body()) {
+                                if (!response.isSuccessful()) {
+                                    int statusCode = response.code();
+                                    searcherMetrics.counter(metricName(country, name, ERROR, statusCode)).inc();
+                                    subscriber.onError(new SearcherException(statusCode + " " + response.message()).searcher(getName()).query(query));
+                                    response.close();
+                                } else {
+                                    subscriber.onNext(response);
+                                    subscriber.onComplete();
+                                }
+                            } finally {
                                 timer.stop();
-                                response.close();
-                            } else {
-                                searcherMetrics.counter(metricName(country, name, SUCCESS)).inc();
-                                subscriber.onNext(response);
-                                subscriber.onComplete();
-                                timer.stop();
+                                timer.close();
                             }
                         }
 
                         @Override
                         public void onFailure(Call request, IOException t) {
-                            searcherMetrics.counter(metricName(country, "general", "error")).inc();
-                            subscriber.onError(new SearcherException(t).searcher(getName()).query(query));
                             timer.stop();
+                            timer.close();
+                            subscriber.onError(new SearcherException(t).searcher(getName()).query(query));
                         }
                     });
                 }

@@ -1,5 +1,6 @@
 package de.hanbei.rxsearch.searcher;
 
+import com.google.common.util.concurrent.Uninterruptibles;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.model.User;
@@ -15,11 +16,14 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @Ignore
@@ -98,6 +102,21 @@ public class AbstractSearcherTest {
         subscriber.assertNoValues();
         subscriber.assertError(SearcherException.class);
     }
+
+//    @Test
+//    public void requestIsCancelledOnTimeout() {
+//        Call call = mock(Call.class);
+//        when(httpClient.newCall(any(Request.class))).thenReturn(call);
+//        doAnswer(invocation -> {
+//            Uninterruptibles.sleepUninterruptibly(3, TimeUnit.SECONDS);
+//            return null;
+//        }).when(call).enqueue(any(Callback.class));
+//
+//        Observable<Offer> observable = searcher.search(DUMMY_QUERY);
+//        TestObserver<Offer> subscriber = observable.test().assertError(TimeoutException.class);
+//
+//        verify(call).cancel();
+//    }
 
     private Response badRequest() throws IOException {
         Response response = mock(Response.class, RETURNS_DEEP_STUBS);
