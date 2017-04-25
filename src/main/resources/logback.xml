@@ -6,7 +6,16 @@
         </encoder>
     </appender>
 
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <encoder>
+            <pattern>%date %-5level [%thread] - [%logger]- %msg%n</pattern>
+        </encoder>
+        <append>false</append>
+        <file>logs/rxsearch.log</file>
+    </appender>
+
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
     </root>
 </configuration>
