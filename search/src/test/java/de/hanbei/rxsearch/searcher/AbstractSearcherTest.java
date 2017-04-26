@@ -5,7 +5,6 @@ import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.model.User;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
-import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;

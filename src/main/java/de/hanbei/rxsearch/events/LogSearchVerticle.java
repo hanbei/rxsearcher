@@ -65,9 +65,11 @@ public class LogSearchVerticle extends AbstractVerticle {
 
     private void searchStarted(Message<SearchStartedEvent> message) {
         SearchStartedEvent event = message.body();
-        LoggedSearchContainer loggedSearch = loggedSearchesContainer.getOrDefault(event.getRequestId(),
-                new LoggedSearchContainer(event.getRequestId(), event.getSearchConfiguraton()));
-        loggedSearchesContainer.put(event.getRequestId(), loggedSearch);
+        if (event.getSearchConfiguraton().getLogSearch()) {
+            LoggedSearchContainer loggedSearch = loggedSearchesContainer.getOrDefault(event.getRequestId(),
+                    new LoggedSearchContainer(event.getRequestId(), event.getSearchConfiguraton()));
+            loggedSearchesContainer.put(event.getRequestId(), loggedSearch);
+        }
     }
 
     private void searchFailed(Message<SearchFailedEvent> message) {
