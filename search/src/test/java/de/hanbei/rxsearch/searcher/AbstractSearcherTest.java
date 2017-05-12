@@ -5,6 +5,7 @@ import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.model.User;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
+import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -106,9 +107,10 @@ public class AbstractSearcherTest {
     }
 
     private Response ok() throws IOException {
-        Response response = mock(Response.class);
+        Response response = mock(Response.class, RETURNS_DEEP_STUBS);
         when(response.body().string()).thenReturn("");
         when(response.code()).thenReturn(200);
+        when(response.isSuccessful()).thenReturn(true);
         return response;
     }
 
@@ -118,18 +120,24 @@ public class AbstractSearcherTest {
 
     @SuppressWarnings("unchecked")
     private void givenHttpClientSendsResponse(Response response) {
+        Call call = mock(Call.class);
+        when(httpClient.newCall(any(Request.class))).thenReturn(call);
+
         doAnswer(invocation -> {
-            ((Callback) invocation.getArguments()[1]).onResponse(null, response);
+            ((Callback) invocation.getArgument(0)).onResponse(null, response);
             return null;
-        }).when(httpClient.newCall(any(Request.class))).enqueue(any(Callback.class));
+        }).when(call).enqueue(any(Callback.class));
     }
 
     @SuppressWarnings("unchecked")
     private void givenHttpClientThrows() {
+        Call call = mock(Call.class);
+        when(httpClient.newCall(any(Request.class))).thenReturn(call);
+
         doAnswer(invocation -> {
-            ((Callback) invocation.getArguments()[1]).onFailure(null, new IOException("client error"));
+            ((Callback) invocation.getArgument(0)).onFailure(null, new IOException("client error"));
             return null;
-        }).when(httpClient.newCall(any(Request.class))).enqueue(any(Callback.class));
+        }).when(call).enqueue(any(Callback.class));
     }
 
     private static class TestSearcher extends AbstractSearcher {
