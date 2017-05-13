@@ -1,5 +1,6 @@
 package de.hanbei.rxsearch.searcher;
 
+import com.codahale.metrics.Counter;
 import de.hanbei.rxsearch.model.Offer;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.model.User;
@@ -10,12 +11,16 @@ import okhttp3.Callback;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
+import java.util.SortedMap;
 
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.doAnswer;
@@ -50,6 +55,11 @@ public class AbstractSearcherTest {
         searcher = new TestSearcher(TEST_SEARCHER, urlBuilder, responseParser, httpClient);
     }
 
+    @After
+    public void resetMetric() {
+        searcher.getMetricRegistry().getCounters().values().forEach(c -> c.dec(c.getCount()));
+    }
+
     @Test
     public void searcherReturnsCorrectResults() throws IOException {
         givenHttpClientSendsResponse(ok());
@@ -61,6 +71,8 @@ public class AbstractSearcherTest {
         subscriber.assertValueCount(expectedOffers.length);
         subscriber.assertComplete();
         subscriber.assertValues(expectedOffers);
+
+        assertMetricSuccess();
     }
 
     @Test
@@ -73,6 +85,8 @@ public class AbstractSearcherTest {
         observable.subscribe(subscriber);
         subscriber.assertNoValues();
         subscriber.assertError(SearcherException.class);
+
+        assertMetricError();
     }
 
     @Test
@@ -85,6 +99,8 @@ public class AbstractSearcherTest {
         observable.subscribe(subscriber);
         subscriber.assertNoValues();
         subscriber.assertError(SearcherException.class);
+
+        assertMetricError();
     }
 
     @Test
@@ -97,6 +113,8 @@ public class AbstractSearcherTest {
         observable.subscribe(subscriber);
         subscriber.assertNoValues();
         subscriber.assertError(SearcherException.class);
+
+        assertMetricError();
     }
 
     private Response badRequest() throws IOException {
@@ -112,6 +130,16 @@ public class AbstractSearcherTest {
         when(response.code()).thenReturn(200);
         when(response.isSuccessful()).thenReturn(true);
         return response;
+    }
+
+    private void assertMetricError() {
+        Counter counter = searcher.getMetricRegistry().getCounters().get("searcher.de."+TEST_SEARCHER+".error");
+        assertThat(counter.getCount(), is(1L));
+    }
+
+    private void assertMetricSuccess() {
+        Counter counter = searcher.getMetricRegistry().getCounters().get("searcher.de."+TEST_SEARCHER+".success");
+        assertThat(counter.getCount(), is(1L));
     }
 
     private void givenResponseParserSendsErrorObservable() {

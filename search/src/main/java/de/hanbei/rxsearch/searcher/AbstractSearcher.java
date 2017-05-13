@@ -39,11 +39,11 @@ public abstract class AbstractSearcher implements Searcher {
     public Observable<Offer> search(Query query) {
         return asyncGet(query)
                 .timeout(2, TimeUnit.SECONDS)
+                .flatMap(responseParser::toSearchResults)
                 .doOnError(t -> {
                     MetricRegistry searcherMetrics = getMetricRegistry();
                     searcherMetrics.counter(metricName(query.getCountry(), name, ERROR)).inc();
-                })
-                .flatMap(responseParser::toSearchResults);
+                });
     }
 
     private Observable<Response> asyncGet(Query query) {
@@ -67,6 +67,7 @@ public abstract class AbstractSearcher implements Searcher {
                                 } else {
                                     subscriber.onNext(response);
                                     subscriber.onComplete();
+                                    searcherMetrics.counter(metricName(country, name, SUCCESS)).inc();
                                 }
                             } finally {
                                 timer.stop();
