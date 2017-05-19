@@ -3,6 +3,8 @@ apply plugin: 'groovy'
 dependencies {
     compile project(':search')
     compile project(':searcher')
+    compile project(':processing')
+
     compile "org.codehaus.groovy:groovy-all"
 
     testCompile "org.spockframework:spock-core"

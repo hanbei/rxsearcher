@@ -14,4 +14,8 @@ class ConfigurationException extends RuntimeException {
     String environment
     String country
 
+    static def wrap(Exception e) {
+        if (e instanceof ConfigurationException) return e else new ConfigurationException(e)
+    }
+
 }

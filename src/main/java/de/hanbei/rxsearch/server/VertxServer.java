@@ -6,7 +6,7 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule;
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import de.hanbei.rxsearch.config.SearcherConfiguration;
+import de.hanbei.rxsearch.config.ConfigurationBuilder;
 import de.hanbei.rxsearch.events.LogSearchVerticle;
 import de.hanbei.rxsearch.events.LoggingVerticle;
 import de.hanbei.rxsearch.events.OfferProcessedEvent;
@@ -60,9 +60,9 @@ public class VertxServer extends AbstractVerticle {
 
     public VertxServer() {
         asyncHttpClient = new OkHttpClient();
-        SearcherConfiguration searcherConfiguration = new SearcherConfiguration(asyncHttpClient);
+        ConfigurationBuilder configurationBuilder = new ConfigurationBuilder(asyncHttpClient);
 
-        searchers = searcherConfiguration.loadConfiguration("rxsearch", "testing", "de");
+        searchers = configurationBuilder.loadConfiguration("rxsearch", "testing", "de").searcher();
         processors = Lists.newArrayList((OfferFilter) (Query q, Observable<Offer> o) -> o.filter(offer -> offer.getPrice().getAmount() > 2500));
 
 

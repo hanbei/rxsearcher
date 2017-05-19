@@ -1,6 +1,6 @@
 package de.hanbei.rxsearch.config
 
-import de.hanbei.rxsearch.searcher.Searcher
+import de.hanbei.rxsearch.filter.impl.PriceFilter
 import de.hanbei.rxsearch.searcher.duckduckgo.DuckDuckGoSearcher
 import de.hanbei.rxsearch.searcher.fred.FredSearcher
 import de.hanbei.rxsearch.searcher.github.GithubSearcher
@@ -8,13 +8,14 @@ import de.hanbei.rxsearch.searcher.webhose.WebhoseSearcher
 import de.hanbei.rxsearch.searcher.zoom.ZoomSearcher
 import spock.lang.Specification
 
-class SearcherConfigurationTest extends Specification {
+class ConfigurationBuilderTest extends Specification {
 
-    def searcherConfig = new SearcherConfiguration(null)
+    def searcherConfig = new ConfigurationBuilder(null)
 
-    def "load configuration for name and env"() {
+    def "load configuration for name and env test searchers"() {
         when:
-        List<Searcher> searcher = searcherConfig.loadConfiguration("test_app", "staging", "de")
+        Configuration config = searcherConfig.loadConfiguration("test_app", "staging", "de")
+        def searcher = config.searcher()
         then:
         searcher.size() == 5
         searcher.get(0) instanceof ZoomSearcher
@@ -23,6 +24,16 @@ class SearcherConfigurationTest extends Specification {
         searcher.get(3) instanceof FredSearcher
         searcher.get(4) instanceof DuckDuckGoSearcher
     }
+
+    def "load configuration for name and env test filters"() {
+        when:
+        Configuration config = searcherConfig.loadConfiguration("test_app", "staging", "de")
+        def filter = config.filter()
+        then:
+        filter.size() == 1
+        filter.get(0) instanceof PriceFilter
+    }
+
 
     def "load not existing configuration"() {
         when:
