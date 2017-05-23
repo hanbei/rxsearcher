@@ -1,15 +1,21 @@
 package de.hanbei.rxsearch.config
 
+import de.hanbei.rxsearch.config.loader.ClasspathConfigurationLoader
+import de.hanbei.rxsearch.config.loader.ConfigurationLoader
 import okhttp3.OkHttpClient
 
 class ConfigurationBuilder {
 
-    def configurationLoader
+    private final ConfigurationLoader configurationLoader
     private final ConfigurationFactoryBuilder configurationFactoryBuilder
 
     ConfigurationBuilder(OkHttpClient httpClient) {
-        this.configurationLoader = new ConfigurationLoader()
+        this(httpClient, new ClasspathConfigurationLoader())
+    }
+
+    ConfigurationBuilder(OkHttpClient httpClient, ConfigurationLoader configurationLoader) {
         this.configurationFactoryBuilder = new ConfigurationFactoryBuilder(httpClient)
+        this.configurationLoader = configurationLoader
     }
 
     Configuration loadConfiguration(String appName, String environment, String country) {

@@ -1,11 +1,13 @@
-package de.hanbei.rxsearch.config
+package de.hanbei.rxsearch.config.loader
 
 import com.google.common.base.Charsets
 import com.google.common.io.Resources
+import de.hanbei.rxsearch.config.ConfigurationException
 
-class ConfigurationLoader {
+class ClasspathConfigurationLoader implements ConfigurationLoader {
 
-    def String load(String appName, String environment, String country) {
+    @Override
+    String load(String appName, String environment, String country) {
         try {
             def url = Resources.getResource("${appName}/${environment}/${country}.groovy")
             def content = Resources.toString(url, Charsets.UTF_8).trim()

@@ -1,10 +1,12 @@
-package de.hanbei.rxsearch.config
+package de.hanbei.rxsearch.config.loader
 
+import de.hanbei.rxsearch.config.ConfigurationException
+import de.hanbei.rxsearch.config.loader.ClasspathConfigurationLoader
 import spock.lang.Specification
 
-class ConfigurationLoaderTest extends Specification {
+class ClasspathConfigurationLoaderTest extends Specification {
 
-    def configurationLoader = new ConfigurationLoader()
+    def configurationLoader = new ClasspathConfigurationLoader()
 
     def "load resource from test / production"() {
         when:
