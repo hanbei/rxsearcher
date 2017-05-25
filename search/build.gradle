@@ -1,6 +1,6 @@
 dependencies {
     compile 'io.reactivex.rxjava2:rxjava'
     compile 'com.squareup.okhttp3:okhttp'
-    compile "org.jooq:joox"
+    compile "org.jooq:joox:1.4.0"
     compile "io.dropwizard.metrics:metrics-core"
 }

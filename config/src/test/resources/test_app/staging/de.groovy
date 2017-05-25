@@ -1,7 +1,5 @@
 package test_app.staging
 
-def bla = fred(name: "fred", baseUrl: "hanbei/mockhttpserver")
-
 config(country: "de") {
     searcher {
         zoom(name: "zoom", baseUrl: "http://example.com/zoom")

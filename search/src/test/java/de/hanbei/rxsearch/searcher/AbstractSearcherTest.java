@@ -27,7 +27,6 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Ignore
 public class AbstractSearcherTest {
 
     private static final String TEST_SEARCHER = "TestSearcher";
