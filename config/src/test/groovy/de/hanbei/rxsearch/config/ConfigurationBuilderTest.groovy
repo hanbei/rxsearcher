@@ -2,10 +2,8 @@ package de.hanbei.rxsearch.config
 
 import de.hanbei.rxsearch.filter.impl.PriceFilter
 import de.hanbei.rxsearch.searcher.duckduckgo.DuckDuckGoSearcher
-import de.hanbei.rxsearch.searcher.fred.FredSearcher
 import de.hanbei.rxsearch.searcher.github.GithubSearcher
 import de.hanbei.rxsearch.searcher.webhose.WebhoseSearcher
-import de.hanbei.rxsearch.searcher.zoom.ZoomSearcher
 import spock.lang.Specification
 
 class ConfigurationBuilderTest extends Specification {
@@ -17,12 +15,10 @@ class ConfigurationBuilderTest extends Specification {
         Configuration config = searcherConfig.loadConfiguration("test_app", "staging", "de")
         def searcher = config.searcher()
         then:
-        searcher.size() == 5
-        searcher.get(0) instanceof ZoomSearcher
-        searcher.get(1) instanceof WebhoseSearcher
-        searcher.get(2) instanceof GithubSearcher
-        searcher.get(3) instanceof FredSearcher
-        searcher.get(4) instanceof DuckDuckGoSearcher
+        searcher.size() == 3
+        searcher.get(0) instanceof WebhoseSearcher
+        searcher.get(1) instanceof GithubSearcher
+        searcher.get(2) instanceof DuckDuckGoSearcher
     }
 
     def "load configuration for name and env test filters"() {

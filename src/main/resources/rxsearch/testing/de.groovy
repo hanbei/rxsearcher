@@ -1,7 +1,7 @@
 package rxsearch.testing
 
 searchers {
-    fred(name: "dummy1", baseUrl: "http://dummysearcher1.herokuapp.com")
-    fred(name: "dummy2", baseUrl: "http://dummysearcher2.herokuapp.com")
+    github(name: "dummy1", repo: "hanbei/mockhttpserver")
+    github(name: "dummy2", repo: "hanbei/rxsearcher")
     zoom(name: "zoom", baseUrl: "http://dummysearcher1.herokuapp.com/search/zoom")
 }

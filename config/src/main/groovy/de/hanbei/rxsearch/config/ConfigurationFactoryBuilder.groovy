@@ -33,12 +33,9 @@ class ConfigurationFactoryBuilder extends FactoryBuilderSupport {
     }
 
     private void registerSearcher() {
-        registerFactory("zoom", new ZoomSearcherFactory(httpClient))
         registerFactory("duckduckgo", new DuckDuckGoSearcherFactory(httpClient))
-        registerFactory("fred", new FredSearcherFactory(httpClient))
         registerFactory("webhose", new WebhoseSearcherFactory(httpClient))
         registerFactory("github", new GithubSearcherFactory(httpClient))
-        registerFactory("kelkoo", new KelkooSearcherFactory(httpClient))
     }
 
     private void registerFilter() {
