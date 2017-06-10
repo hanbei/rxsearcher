@@ -2,7 +2,6 @@ package de.hanbei.rxsearch.filter.impl;
 
 import de.hanbei.rxsearch.model.Hit;
 import de.hanbei.rxsearch.model.Query;
-import de.hanbei.rxsearch.model.User;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
 import org.junit.Before;
@@ -18,7 +17,7 @@ public class NoImageFilterTest {
     @Before
     public void setup() {
         filter = new NoImageFilter();
-        query = Query.builder().keywords("keywords").requestId("requestId").country("de").user(User.getDefaultUser()).price(20.0, CURRENCY).build();
+        query = Query.builder().keywords("keywords").requestId("requestId").country("de").build();
         offers = new Hit[]{
                 Hit.builder().url("").title("").searcher("").image("not null").build(),
                 Hit.builder().url("").title("").searcher("").build(),

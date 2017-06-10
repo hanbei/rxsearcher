@@ -7,7 +7,6 @@ import de.hanbei.rxsearch.events.SearcherCompletedEvent;
 import de.hanbei.rxsearch.events.SearcherResultEvent;
 import de.hanbei.rxsearch.model.Hit;
 import de.hanbei.rxsearch.model.Query;
-import de.hanbei.rxsearch.model.User;
 import de.hanbei.rxsearch.searcher.Searcher;
 import io.reactivex.Observable;
 import io.vertx.core.eventbus.EventBus;
@@ -36,7 +35,7 @@ public class SearchRouterTest {
     private static final String SEARCH_TERM = "search_term";
     private static final String ID = "id";
     private static final String DE = "de";
-    private static final Query QUERY = Query.builder().keywords(SEARCH_TERM).requestId(ID).country(DE).user(new User("user_id", "partner_id", "partner_sub_id")).build();
+    private static final Query QUERY = Query.builder().keywords(SEARCH_TERM).requestId(ID).country(DE).build();
     private static final Hit hit1 = Hit.builder().url("url").title("title").searcher("searcher1").build();
     private static final Hit hit2 = Hit.builder().url("url").title("title").searcher("searcher2").build();
 

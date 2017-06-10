@@ -2,7 +2,6 @@ package de.hanbei.rxsearch.filter;
 
 import de.hanbei.rxsearch.model.Hit;
 import de.hanbei.rxsearch.model.Query;
-import de.hanbei.rxsearch.model.User;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
 import org.junit.Before;
@@ -23,7 +22,7 @@ public class HitProcessorCoordinatorTest {
 
     @Before
     public void setup() {
-        query = Query.builder().keywords("keywords").requestId("requestId").country("de").user(User.getDefaultUser()).build();
+        query = Query.builder().keywords("keywords").requestId("requestId").country("de").build();
         hits = newArrayList(
                 Hit.builder().url("url1").title("title1").searcher("searcher1").build(),
                 Hit.builder().url("url2").title("title2").searcher("searcher2").build(),

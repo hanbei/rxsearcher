@@ -10,7 +10,6 @@ import de.hanbei.rxsearch.filter.HitProcessor;
 import de.hanbei.rxsearch.filter.HitProcessorCoordinator;
 import de.hanbei.rxsearch.model.Hit;
 import de.hanbei.rxsearch.model.Query;
-import de.hanbei.rxsearch.model.User;
 import de.hanbei.rxsearch.searcher.Searcher;
 import io.reactivex.Observable;
 import io.vertx.core.Handler;
@@ -71,17 +70,11 @@ class SearchRouter implements Handler<RoutingContext> {
 
         JsonObject query = queryAsJson.getJsonObject("query");
 
-        User user = extractUser(query);
 
-        Query.Companion.OtherStep builder = Query.builder().keywords(query.getString("keywords"))
-                .requestId(requestId).country(query.getString("country")).user(user);
+        Query.Companion.BuildStep builder = Query.builder().keywords(query.getString("keywords"))
+                .requestId(requestId).country(query.getString("country"));
 
         return builder.build();
-    }
-
-    private User extractUser(JsonObject query) {
-        JsonObject userJson = query.getJsonObject("user");
-        return new User(userJson.getString("id"), userJson.getString("partnerId"), userJson.getString("partnerSubId"));
     }
 
 }

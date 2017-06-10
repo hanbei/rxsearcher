@@ -3,7 +3,6 @@ package de.hanbei.rxsearch.searcher;
 import com.codahale.metrics.Counter;
 import de.hanbei.rxsearch.model.Hit;
 import de.hanbei.rxsearch.model.Query;
-import de.hanbei.rxsearch.model.User;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
 import okhttp3.Call;
@@ -28,7 +27,7 @@ import static org.mockito.Mockito.when;
 public class AbstractSearcherTest {
 
     private static final String TEST_SEARCHER = "TestSearcher";
-    private static final Query DUMMY_QUERY = Query.builder().keywords("something").requestId("id").country("de").user(User.getDefaultUser()).build();
+    private static final Query DUMMY_QUERY = Query.builder().keywords("something").requestId("id").country("de").build();
     private final Hit[] expectedHits = {
             Hit.builder().url("url0").title("title0").searcher("icon0").image(TEST_SEARCHER).build(),
             Hit.builder().url("url1").title("title1").searcher("icon1").image(TEST_SEARCHER).build(),
@@ -130,12 +129,12 @@ public class AbstractSearcherTest {
     }
 
     private void assertMetricError() {
-        Counter counter = searcher.getMetricRegistry().getCounters().get("searcher.de."+TEST_SEARCHER+".error");
+        Counter counter = searcher.getMetricRegistry().getCounters().get("searcher.de." + TEST_SEARCHER + ".error");
         assertThat(counter.getCount(), is(1L));
     }
 
     private void assertMetricSuccess() {
-        Counter counter = searcher.getMetricRegistry().getCounters().get("searcher.de."+TEST_SEARCHER+".success");
+        Counter counter = searcher.getMetricRegistry().getCounters().get("searcher.de." + TEST_SEARCHER + ".success");
         assertThat(counter.getCount(), is(1L));
     }
 
