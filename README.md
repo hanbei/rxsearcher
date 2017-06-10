@@ -1,5 +1,7 @@
-[![wercker status](https://app.wercker.com/status/6488afa57c3b3bc68dfe8859c61b3d65/s/master "wercker status")](https://app.wercker.com/project/bykey/6488afa57c3b3bc68dfe8859c61b3d65)
-[![codecov](https://codecov.io/bb/fschulz/rxsearcher/branch/master/graph/badge.svg?token=SRgrSlPFhF)](https://codecov.io/bb/fschulz/rxsearcher)
+[![Build Status](https://travis-ci.org/hanbei/rxsearcher2.svg?branch=master)](https://travis-ci.org/hanbei/rxsearcher2)
+[![codecov](https://codecov.io/gh/hanbei/rxsearcher2/branch/master/graph/badge.svg)](https://codecov.io/gh/hanbei/rxsearcher2)
+
+
 
 # RxSearcher #
 
