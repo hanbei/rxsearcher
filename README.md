@@ -3,7 +3,7 @@
 
 # RxSearcher #
 
-Reactive searcher for offer searches. Using RxJava and Vertx as proof of concept. There are some rules I try to abide to:
+Reactive metasearcher combining different search engines. Using RxJava and Vertx as proof of concept. There are some rules I try to abide to:
 
 * be reactive 
 * no state 
@@ -29,10 +29,6 @@ to do it that needs more work, still do it. Don't use reflection or anythings el
 ## How do I get set up? ##
 This project needs Java 8 or later.  
 
-Clone the repository.
-
-    git clone git@bitbucket.org:fschulz/rxsearcher.git
-    
 The project uses gradle to manage the build. So you can use the gradle commands to build it 
 from the commandline. If you don't have gradle installed use the gradle wrapper. 
 You can also import it into and IDE that supports gradle. 
@@ -62,10 +58,6 @@ run the server from the commandline.
   Codecoverage can be seen on [codecov](https://codecov.io/bb/fschulz/rxsearcher). 
   Static Code Checking service is in evaluation. 
    
-* **Code review**
+* **Contributing**
 
-  I do it. Use pull requests for your additions.
-  
-* **Other guidelines**
-
-  Don't fuck it up.
+  Use pull requests for your additions.
