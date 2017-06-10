@@ -2,7 +2,7 @@ package de.hanbei.rxsearch.searcher;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import de.hanbei.rxsearch.model.Offer;
+import de.hanbei.rxsearch.model.Hit;
 import de.hanbei.rxsearch.model.Query;
 import io.reactivex.Observable;
 import okhttp3.Call;
@@ -36,7 +36,7 @@ public abstract class AbstractSearcher implements Searcher {
         return name;
     }
 
-    public Observable<Offer> search(Query query) {
+    public Observable<Hit> search(Query query) {
         return asyncGet(query)
                 .timeout(2, TimeUnit.SECONDS)
                 .flatMap(responseParser::toSearchResults)

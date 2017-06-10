@@ -3,7 +3,7 @@ package de.hanbei.rxsearch.searcher.duckduckgo;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Strings;
-import de.hanbei.rxsearch.model.Offer;
+import de.hanbei.rxsearch.model.Hit;
 import de.hanbei.rxsearch.searcher.ResponseParser;
 import io.reactivex.Observable;
 import okhttp3.Response;
@@ -25,7 +25,7 @@ public class DuckDuckGoResponseParser implements ResponseParser {
     }
 
     @Override
-    public Observable<Offer> toSearchResults(Response response) {
+    public Observable<Hit> toSearchResults(Response response) {
         checkNotNull(response);
 
         try (ResponseBody body = response.body()) {
@@ -46,8 +46,8 @@ public class DuckDuckGoResponseParser implements ResponseParser {
         }
     }
 
-    private List<Offer> extractResultNodes(JsonNode jsonNode) {
-        List<Offer> results = new ArrayList<>();
+    private List<Hit> extractResultNodes(JsonNode jsonNode) {
+        List<Hit> results = new ArrayList<>();
         for (JsonNode relatedTopic : jsonNode) {
             if (relatedTopic.has("Topics")) {
                 results.addAll(extractResultNodes(relatedTopic.get("Topics")));
@@ -58,16 +58,17 @@ public class DuckDuckGoResponseParser implements ResponseParser {
         return results;
     }
 
-    private Offer toSearchResult(JsonNode relatedTopic) {
+    private Hit toSearchResult(JsonNode relatedTopic) {
         String url = getFieldStringValue(relatedTopic, "FirstURL");
         String title = getFieldStringValue(relatedTopic, "Text");
         String icon = getIcon(relatedTopic);
 
-        return Offer.builder()
+        return Hit.builder()
                 .url(url)
                 .title(title)
-                .price(0.0, "USD")
-                .searcher(name).image(icon).build();
+                .searcher(name)
+                .image(icon)
+                .build();
     }
 
     private String getIcon(JsonNode relatedTopic) {

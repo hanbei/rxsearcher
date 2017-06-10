@@ -3,7 +3,7 @@ package de.hanbei.rxsearch.server;
 import com.google.common.collect.Lists;
 import de.hanbei.rxsearch.events.SearchFailedEvent;
 import de.hanbei.rxsearch.events.SearchFinishedEvent;
-import de.hanbei.rxsearch.model.Offer;
+import de.hanbei.rxsearch.model.Hit;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerResponse;
@@ -58,7 +58,7 @@ public class ResponseHandlerTest {
     @Test
     public void someOffersSendContent() throws Exception {
         responseHandler.handleSuccess(routingContext, REQUEST_ID, Lists.newArrayList(
-                Offer.builder().url("").title("").price(0.0, "EUR").searcher("test").requestId(REQUEST_ID).build()
+                Hit.builder().url("").title("").searcher("test").requestId(REQUEST_ID).build()
         ));
 
         verify(eventBus).publish(SearchFinishedEvent.topic(), new SearchFinishedEvent(REQUEST_ID, 1));

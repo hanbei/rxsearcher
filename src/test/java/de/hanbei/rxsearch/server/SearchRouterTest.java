@@ -4,13 +4,11 @@ import de.hanbei.rxsearch.events.SearchFailedEvent;
 import de.hanbei.rxsearch.events.SearchFinishedEvent;
 import de.hanbei.rxsearch.events.SearchStartedEvent;
 import de.hanbei.rxsearch.events.SearcherCompletedEvent;
-import de.hanbei.rxsearch.events.SearcherErrorEvent;
 import de.hanbei.rxsearch.events.SearcherResultEvent;
-import de.hanbei.rxsearch.model.Offer;
+import de.hanbei.rxsearch.model.Hit;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.model.User;
 import de.hanbei.rxsearch.searcher.Searcher;
-import de.hanbei.rxsearch.searcher.SearcherException;
 import io.reactivex.Observable;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpHeaders;
@@ -39,8 +37,8 @@ public class SearchRouterTest {
     private static final String ID = "id";
     private static final String DE = "de";
     private static final Query QUERY = Query.builder().keywords(SEARCH_TERM).requestId(ID).country(DE).user(new User("user_id", "partner_id", "partner_sub_id")).build();
-    private static final Offer offer1 = Offer.builder().url("url").title("title").price(0.0, "USD").searcher("searcher1").build();
-    private static final Offer offer2 = Offer.builder().url("url").title("title").price(0.0, "USD").searcher("searcher2").build();
+    private static final Hit hit1 = Hit.builder().url("url").title("title").searcher("searcher1").build();
+    private static final Hit hit2 = Hit.builder().url("url").title("title").searcher("searcher2").build();
 
     private SearchRouter router;
     private Searcher searcher1;
@@ -86,8 +84,8 @@ public class SearchRouterTest {
 
     @Test
     public void whenSearcherRespondRendersCorrectJson() {
-        when(searcher1.search(QUERY)).thenReturn(Observable.just(offer1));
-        when(searcher2.search(QUERY)).thenReturn(Observable.just(offer2));
+        when(searcher1.search(QUERY)).thenReturn(Observable.just(hit1));
+        when(searcher2.search(QUERY)).thenReturn(Observable.just(hit2));
 
         router.handle(routingContext);
 
@@ -99,16 +97,16 @@ public class SearchRouterTest {
 
     @Test
     public void testEventsArePublishedIfSearchReturnsCorrectly() {
-        when(searcher1.search(QUERY)).thenReturn(Observable.just(offer1));
-        when(searcher2.search(QUERY)).thenReturn(Observable.just(offer2));
+        when(searcher1.search(QUERY)).thenReturn(Observable.just(hit1));
+        when(searcher2.search(QUERY)).thenReturn(Observable.just(hit2));
 
         router.handle(routingContext);
 
         verify(eventBus).publish(SearchStartedEvent.topic(), new SearchStartedEvent(ID, new SearchRequestConfiguration(ID, false)));
         verify(eventBus).publish(SearcherCompletedEvent.topic(), new SearcherCompletedEvent(ID, "searcher1", QUERY));
         verify(eventBus).publish(SearcherCompletedEvent.topic(), new SearcherCompletedEvent(ID, "searcher2", QUERY));
-        verify(eventBus).publish(SearcherResultEvent.topic(), new SearcherResultEvent(ID, "searcher1", offer1));
-        verify(eventBus).publish(SearcherResultEvent.topic(), new SearcherResultEvent(ID, "searcher2", offer2));
+        verify(eventBus).publish(SearcherResultEvent.topic(), new SearcherResultEvent(ID, "searcher1", hit1));
+        verify(eventBus).publish(SearcherResultEvent.topic(), new SearcherResultEvent(ID, "searcher2", hit2));
         verify(eventBus).publish(SearchFinishedEvent.topic(), new SearchFinishedEvent(ID, 2));
     }
 

@@ -49,7 +49,7 @@ public class LogSearchVerticle extends AbstractVerticle {
     private void offerProcessed(Message<OfferProcessedEvent> message) {
         OfferProcessedEvent event = message.body();
         Optional<LoggedSearchContainer> loggedSearchContainer = getLoggedSearchContainer(event.getRequestId());
-        loggedSearchContainer.ifPresent(loggedSearchContainer1 -> loggedSearchContainer1.addProcessor(event.getProcessor(), event.isFilter(), event.getOffers()));
+        loggedSearchContainer.ifPresent(loggedSearchContainer1 -> loggedSearchContainer1.addProcessor(event.getProcessor(), event.isFilter(), event.getHits()));
     }
 
     @Override
@@ -95,7 +95,7 @@ public class LogSearchVerticle extends AbstractVerticle {
         SearcherResultEvent event = message.body();
         Optional<LoggedSearchContainer> loggedSearchContainer = getLoggedSearchContainer(event.getRequestId());
         if (loggedSearchContainer.isPresent()) {
-            loggedSearchContainer.get().addOffer(event.getSearcher(), event.getOffer());
+            loggedSearchContainer.get().addOffer(event.getSearcher(), event.getHit());
             loggedSearchesContainer.put(event.getRequestId(), loggedSearchContainer.get());
         }
     }

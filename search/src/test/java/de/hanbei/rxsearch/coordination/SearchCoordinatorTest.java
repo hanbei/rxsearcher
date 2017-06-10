@@ -1,7 +1,7 @@
 package de.hanbei.rxsearch.coordination;
 
 import com.google.common.collect.Lists;
-import de.hanbei.rxsearch.model.Offer;
+import de.hanbei.rxsearch.model.Hit;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.model.User;
 import de.hanbei.rxsearch.searcher.Searcher;
@@ -42,13 +42,13 @@ public class SearchCoordinatorTest {
     public void searchReturnSucessfulCallsSuccessHandler() {
         SearchCoordinator coordinator = given.givenCoordinatorNotExpectingError(searcher);
 
-        Offer offer = Offer.builder().url("").title("").price(0.0, "EUR").searcher("test").requestId("id").build();
-        when(searcher.search(any(Query.class))).thenReturn(Observable.just(offer));
+        Hit hit = Hit.builder().url("").title("").searcher("test").requestId("id").build();
+        when(searcher.search(any(Query.class))).thenReturn(Observable.just(hit));
 
-        TestObserver<Offer> subscriber = new TestObserver<>();
+        TestObserver<Hit> subscriber = new TestObserver<>();
         coordinator.startSearch(QUERY).subscribe(subscriber);
         subscriber.assertComplete();
-        subscriber.assertValue(offer);
+        subscriber.assertValue(hit);
     }
 
     @Test
@@ -57,7 +57,7 @@ public class SearchCoordinatorTest {
 
         when(searcher.search(any(Query.class))).thenThrow(new SearcherException(MESSAGE).query(OTHER_QUERY));
 
-        TestObserver<Offer> subscriber = new TestObserver<>();
+        TestObserver<Hit> subscriber = new TestObserver<>();
         coordinator.startSearch(QUERY).subscribe(subscriber);
         subscriber.assertNotComplete();
         subscriber.assertNoValues();
@@ -69,7 +69,7 @@ public class SearchCoordinatorTest {
 
         when(searcher.search(any(Query.class))).thenReturn(Observable.error(new IllegalArgumentException(MESSAGE)));
 
-        TestObserver<Offer> subscriber = new TestObserver<>();
+        TestObserver<Hit> subscriber = new TestObserver<>();
         coordinator.startSearch(QUERY).subscribe(subscriber);
 
         subscriber.assertComplete();

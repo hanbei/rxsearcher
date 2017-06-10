@@ -16,13 +16,9 @@ import de.hanbei.rxsearch.events.SearchStartedEvent;
 import de.hanbei.rxsearch.events.SearcherCompletedEvent;
 import de.hanbei.rxsearch.events.SearcherErrorEvent;
 import de.hanbei.rxsearch.events.SearcherResultEvent;
-import de.hanbei.rxsearch.filter.OfferFilter;
-import de.hanbei.rxsearch.filter.OfferProcessor;
+import de.hanbei.rxsearch.filter.HitProcessor;
 import de.hanbei.rxsearch.metrics.Measured;
-import de.hanbei.rxsearch.model.Offer;
-import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.Searcher;
-import io.reactivex.Observable;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.CompositeFuture;
 import io.vertx.core.Future;
@@ -52,7 +48,7 @@ public class VertxServer extends AbstractVerticle {
 
     private final OkHttpClient asyncHttpClient;
     private final List<Searcher> searchers;
-    private final List<OfferProcessor> processors;
+    private final List<HitProcessor> processors;
 
     private SearchRouter searchRouter;
     private HttpServer httpServer;
@@ -63,7 +59,7 @@ public class VertxServer extends AbstractVerticle {
         ConfigurationBuilder configurationBuilder = new ConfigurationBuilder(asyncHttpClient);
 
         searchers = configurationBuilder.loadConfiguration("rxsearch", "testing", "de").searcher();
-        processors = Lists.newArrayList((OfferFilter) (Query q, Observable<Offer> o) -> o.filter(offer -> offer.getPrice().getAmount() > 2500));
+        processors = Lists.newArrayList();
 
 
         JmxReporter reporter = JmxReporter.forRegistry(SharedMetricRegistries.getOrCreate(Measured.SEARCHER_METRICS))
@@ -82,9 +78,9 @@ public class VertxServer extends AbstractVerticle {
         router.route().handler(ResponseTimeHandler.create());
 
 
-        router.route("/search/offers").handler(BodyHandler.create());
-        router.route("/search/offers").handler(TimeoutHandler.create());
-        router.post("/search/offers").handler(searchRouter);
+        router.route("/search/hits").handler(BodyHandler.create());
+        router.route("/search/hits").handler(TimeoutHandler.create());
+        router.post("/search/hits").handler(searchRouter);
         router.get("/loaderio-527965f7c4480c76ed72d38029e876c1").handler(rc -> rc.response().end("loaderio-527965f7c4480c76ed72d38029e876c1"));
 
         router.route().handler(StaticHandler.create()

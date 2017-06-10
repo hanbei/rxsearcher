@@ -2,8 +2,7 @@ package de.hanbei.rxsearch.server;
 
 import de.hanbei.rxsearch.events.SearchFailedEvent;
 import de.hanbei.rxsearch.events.SearchFinishedEvent;
-import de.hanbei.rxsearch.model.Offer;
-import io.vertx.core.eventbus.EventBus;
+import de.hanbei.rxsearch.model.Hit;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.Json;
@@ -20,7 +19,7 @@ class ResponseHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ResponseHandler.class);
     private static final String MEDIATYPE_JSON = "application/json";
 
-    public void handleSuccess(RoutingContext routingContext, String requestId, List<Offer> results) {
+    public void handleSuccess(RoutingContext routingContext, String requestId, List<Hit> results) {
         routingContext.vertx().eventBus().publish(SearchFinishedEvent.topic(), new SearchFinishedEvent(requestId, results.size()));
 
         if (results.isEmpty()) {

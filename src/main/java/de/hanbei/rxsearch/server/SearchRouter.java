@@ -6,9 +6,9 @@ import de.hanbei.rxsearch.events.SearchStartedEvent;
 import de.hanbei.rxsearch.events.SearcherCompletedEvent;
 import de.hanbei.rxsearch.events.SearcherErrorEvent;
 import de.hanbei.rxsearch.events.SearcherResultEvent;
-import de.hanbei.rxsearch.filter.OfferProcessor;
-import de.hanbei.rxsearch.filter.OfferProcessorCoordinator;
-import de.hanbei.rxsearch.model.Offer;
+import de.hanbei.rxsearch.filter.HitProcessor;
+import de.hanbei.rxsearch.filter.HitProcessorCoordinator;
+import de.hanbei.rxsearch.model.Hit;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.model.User;
 import de.hanbei.rxsearch.searcher.Searcher;
@@ -26,11 +26,11 @@ import java.util.UUID;
 class SearchRouter implements Handler<RoutingContext> {
 
     private final SearchCoordinator searchCoordinator;
-    private final OfferProcessorCoordinator filterCoordinator;
+    private final HitProcessorCoordinator filterCoordinator;
     private final EventBus eventBus;
     private ResponseHandler responseHandler;
 
-    public SearchRouter(List<Searcher> searcher, List<OfferProcessor> processors, EventBus eventBus) {
+    public SearchRouter(List<Searcher> searcher, List<HitProcessor> processors, EventBus eventBus) {
         this.eventBus = eventBus;
 
         this.searchCoordinator = new SearchCoordinator(searcher,
@@ -43,7 +43,7 @@ class SearchRouter implements Handler<RoutingContext> {
                 (requestId, s, offer) -> {
                     eventBus.publish(SearcherResultEvent.topic(), new SearcherResultEvent(requestId, s, offer));
                 });
-        this.filterCoordinator = new OfferProcessorCoordinator(processors,
+        this.filterCoordinator = new HitProcessorCoordinator(processors,
                 (requestId, processorName, filter, remainingOffers) -> eventBus.publish(OfferProcessedEvent.topic(), new OfferProcessedEvent(requestId, processorName, filter, remainingOffers))
         );
         responseHandler = new ResponseHandler();
@@ -58,7 +58,7 @@ class SearchRouter implements Handler<RoutingContext> {
 
         eventBus.publish(SearchStartedEvent.topic(), new SearchStartedEvent(requestId, new SearchRequestConfiguration(requestId, logSearch)));
 
-        Observable<Offer> offerObservable = searchCoordinator.startSearch(q);
+        Observable<Hit> offerObservable = searchCoordinator.startSearch(q);
 
         filterCoordinator.filter(q, offerObservable).toList().subscribe(
                 o -> responseHandler.handleSuccess(routingContext, requestId, o),

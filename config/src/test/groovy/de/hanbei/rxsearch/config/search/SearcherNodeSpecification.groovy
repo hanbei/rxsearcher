@@ -1,8 +1,7 @@
 package de.hanbei.rxsearch.config.search
 
 import de.hanbei.rxsearch.config.SearcherConfiguration
-import de.hanbei.rxsearch.config.search.AbstractSearcherFactory
-import de.hanbei.rxsearch.model.Offer
+import de.hanbei.rxsearch.model.Hit
 import de.hanbei.rxsearch.model.Query
 import de.hanbei.rxsearch.searcher.Searcher
 import io.reactivex.Observable
@@ -37,7 +36,7 @@ abstract class SearcherNodeSpecification extends Specification {
             }
 
             @Override
-            Observable<Offer> search(Query query) {
+            Observable<Hit> search(Query query) {
                 return null
             }
         }

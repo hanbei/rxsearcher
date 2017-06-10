@@ -1,6 +1,6 @@
 package de.hanbei.rxsearch.events
 
-import de.hanbei.rxsearch.model.Offer
+import de.hanbei.rxsearch.model.Hit
 import de.hanbei.rxsearch.model.Query
 import de.hanbei.rxsearch.searcher.SearcherException
 import de.hanbei.rxsearch.server.SearchRequestConfiguration
@@ -16,7 +16,7 @@ data class SearcherStartedEvent(val requestId: String, val searcher: String) {
     }
 }
 
-data class SearcherResultEvent(val requestId: String, val searcher: String, val offer: Offer) {
+data class SearcherResultEvent(val requestId: String, val searcher: String, val hit: Hit) {
     companion object {
         @JvmStatic
         fun Codec(): MessageCodec<SearcherResultEvent, SearcherResultEvent> = object : PojoToJsonCodec<SearcherResultEvent>(SearcherResultEvent::class.java) {}
@@ -79,7 +79,7 @@ data class SearchFailedEvent(val requestId: String, val error: Throwable) {
 
 }
 
-data class OfferProcessedEvent(val requestId: String, val processor: String, val isFilter: Boolean, val offers: List<Offer>) {
+data class OfferProcessedEvent(val requestId: String, val processor: String, val isFilter: Boolean, val hits: List<Hit>) {
     companion object {
         @JvmStatic
         fun Codec(): MessageCodec<OfferProcessedEvent, OfferProcessedEvent> = object : PojoToJsonCodec<OfferProcessedEvent>(OfferProcessedEvent::class.java) {}

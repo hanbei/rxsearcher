@@ -2,7 +2,7 @@ package de.hanbei.rxsearch.searcher.github;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import de.hanbei.rxsearch.model.Offer;
+import de.hanbei.rxsearch.model.Hit;
 import de.hanbei.rxsearch.searcher.ResponseParser;
 import io.reactivex.Observable;
 import okhttp3.Response;
@@ -24,10 +24,10 @@ public class GithubResponseParser implements ResponseParser {
     }
 
     @Override
-    public Observable<Offer> toSearchResults(Response response) {
+    public Observable<Hit> toSearchResults(Response response) {
         checkNotNull(response);
 
-        List<Offer> results = new ArrayList<>();
+        List<Hit> results = new ArrayList<>();
 
         try (ResponseBody body = response.body()) {
             String responseAsString = body.string();
@@ -47,15 +47,14 @@ public class GithubResponseParser implements ResponseParser {
         return Observable.fromIterable(results);
     }
 
-    private Offer toSearchResult(JsonNode item) {
+    private Hit toSearchResult(JsonNode item) {
         String url = item.findValue("html_url").asText("");
         String title = item.findValue("name").asText("");
         String icon = "";
 
-        return Offer.builder()
+        return Hit.builder()
                 .url(url)
                 .title(title)
-                .price(0.0, "USD")
                 .searcher(name).image(icon).build();
     }
 }

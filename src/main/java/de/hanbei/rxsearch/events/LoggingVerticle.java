@@ -66,7 +66,7 @@ public class LoggingVerticle extends AbstractVerticle {
 
     private void searcherResult(Message<SearcherResultEvent> message) {
         SearcherResultEvent event = message.body();
-        LOGGER.trace("{}: searcher {} got result for {}", event.getRequestId(), event.getSearcher(), event.getOffer());
+        LOGGER.trace("{}: searcher {} got result for {}", event.getRequestId(), event.getSearcher(), event.getHit());
     }
 
     private void searchStarted(Message<SearchStartedEvent> message) {

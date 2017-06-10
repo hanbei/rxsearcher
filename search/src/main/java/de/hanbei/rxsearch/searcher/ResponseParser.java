@@ -1,7 +1,7 @@
 package de.hanbei.rxsearch.searcher;
 
 import okhttp3.Response;
-import de.hanbei.rxsearch.model.Offer;
+import de.hanbei.rxsearch.model.Hit;
 import io.reactivex.Observable;
 
 /**
@@ -10,13 +10,13 @@ import io.reactivex.Observable;
 public interface ResponseParser {
 
     /**
-     * Returns an observable with the parsed {@link Offer}. If the response is not parseable an error
+     * Returns an observable with the parsed {@link Hit}. If the response is not parseable an error
      * Observable that contains the exception should be returned. If the response is parseable but contains no
      * results an empty Observable should be returned
      *
      * @param response The response to parse
      * @return An observable
      */
-    Observable<Offer> toSearchResults(Response response);
+    Observable<Hit> toSearchResults(Response response);
 
 }

@@ -1,6 +1,6 @@
 package de.hanbei.rxsearch.events
 
-import de.hanbei.rxsearch.model.Offer
+import de.hanbei.rxsearch.model.Hit
 import de.hanbei.rxsearch.server.SearchRequestConfiguration
 
 class LoggedSearchContainer(val requestId: String, val searchConfiguraton: SearchRequestConfiguration) {
@@ -8,16 +8,16 @@ class LoggedSearchContainer(val requestId: String, val searchConfiguraton: Searc
     var result: Result = Result.OK
     var numOffers: Int = 0
     var error: Throwable? = null
-    var searcherMap = mutableMapOf<String, List<Offer>>()
-    var processorMap = mutableMapOf<String, List<Offer>>()
+    var searcherMap = mutableMapOf<String, List<Hit>>()
+    var processorMap = mutableMapOf<String, List<Hit>>()
 
-    fun addOffer(searcher: String, offer: Offer): Unit {
+    fun addOffer(searcher: String, hit: Hit): Unit {
         val offerList = searcherMap.getOrDefault(searcher, mutableListOf())
-        searcherMap.put(searcher, offerList + offer)
+        searcherMap.put(searcher, offerList + hit)
     }
 
-    fun addProcessor(processor: String, isFilter: Boolean, offers: List<Offer>): Unit {
-        processorMap.put(processor, offers);
+    fun addProcessor(processor: String, isFilter: Boolean, hits: List<Hit>): Unit {
+        processorMap.put(processor, hits);
     }
 
     fun failed(error: Throwable): Unit {

@@ -1,6 +1,6 @@
 package de.hanbei.rxsearch.coordination;
 
-import de.hanbei.rxsearch.model.Offer;
+import de.hanbei.rxsearch.model.Hit;
 import de.hanbei.rxsearch.model.Query;
 import de.hanbei.rxsearch.searcher.Searcher;
 import de.hanbei.rxsearch.searcher.SearcherException;
@@ -34,7 +34,7 @@ public class SearchCoordinator {
         this.onNext = resultHandler;
     }
 
-    public Observable<Offer> startSearch(Query query) {
+    public Observable<Hit> startSearch(Query query) {
         return Observable.fromIterable(searchers)
                 .flatMap(
                         searcher -> searcher.search(query)
@@ -42,7 +42,7 @@ public class SearchCoordinator {
                                 .doOnComplete(() -> onCompleted.searcherCompleted(query.getRequestId(), searcher.getName(), query))
                                 .doOnError(t -> onError.searcherError(query.getRequestId(), searcher.getName(), SearcherException.wrap(t).searcher(searcher.getName()).query(query)))
                                 .onErrorResumeNext(Observable.empty())
-                ).map(offer -> Offer.from(offer).requestId(query.getRequestId()).build());
+                ).map(offer -> Hit.from(offer).requestId(query.getRequestId()).build());
     }
 
     private static <T> void noop(String r, String s, T t) {
