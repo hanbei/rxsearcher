@@ -32,8 +32,12 @@ public class HitProcessorCoordinatorTest {
 
     @Test
     public void coordinatorLogsFilteredOffers() throws Exception {
-        HitFilter hitFilter1 = (q, offerObservable) -> offerObservable.filter(offer -> offer.getSearcher().equals("searcher1"));
-        HitFilter hitFilter2 = (q, offerObservable) -> offerObservable.filter(offer -> offer.getSearcher().equals("searcher2"));
+        HitFilter hitFilter1 = (q, offerObservable) -> offerObservable.filter(offer -> {
+            return !offer.getSearcher().equals("searcher1");
+        });
+        HitFilter hitFilter2 = (q, offerObservable) -> offerObservable.filter(offer -> {
+            return !offer.getSearcher().equals("searcher2");
+        });
 
         ProcessedHandler processedHandler = mock(ProcessedHandler.class);
 
@@ -69,7 +73,7 @@ public class HitProcessorCoordinatorTest {
 
     @Test
     public void coordinatorLogsFiltersAndProcessor() throws Exception {
-        HitFilter filter = (q, offerObservable) -> offerObservable.filter(offer -> offer.getSearcher().equals("searcher1"));
+        HitFilter filter = (q, offerObservable) -> offerObservable.filter(offer -> !offer.getSearcher().equals("searcher1"));
         HitProcessor processor = (q, offerObservable) -> offerObservable;
 
         ProcessedHandler processedHandler = mock(ProcessedHandler.class);

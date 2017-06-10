@@ -63,7 +63,7 @@ public class ResponseHandlerTest {
 
         verify(eventBus).publish(SearchFinishedEvent.topic(), new SearchFinishedEvent(REQUEST_ID, 1));
         verify(response).putHeader(HttpHeaders.CONTENT_TYPE, "application/json");
-        verify(response).end("{\"results\":[{\"searcher\":\"test\",\"price\":{\"amount\":0.0,\"currency\":\"EUR\"},\"requestId\":\"requestId\",\"type\":\"RELATED\",\"eec\":\"UNKNOWN\",\"availability\":\"NOT_AVAILABLE\"}]}");
+        verify(response).end("{\"results\":[{\"searcher\":\"test\",\"requestId\":\"requestId\"}]}");
     }
 
 }

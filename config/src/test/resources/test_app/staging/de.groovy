@@ -7,6 +7,6 @@ config(country: "de") {
         duckduckgo(name: "ddgo")
     }
     filter {
-        price()
+        image()
     }
 }
