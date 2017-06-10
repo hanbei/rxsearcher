@@ -1,18 +1,19 @@
 package de.hanbei.rxsearch.config.filter
 
-import de.hanbei.rxsearch.filter.impl.PriceFilter
+import de.hanbei.rxsearch.filter.impl.NoImageFilter
 
-class PriceFilterFactoryTest extends FilterNodeSpecification {
+
+class NoImageFilterFactoryTest extends FilterNodeSpecification {
 
     void setup() {
-        filterFactory = new PriceFilterFactory()
+        filterFactory = new NoImageFilterFactory()
     }
 
     def "returns new price filter"() {
         when:
         def instance = filterFactory.newInstance(null, null, null, null)
         then:
-        instance instanceof PriceFilter
+        instance instanceof NoImageFilter
     }
 
 }

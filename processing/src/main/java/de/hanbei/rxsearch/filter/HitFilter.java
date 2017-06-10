@@ -1,13 +1,13 @@
 package de.hanbei.rxsearch.filter;
 
-import de.hanbei.rxsearch.model.Offer;
+import de.hanbei.rxsearch.model.Hit;
 import de.hanbei.rxsearch.model.Query;
 import io.reactivex.Observable;
 
-public interface OfferFilter extends OfferProcessor {
+public interface HitFilter extends HitProcessor {
 
     @Override
-    default Observable<Offer> process(Query query, Observable<Offer> observable) {
+    default Observable<Hit> process(Query query, Observable<Hit> observable) {
         return filter(query, observable);
     }
 
@@ -16,6 +16,6 @@ public interface OfferFilter extends OfferProcessor {
         return true;
     }
 
-    Observable<Offer> filter(Query query, Observable<Offer> observable);
+    Observable<Hit> filter(Query query, Observable<Hit> observable);
 
 }

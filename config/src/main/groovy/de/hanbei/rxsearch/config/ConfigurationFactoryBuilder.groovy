@@ -1,6 +1,6 @@
 package de.hanbei.rxsearch.config
 
-import de.hanbei.rxsearch.config.filter.PriceFilterFactory
+import de.hanbei.rxsearch.config.filter.NoImageFilterFactory
 import de.hanbei.rxsearch.config.search.*
 import okhttp3.OkHttpClient
 
@@ -39,7 +39,7 @@ class ConfigurationFactoryBuilder extends FactoryBuilderSupport {
     }
 
     private void registerFilter() {
-        registerFactory("price", new PriceFilterFactory())
+        registerFactory("image", new NoImageFilterFactory())
     }
 
 

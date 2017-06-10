@@ -1,6 +1,6 @@
 package de.hanbei.rxsearch.config
 
-import de.hanbei.rxsearch.filter.impl.PriceFilter
+import de.hanbei.rxsearch.filter.impl.NoImageFilter
 import de.hanbei.rxsearch.searcher.duckduckgo.DuckDuckGoSearcher
 import de.hanbei.rxsearch.searcher.github.GithubSearcher
 import de.hanbei.rxsearch.searcher.webhose.WebhoseSearcher
@@ -27,7 +27,7 @@ class ConfigurationBuilderTest extends Specification {
         def filter = config.filter()
         then:
         filter.size() == 1
-        filter.get(0) instanceof PriceFilter
+        filter.get(0) instanceof NoImageFilter
     }
 
 
