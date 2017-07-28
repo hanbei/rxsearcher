@@ -1,0 +1,25 @@
+apply plugin: 'application'
+
+mainClassName = "rxsearch.server.VertxServer"
+
+dependencies {
+    compile project(":search")
+    compile project(":searcher")
+    compile project(":processing")
+    compile project(":config")
+
+    compile "io.vertx:vertx-core"
+    compile "io.vertx:vertx-web"
+    compile "io.vertx:vertx-dropwizard-metrics"
+
+    compile "com.fasterxml.jackson.datatype:jackson-datatype-guava"
+    compile "com.fasterxml.jackson.module:jackson-module-kotlin"
+
+    compile "ch.qos.logback:logback-classic"
+    compile "org.slf4j:jul-to-slf4j"
+
+    testCompile "guru.nidi.raml:raml-tester"
+    testCompile "io.vertx:vertx-unit"
+    testCompile "io.vertx:vertx-codegen"
+    testCompile "org.glassfish.jersey.core:jersey-client"
+}
