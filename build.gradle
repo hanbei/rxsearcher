@@ -5,32 +5,6 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.1.1'
 }
 
-apply plugin: 'application'
-
-mainClassName = "de.hanbei.rxsearch.server.VertxServer"
-
-dependencies {
-    compile project(":search")
-    compile project(":searcher")
-    compile project(":processing")
-    compile project(":config")
-
-    compile "io.vertx:vertx-core"
-    compile "io.vertx:vertx-web"
-    compile "io.vertx:vertx-dropwizard-metrics"
-
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-guava"
-    compile "com.fasterxml.jackson.module:jackson-module-kotlin"
-
-    compile "ch.qos.logback:logback-classic"
-    compile "org.slf4j:jul-to-slf4j"
-
-    testCompile "guru.nidi.raml:raml-tester"
-    testCompile "io.vertx:vertx-unit"
-    testCompile "io.vertx:vertx-codegen"
-    testCompile "org.glassfish.jersey.core:jersey-client"
-}
-
 allprojects {
     apply plugin: 'java'
     apply plugin: "io.spring.dependency-management"
@@ -80,7 +54,7 @@ allprojects {
             dependency 'com.squareup.okhttp3:okhttp:3.7.0'
             dependency 'io.dropwizard.metrics:metrics-core:3.2.2'
 
-            dependencySet(group: 'io.vertx', version: '3.4.1') {
+            dependencySet(group: 'io.vertx', version: '3.4.2') {
                 entry 'vertx-core'
                 entry 'vertx-web'
                 entry 'vertx-unit'

@@ -4,4 +4,5 @@ include 'search'
 include 'searcher'
 include 'processing'
 include 'config'
+include 'server'
 
