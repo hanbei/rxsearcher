@@ -80,7 +80,7 @@ allprojects {
             dependency 'com.squareup.okhttp3:okhttp:3.7.0'
             dependency 'io.dropwizard.metrics:metrics-core:3.2.2'
 
-            dependencySet(group: 'io.vertx', version: '3.4.1') {
+            dependencySet(group: 'io.vertx', version: '3.4.2') {
                 entry 'vertx-core'
                 entry 'vertx-web'
                 entry 'vertx-unit'
