@@ -7,3 +7,4 @@
 .wercker
 /out
 /logs
+**/out
