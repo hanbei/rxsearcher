@@ -83,29 +83,28 @@ public class LogSearchVerticle extends AbstractVerticle {
 
     private void searchFinished(Message<SearchFinishedEvent> message) {
         SearchFinishedEvent event = message.body();
-        Optional<LoggedSearchContainer> lsc = getLoggedSearchContainer(event.getRequestId());
-        if (lsc.isPresent()) {
-            lsc.get().success(event.getNumberOfOffers());
-            LOGGER.info("{}", Json.encode(lsc.get()));
+        getLoggedSearchContainer(event.getRequestId()).ifPresent(lsc -> {
+            lsc.success(event.getNumberOfOffers());
+            LOGGER.info("{}", Json.encode(lsc));
             loggedSearchesContainer.remove(event.getRequestId());
-        }
+        });
     }
 
     private void searcherGotResult(Message<SearcherResultEvent> message) {
         SearcherResultEvent event = message.body();
         Optional<LoggedSearchContainer> loggedSearchContainer = getLoggedSearchContainer(event.getRequestId());
-        if (loggedSearchContainer.isPresent()) {
-            loggedSearchContainer.get().addOffer(event.getSearcher(), event.getHit());
-            loggedSearchesContainer.put(event.getRequestId(), loggedSearchContainer.get());
-        }
+        loggedSearchContainer.ifPresent(lsc -> {
+            lsc.addOffer(event.getSearcher(), event.getHit());
+            loggedSearchesContainer.put(event.getRequestId(), lsc);
+        });
     }
 
     private Optional<LoggedSearchContainer> getLoggedSearchContainer(String requestId) {
         LoggedSearchContainer loggedSearchContainer = loggedSearchesContainer.get(requestId);
-        if (loggedSearchContainer == null || !loggedSearchContainer.getSearchConfiguraton().getLogSearch()) {
+        if (!loggedSearchContainer.getSearchConfiguraton().getLogSearch()) {
             return Optional.empty();
         }
-        return Optional.of(loggedSearchContainer);
+        return Optional.ofNullable(loggedSearchContainer);
     }
 
     private void searcherGotError(Message<SearcherErrorEvent> message) {
