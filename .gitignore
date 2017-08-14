@@ -6,5 +6,5 @@
 /**/build/
 .wercker
 /out
-/logs
+**/logs
 **/out

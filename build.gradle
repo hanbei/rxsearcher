@@ -12,20 +12,19 @@ allprojects {
     apply plugin: 'com.github.ben-manes.versions'
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'jacoco'
+    apply plugin: 'application'
 
     version = '0.2.0'
     sourceCompatibility = 1.8
+    mainClassName = "rxsearch.server.VertxServer"
 
     repositories {
         mavenCentral()
     }
 
     dependencies {
-        compile "com.google.guava:guava"
         compile "org.slf4j:slf4j-api"
-
         compile "org.jetbrains.kotlin:kotlin-stdlib"
-        compile "com.fasterxml.jackson.core:jackson-databind"
 
         testCompile "junit:junit"
         testCompile 'org.mockito:mockito-core'
@@ -90,6 +89,20 @@ allprojects {
             xml.enabled true
         }
     }
+
 }
 
-task stage(dependsOn: ['clean', 'installDist'])
+task copyJars(type: Copy, dependsOn: subprojects.jar) {
+    from(subprojects.jar)
+    into project.file("$buildDir/libs")
+}
+
+task copyDeps(type: Copy) {
+    from(subprojects.configurations.runtime)
+    into project.file("$buildDir/libs")
+}
+
+task copyFiles(dependsOn: [copyJars, copyDeps])
+
+task stage(dependsOn: ['clean', 'copyFiles'])
+copyFiles.mustRunAfter clean
