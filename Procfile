@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -cp './build/install/rxsearcher/lib/*' rxsearch.server.VertxServer
+web: java $JAVA_OPTS -cp './build/libs/*' rxsearch.server.VertxServer
