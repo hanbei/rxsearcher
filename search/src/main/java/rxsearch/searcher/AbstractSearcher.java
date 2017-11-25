@@ -2,8 +2,8 @@ package rxsearch.searcher;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import rxsearch.model.Hit;
-import rxsearch.model.Query;
+import com.google.common.base.Charsets;
+import com.google.common.net.MediaType;
 import io.reactivex.Observable;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -11,8 +11,11 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import rxsearch.model.Hit;
+import rxsearch.model.Query;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
 
 public abstract class AbstractSearcher implements Searcher {
@@ -46,7 +49,7 @@ public abstract class AbstractSearcher implements Searcher {
                 });
     }
 
-    private Observable<Response> asyncGet(Query query) {
+    private Observable<SearcherResponse> asyncGet(Query query) {
         return Observable.create(subscriber -> {
                     final Request request = requestBuilder.createRequest(query);
                     final String country = query.getCountry();
@@ -65,13 +68,26 @@ public abstract class AbstractSearcher implements Searcher {
                                     subscriber.onError(new SearcherException(statusCode + " " + response.message()).searcher(getName()).query(query));
                                     response.close();
                                 } else {
-                                    subscriber.onNext(response);
-                                    subscriber.onComplete();
+                                    if (!subscriber.isDisposed()) {
+                                        okhttp3.MediaType contentType = body.contentType();
+                                        subscriber.onNext(new SearcherResponse(
+                                                response.code(),
+                                                response.message(),
+                                                MediaType.create(contentType.type(), contentType.subtype()).withCharset(contentType.charset(Charsets.UTF_8)),
+                                                ByteBuffer.wrap(body.bytes()))
+                                        );
+                                        subscriber.onComplete();
+                                    }
                                     searcherMetrics.counter(metricName(country, name, SUCCESS)).inc();
+                                }
+                            } catch (IOException e) {
+                                if (!subscriber.isDisposed()) {
+                                    subscriber.onError(new SearcherException(e).searcher(getName()).query(query));
                                 }
                             } finally {
                                 timer.stop();
                                 timer.close();
+                                response.close();
                             }
                         }
 

@@ -1,8 +1,7 @@
 package rxsearch.searcher;
 
-import okhttp3.Response;
-import rxsearch.model.Hit;
 import io.reactivex.Observable;
+import rxsearch.model.Hit;
 
 /**
  * Parses responses from a searcher.
@@ -17,6 +16,6 @@ public interface ResponseParser {
      * @param response The response to parse
      * @return An observable
      */
-    Observable<Hit> toSearchResults(Response response);
+    Observable<Hit> toSearchResults(SearcherResponse response);
 
 }

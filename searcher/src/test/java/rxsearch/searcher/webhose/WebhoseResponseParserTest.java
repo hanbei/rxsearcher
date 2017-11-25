@@ -3,12 +3,12 @@ package rxsearch.searcher.webhose;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
-import rxsearch.model.Hit;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
-import okhttp3.Response;
 import org.junit.Before;
 import org.junit.Test;
+import rxsearch.model.Hit;
+import rxsearch.searcher.SearcherResponse;
 
 import java.io.IOException;
 
@@ -22,13 +22,13 @@ public class WebhoseResponseParserTest {
     private static final String USD = "USD";
 
     private WebhoseResponseParser responseParser;
-    private Response response;
+    private SearcherResponse response;
 
     @Before
     public void setUp() throws IOException {
         String stringResponse = Resources.toString(getResource("searcher/webhose/response_ok.json"), Charsets.UTF_8);
-        response = mock(Response.class, RETURNS_DEEP_STUBS);
-        when(response.body().string()).thenReturn(stringResponse);
+        response = mock(SearcherResponse.class, RETURNS_DEEP_STUBS);
+        when(response.content().array()).thenReturn(stringResponse.getBytes());
 
         responseParser = new WebhoseResponseParser(WEBHOSE_SEARCHER);
     }
@@ -50,7 +50,7 @@ public class WebhoseResponseParserTest {
 
     @Test
     public void brokenJsonReturnsErrorObservable() throws IOException {
-        when(response.body().string()).thenReturn("{");
+        when(response.content().array()).thenReturn("{".getBytes());
 
         Observable<Hit> observable = responseParser.toSearchResults(response);
 
@@ -61,7 +61,7 @@ public class WebhoseResponseParserTest {
 
     @Test
     public void correctButEmptyJsonReturnsEmptyObservable() throws IOException {
-        when(response.body().string()).thenReturn("{}");
+        when(response.content().array()).thenReturn("{}".getBytes());
 
         Observable<Hit> observable = responseParser.toSearchResults(response);
         TestObserver<Hit> subscriber = new TestObserver<>();

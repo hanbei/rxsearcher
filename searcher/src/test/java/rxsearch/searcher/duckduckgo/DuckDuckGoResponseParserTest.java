@@ -9,6 +9,7 @@ import io.reactivex.observers.TestObserver;
 import okhttp3.Response;
 import org.junit.Before;
 import org.junit.Test;
+import rxsearch.searcher.SearcherResponse;
 
 import java.io.IOException;
 
@@ -21,14 +22,14 @@ public class DuckDuckGoResponseParserTest {
 
     private static final String DUCK_DUCK_GO_SEARCHER = "DuckDuckGoSearcher";
     private static final String USD = "USD";
-    private Response response;
+    private SearcherResponse response;
     private DuckDuckGoResponseParser responseParser;
 
     @Before
     public void setUp() throws IOException {
-        response = mock(Response.class, RETURNS_DEEP_STUBS);
+        response = mock(SearcherResponse.class, RETURNS_DEEP_STUBS);
         String stringResponse = Resources.toString(getResource("searcher/duckduckgo/response_ok.json"), Charsets.UTF_8);
-        when(response.body().string()).thenReturn(stringResponse);
+        when(response.content().array()).thenReturn(stringResponse.getBytes());
         responseParser = new DuckDuckGoResponseParser(DUCK_DUCK_GO_SEARCHER);
     }
 
@@ -55,7 +56,7 @@ public class DuckDuckGoResponseParserTest {
 
     @Test
     public void brokenJsonReturnsErrorObservable() throws IOException {
-        when(response.body().string()).thenReturn("{");
+        when(response.content().array()).thenReturn("{".getBytes());
 
         Observable<Hit> observable = responseParser.toSearchResults(response);
 
@@ -66,7 +67,7 @@ public class DuckDuckGoResponseParserTest {
 
     @Test
     public void correctButEmptyJsonReturnsEmptyObservable() throws IOException {
-        when(response.body().string()).thenReturn("{}");
+        when(response.content().array()).thenReturn("{}".getBytes());
 
         Observable<Hit> observable = responseParser.toSearchResults(response);
 

@@ -1,6 +1,7 @@
 package rxsearch.searcher;
 
 import com.codahale.metrics.Counter;
+import okhttp3.MediaType;
 import rxsearch.model.Hit;
 import rxsearch.model.Query;
 import io.reactivex.Observable;
@@ -44,7 +45,7 @@ public class AbstractSearcherTest {
         when(urlBuilder.createRequest(any(Query.class))).thenReturn(mock(Request.class));
 
         responseParser = mock(ResponseParser.class);
-        when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.fromArray(expectedHits));
+        when(responseParser.toSearchResults(any(SearcherResponse.class))).thenReturn(Observable.fromArray(expectedHits));
 
         httpClient = mock(OkHttpClient.class, RETURNS_DEEP_STUBS);
 
@@ -115,15 +116,18 @@ public class AbstractSearcherTest {
 
     private Response badRequest() throws IOException {
         Response response = mock(Response.class, RETURNS_DEEP_STUBS);
-        when(response.body().string()).thenReturn("");
+        when(response.body().bytes()).thenReturn("".getBytes());
         when(response.code()).thenReturn(400);
+        when(response.body().contentType()).thenReturn(MediaType.parse("text/xml"));
+        when(response.body().contentType()).thenReturn(MediaType.parse("text/xml"));
         return response;
     }
 
     private Response ok() throws IOException {
         Response response = mock(Response.class, RETURNS_DEEP_STUBS);
-        when(response.body().string()).thenReturn("");
+        when(response.body().bytes()).thenReturn("".getBytes());
         when(response.code()).thenReturn(200);
+        when(response.body().contentType()).thenReturn(MediaType.parse("text/xml"));
         when(response.isSuccessful()).thenReturn(true);
         return response;
     }
@@ -139,7 +143,7 @@ public class AbstractSearcherTest {
     }
 
     private void givenResponseParserSendsErrorObservable() {
-        when(responseParser.toSearchResults(any(Response.class))).thenReturn(Observable.error(new SearcherException("response parser error").query(DUMMY_QUERY)));
+        when(responseParser.toSearchResults(any(SearcherResponse.class))).thenReturn(Observable.error(new SearcherException("response parser error").query(DUMMY_QUERY)));
     }
 
     @SuppressWarnings("unchecked")

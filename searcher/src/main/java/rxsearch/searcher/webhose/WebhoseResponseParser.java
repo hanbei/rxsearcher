@@ -2,11 +2,10 @@ package rxsearch.searcher.webhose;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.reactivex.Observable;
 import rxsearch.model.Hit;
 import rxsearch.searcher.ResponseParser;
-import io.reactivex.Observable;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
+import rxsearch.searcher.SearcherResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -23,14 +22,12 @@ public class WebhoseResponseParser implements ResponseParser {
     }
 
     @Override
-    public Observable<Hit> toSearchResults(Response response) {
+    public Observable<Hit> toSearchResults(SearcherResponse response) {
         checkNotNull(response);
 
         List<Hit> results = new ArrayList<>();
-        try (ResponseBody body = response.body()) {
-            String responseAsString = body.string();
-
-            JsonNode jsonNode = mapper.readTree(responseAsString);
+        try {
+            JsonNode jsonNode = mapper.readTree(response.content().array());
             JsonNode posts = jsonNode.findValue("posts");
             if (posts == null) {
                 return Observable.empty();

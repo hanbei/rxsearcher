@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'org.junit.platform:junit-platform-gradle-plugin:1.0.2'
+    }
+}
+
 plugins {
     id "io.spring.dependency-management" version "0.6.0.RELEASE"
     id 'com.github.johnrengelman.shadow' version '1.2.3'
@@ -13,6 +22,7 @@ allprojects {
     apply plugin: 'org.jetbrains.kotlin.jvm'
     apply plugin: 'jacoco'
     apply plugin: 'application'
+    apply plugin: 'org.junit.platform.gradle.plugin'
 
     version = '0.2.0'
     sourceCompatibility = 1.8
@@ -27,16 +37,21 @@ allprojects {
         compile "org.jetbrains.kotlin:kotlin-stdlib"
 
         testCompile "junit:junit"
+        testCompileOnly 'org.apiguardian:apiguardian-api:1.0.0'
+        testCompile "org.junit.jupiter:junit-jupiter-api"
+        testRuntime "org.junit.jupiter:junit-jupiter-engine"
+
         testCompile 'org.mockito:mockito-core'
         testCompile 'org.hamcrest:hamcrest-all'
         testCompile 'io.kotlintest:kotlintest'
+        testRuntime "org.junit.vintage:junit-vintage-engine"
     }
 
     dependencyManagement {
         dependencies {
-            dependency "com.fasterxml.jackson.core:jackson-databind:2.8.8"
-            dependency "com.fasterxml.jackson.datatype:jackson-datatype-guava:2.8.8"
-            dependency "com.fasterxml.jackson.module:jackson-module-kotlin:2.8.8"
+            dependency "com.fasterxml.jackson.core:jackson-databind:2.9.0"
+            dependency "com.fasterxml.jackson.datatype:jackson-datatype-guava:2.9.0"
+            dependency "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0"
             dependency "org.jooq:joox:1.4.0"
 
             dependency "com.google.guava:guava:21.0"
@@ -49,11 +64,11 @@ allprojects {
             }
             dependency "ch.qos.logback:logback-classic:1.2.2"
 
-            dependency 'io.reactivex.rxjava2:rxjava:2.0.8'
-            dependency 'com.squareup.okhttp3:okhttp:3.7.0'
+            dependency 'io.reactivex.rxjava2:rxjava:2.1.6'
+            dependency 'com.squareup.okhttp3:okhttp:3.9.0'
             dependency 'io.dropwizard.metrics:metrics-core:3.2.2'
 
-            dependencySet(group: 'io.vertx', version: '3.4.2') {
+            dependencySet(group: 'io.vertx', version: '3.5.0') {
                 entry 'vertx-core'
                 entry 'vertx-web'
                 entry 'vertx-unit'
@@ -62,9 +77,13 @@ allprojects {
             }
 
             dependency 'org.codehaus.groovy:groovy-all:2.4.7'
-            dependency "org.jetbrains.kotlin:kotlin-stdlib:1.1.1"
+            dependency "org.jetbrains.kotlin:kotlin-stdlib:1.1.4"
 
             // Test dependencies
+            dependency("org.junit.jupiter:junit-jupiter-api:5.0.2")
+            dependency("org.junit.jupiter:junit-jupiter-engine:5.0.2")
+            dependency("org.junit.vintage:junit-vintage-engine:4.12.2")
+
             dependency("junit:junit:4.12") {
                 exclude 'org.hamcrest:hamcrest-core'
             }

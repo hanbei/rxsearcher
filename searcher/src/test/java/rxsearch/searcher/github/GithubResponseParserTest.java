@@ -9,6 +9,7 @@ import io.reactivex.observers.TestObserver;
 import okhttp3.Response;
 import org.junit.Before;
 import org.junit.Test;
+import rxsearch.searcher.SearcherResponse;
 
 import java.io.IOException;
 
@@ -22,14 +23,14 @@ public class GithubResponseParserTest {
     private static final String USD = "USD";
 
     private GithubResponseParser responseParser;
-    private Response response;
+    private SearcherResponse response;
 
     @Before
     public void setUp() throws IOException {
 
         String stringResponse = Resources.toString(getResource("searcher/github/response_ok.json"), Charsets.UTF_8);
-        response = mock(Response.class, RETURNS_DEEP_STUBS);
-        when(response.body().string()).thenReturn(stringResponse);
+        response = mock(SearcherResponse.class, RETURNS_DEEP_STUBS);
+        when(response.content().array()).thenReturn(stringResponse.getBytes());
         responseParser = new GithubResponseParser(GITHUB_SEARCHER);
     }
 
@@ -48,7 +49,7 @@ public class GithubResponseParserTest {
 
     @Test
     public void brokenJsonReturnsErrorObservable() throws IOException {
-        when(response.body().string()).thenReturn("{");
+        when(response.content().array()).thenReturn("{".getBytes());
 
         Observable<Hit> observable = responseParser.toSearchResults(response);
 
@@ -59,7 +60,7 @@ public class GithubResponseParserTest {
 
     @Test
     public void correctButEmptyJsonReturnsEmptyObservable() throws IOException {
-        when(response.body().string()).thenReturn("{}");
+        when(response.content().array()).thenReturn("{}".getBytes());
 
         Observable<Hit> observable = responseParser.toSearchResults(response);
 

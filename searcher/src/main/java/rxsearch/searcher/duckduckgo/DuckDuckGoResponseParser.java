@@ -2,12 +2,10 @@ package rxsearch.searcher.duckduckgo;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Strings;
+import io.reactivex.Observable;
 import rxsearch.model.Hit;
 import rxsearch.searcher.ResponseParser;
-import io.reactivex.Observable;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
+import rxsearch.searcher.SearcherResponse;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,16 +23,11 @@ public class DuckDuckGoResponseParser implements ResponseParser {
     }
 
     @Override
-    public Observable<Hit> toSearchResults(Response response) {
+    public Observable<Hit> toSearchResults(SearcherResponse response) {
         checkNotNull(response);
 
-        try (ResponseBody body = response.body()) {
-            String responseAsString = body.string();
-            if (Strings.isNullOrEmpty(responseAsString)) {
-                return Observable.empty();
-            }
-
-            JsonNode jsonNode = mapper.readTree(responseAsString);
+        try {
+            JsonNode jsonNode = mapper.readTree(response.content().array());
             JsonNode relatedTopics = jsonNode.findValue("RelatedTopics");
             if (relatedTopics != null) {
                 return Observable.fromIterable(extractResultNodes(relatedTopics));
