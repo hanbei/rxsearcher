@@ -14,7 +14,7 @@ public interface RequestBuilder {
      * @param query The search terms. Must not be null or empty.
      * @return The searcher url that can be requested.
      */
-    Request createRequest(Query query);
+    SearcherRequest createRequest(Query query);
 
     static String createBasicAuthHeader(String username, String password) {
         return "Basic " + Base64.getEncoder().encodeToString((username + ":" + password).getBytes());

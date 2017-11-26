@@ -4,6 +4,7 @@ import rxsearch.searcher.RequestUrlBuilderTest;
 import okhttp3.Request;
 import org.junit.Before;
 import org.junit.Test;
+import rxsearch.searcher.SearcherRequest;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -29,8 +30,8 @@ public class WebhoseRequestBuilderTest extends RequestUrlBuilderTest {
 
     @Test
     public void correctRequestUrlIsBuilt() {
-        Request input = urlBuilder.createRequest(query);
-        assertThat(input.url().toString(), is("https://webhose.io/search?q=input&token=some-key&format=json&size=10"));
+        SearcherRequest input = urlBuilder.createRequest(query);
+        assertThat(input.url(), is("https://webhose.io/search?q=input&token=some-key&format=json&size=10"));
     }
 
 }

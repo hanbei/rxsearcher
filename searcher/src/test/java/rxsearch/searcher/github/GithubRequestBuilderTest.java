@@ -4,6 +4,7 @@ import rxsearch.searcher.RequestUrlBuilderTest;
 import okhttp3.Request;
 import org.junit.Before;
 import org.junit.Test;
+import rxsearch.searcher.SearcherRequest;
 
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -29,8 +30,8 @@ public class GithubRequestBuilderTest extends RequestUrlBuilderTest {
 
     @Test
     public void correctRequestUrlIsBuilt() {
-        Request input = urlBuilder.createRequest(query);
-        assertThat(input.url().toString(), is("https://api.github.com/search/code?q=input%2Brepo:test/repo"));
+        SearcherRequest input = urlBuilder.createRequest(query);
+        assertThat(input.url(), is("https://api.github.com/search/code?q=input+repo:test/repo"));
     }
 
 }

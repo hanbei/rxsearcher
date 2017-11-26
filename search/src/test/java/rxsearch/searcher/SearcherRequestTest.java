@@ -1,7 +1,5 @@
 package rxsearch.searcher;
 
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Lists;
 import org.junit.jupiter.api.Test;
 
 import java.net.MalformedURLException;
@@ -16,7 +14,7 @@ import static rxsearch.searcher.Method.POST;
 class SearcherRequestTest {
 
     @Test
-    void testFromString() throws MalformedURLException {
+    void testFromString() {
         SearcherRequest request = SearcherRequest.from("http://www.example.com:8080/test/de?q=q&a=b").build();
 
         assertAll(
@@ -29,6 +27,19 @@ class SearcherRequestTest {
                 () -> assertEquals(request.query("a"), newArrayList("b"))
         );
     }
+
+    @Test
+    void testDefaultPortHttp() {
+        SearcherRequest request = SearcherRequest.from("http://www.example.com/").build();
+        assertEquals(request.port(), 80);
+    }
+
+    @Test
+    void testDefaultPortHttps() {
+        SearcherRequest request = SearcherRequest.from("https://www.example.com/").build();
+        assertEquals(request.port(), 443);
+    }
+
 
     @Test
     void testFromEmpty() throws MalformedURLException {
@@ -55,6 +66,7 @@ class SearcherRequestTest {
                 .path("search")
                 .query("q", "test")
                 .query("sort", "bla")
+                .header("Accept", "*/*")
                 .build();
 
         assertAll(
@@ -64,33 +76,33 @@ class SearcherRequestTest {
                 () -> assertEquals(request.port(), 9999),
                 () -> assertEquals(request.path(), "/api/search"),
                 () -> assertEquals(request.query("q"), newArrayList("test")),
-                () -> assertEquals(request.query("sort"), newArrayList("bla"))
+                () -> assertEquals(request.query("sort"), newArrayList("bla")),
+                () -> assertEquals(request.header("Accept"), newArrayList("*/*"))
         );
     }
 
     @Test
-    void testBuilderRemovesEmptyPathElement() throws MalformedURLException {
+    void testBuilderRemovesEmptyPathElement() {
         SearcherRequest request = SearcherRequest.from()
-                .method(POST)
-                .scheme("http")
-                .host("www.example.com")
-                .port(9999)
                 .path("api")
                 .path("")
                 .path("search")
-                .query("q", "test")
-                .query("sort", "bla")
                 .build();
 
-        assertAll(
-                () -> assertEquals(request.method(), POST),
-                () -> assertEquals(request.protocol(), "http"),
-                () -> assertEquals(request.host(), "www.example.com"),
-                () -> assertEquals(request.port(), 9999),
-                () -> assertEquals(request.path(), "/api/search"),
-                () -> assertEquals(request.query("q"), newArrayList("test")),
-                () -> assertEquals(request.query("sort"), newArrayList("bla"))
-        );
+        assertEquals(request.path(), "/api/search");
+    }
+
+    @Test
+    void testSignatureCalculator() {
+        SearcherRequest request = SearcherRequest.from()
+                .query("api", "test")
+                .signatureCalculator(
+                        (r, builder) ->
+                                builder.header("api", r.query("api").stream().findFirst().get())
+                )
+                .build();
+
+        assertEquals(request.header("api"), newArrayList("test"));
     }
 
 }

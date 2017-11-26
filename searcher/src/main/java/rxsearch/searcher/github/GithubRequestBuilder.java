@@ -4,8 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import rxsearch.model.Query;
 import rxsearch.searcher.RequestBuilder;
-import okhttp3.HttpUrl;
-import okhttp3.Request;
+import rxsearch.searcher.SearcherRequest;
 
 public class GithubRequestBuilder implements RequestBuilder {
 
@@ -17,9 +16,10 @@ public class GithubRequestBuilder implements RequestBuilder {
     }
 
     @Override
-    public Request createRequest(Query query) {
+    public SearcherRequest createRequest(Query query) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(query.getKeywords()));
-        return new Request.Builder().get()
-                .url(HttpUrl.parse("https://api.github.com/search/code").newBuilder().addQueryParameter("q", query.getKeywords() + "+repo:" + repo).build()).build();
+        return SearcherRequest.get("https://api.github.com/search/code")
+                .query("q", query.getKeywords() + "+repo:" + repo)
+                .build();
     }
 }

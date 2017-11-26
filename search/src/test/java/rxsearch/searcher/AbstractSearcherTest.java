@@ -1,19 +1,19 @@
 package rxsearch.searcher;
 
 import com.codahale.metrics.Counter;
-import okhttp3.MediaType;
-import rxsearch.model.Hit;
-import rxsearch.model.Query;
 import io.reactivex.Observable;
 import io.reactivex.observers.TestObserver;
 import okhttp3.Call;
 import okhttp3.Callback;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import rxsearch.model.Hit;
+import rxsearch.model.Query;
 
 import java.io.IOException;
 
@@ -42,7 +42,8 @@ public class AbstractSearcherTest {
     @Before
     public void setUp() {
         RequestBuilder urlBuilder = mock(RequestBuilder.class);
-        when(urlBuilder.createRequest(any(Query.class))).thenReturn(mock(Request.class));
+        SearcherRequest searcherRequest = SearcherRequest.get("http://www.example.com/asb").build();
+        when(urlBuilder.createRequest(any(Query.class))).thenReturn(searcherRequest);
 
         responseParser = mock(ResponseParser.class);
         when(responseParser.toSearchResults(any(SearcherResponse.class))).thenReturn(Observable.fromArray(expectedHits));

@@ -11,6 +11,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
+import rxsearch.internal.SearchRequestTranslator;
 import rxsearch.model.Hit;
 import rxsearch.model.Query;
 
@@ -27,12 +28,14 @@ public abstract class AbstractSearcher implements Searcher {
     private final RequestBuilder requestBuilder;
     private final ResponseParser responseParser;
     private final OkHttpClient httpClient;
+    private final SearchRequestTranslator translator;
 
     public AbstractSearcher(String name, RequestBuilder urlBuilder, ResponseParser responseParser, OkHttpClient httpClient) {
         this.name = name;
         this.requestBuilder = urlBuilder;
         this.responseParser = responseParser;
         this.httpClient = httpClient;
+        this.translator = new SearchRequestTranslator();
     }
 
     public String getName() {
@@ -51,7 +54,7 @@ public abstract class AbstractSearcher implements Searcher {
 
     private Observable<SearcherResponse> asyncGet(Query query) {
         return Observable.create(subscriber -> {
-                    final Request request = requestBuilder.createRequest(query);
+                    final Request request = translator.translate(requestBuilder.createRequest(query));
                     final String country = query.getCountry();
 
                     MetricRegistry searcherMetrics = getMetricRegistry();
