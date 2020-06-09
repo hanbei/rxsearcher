@@ -2,6 +2,8 @@
 [![codecov](https://codecov.io/gh/hanbei/rxsearcher/branch/master/graph/badge.svg)](https://codecov.io/gh/hanbei/rxsearcher)
 [![codebeat badge](https://codebeat.co/badges/f8fb89de-2ebe-46dd-b491-9093e873a293)](https://codebeat.co/projects/github-com-hanbei-rxsearcher-master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c77615783ddb4d269c6a87d55ec6e01f)](https://www.codacy.com/app/hanbei/rxsearcher?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=hanbei/rxsearcher&amp;utm_campaign=Badge_Grade)
+[![Maintainability](https://api.codeclimate.com/v1/badges/678c6e5f0a83fa7a29c0/maintainability)](https://codeclimate.com/github/hanbei/rxsearcher/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/678c6e5f0a83fa7a29c0/test_coverage)](https://codeclimate.com/github/hanbei/rxsearcher/test_coverage)
 
 
 # RxSearcher #
